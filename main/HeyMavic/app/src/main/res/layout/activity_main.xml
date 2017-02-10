@@ -44,6 +44,15 @@
             android:text="Hey Mavic"
             android:textColor="@android:color/white"
             android:textSize="19sp" />
+
+        <Button
+            android:text="FPV"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/fpv_btn"
+            android:layout_alignParentTop="true"
+            android:layout_alignParentEnd="true" />
+
     </RelativeLayout>
 
     <TextView
@@ -145,7 +154,8 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:inputType="textPersonName"
-        android:text="Cmd Input"
+        android:text=""
+        android:hint="Command Input"
         android:ems="10"
         android:layout_marginBottom="11dp"
         android:id="@+id/cmd_input"

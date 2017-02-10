@@ -3,4 +3,8 @@
     <string name="view_virtual_stick">VirtualStickView</string>
     <string name="sdk_registration_message">SDK Registration Failed. Please check the bundle ID and your network connectivity</string>
     <string name="success">Success</string>
+
+    <string name="title_activity_fpvfullscreen">Hey Mavic</string>
+    <string name="dummy_button">Dummy Button</string>
+    <string name="dummy_content">DUMMY\nCONTENT</string>
 </resources>

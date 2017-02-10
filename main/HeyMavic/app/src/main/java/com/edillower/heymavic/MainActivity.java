@@ -33,6 +33,7 @@ import dji.sdk.flightcontroller.DJISimulator;
 import dji.sdk.products.DJIAircraft;
 import dji.sdk.base.DJIBaseProduct;
 import dji.common.error.DJIError;
+import dji.thirdparty.eventbus.EventBus;
 
 public class MainActivity extends Activity implements View.OnClickListener {
 
@@ -52,6 +53,10 @@ public class MainActivity extends Activity implements View.OnClickListener {
     // cmd test field
     private TextView mTextCmd;
     private Button mBtnSubmitCmd;
+
+    // fpv
+    private Button mBtnFPV;
+
 
     private TextView mTextView;
 
@@ -246,6 +251,15 @@ public class MainActivity extends Activity implements View.OnClickListener {
                 mCmdCodeGenerator.setCmdCode(mTextCmd.getText().toString());
                 mTextCmd.setText("");
                 stopVoice();
+            }
+        });
+
+        // FPV
+        mBtnFPV=(Button) findViewById(R.id.fpv_btn);
+        mBtnFPV.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                Intent fpvIntent = new Intent(MainActivity.this,FPVFullscreenActivity.class);
+                startActivity(fpvIntent);
             }
         });
 
