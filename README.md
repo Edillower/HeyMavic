@@ -5,7 +5,7 @@ Voice Control App for DJI Mavic
 **APP Name:** Hey Mavic  
 **Software Platform:** Android  
 **Bundle Identifier:** com.dji.sdk.sample  
-**App Key:** 9f497e7726ba5447a263bba8  
+**App Key:** 48f115a46003fbac474fb094  
 **Category:** Voice Control  
 Description:  
 -Voice Control App for DJI Mavic  
