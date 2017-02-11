@@ -23,6 +23,9 @@ dependencies {
     compile fileTree(dir: 'libs', include: ['*.jar'])
     compile project(':dJISDKLIB')
 
+    compile 'com.ibm.watson.developer_cloud:java-sdk:3.5.3'
+    compile 'com.ibm.watson.developer_cloud:android-sdk:0.2.1'
+
     compile 'com.android.support:appcompat-v7:23.4.0'
     compile 'com.android.support:support-v4:23.4.0'
     compile 'com.google.android.gms:play-services-maps:10.0.1'

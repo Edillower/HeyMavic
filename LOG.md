@@ -9,9 +9,10 @@
 - FPV added
 - Minor UI changes
 
-## Feb 11 Update Notes (by Eddie):
+## Feb 11 Update Notes (by Eddie, David):
 - FPV UI updated
 - Command Input UI added
+- Voice recognizer and command classifier added
 
 ## Feb XX Update Notes (by XXXX):
 - ALWAYS update this log when changes are made!!!
