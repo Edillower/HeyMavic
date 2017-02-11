@@ -6,9 +6,12 @@ import android.graphics.SurfaceTexture;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.TextureView;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
+import android.widget.EditText;
 import android.widget.RelativeLayout;
 
 import com.edillower.heymavic.R;
@@ -39,9 +42,11 @@ public class BaseFpvView extends RelativeLayout implements TextureView.SurfaceTe
     private void initUI() {
         LayoutInflater layoutInflater = (LayoutInflater) getContext().getSystemService(Service.LAYOUT_INFLATER_SERVICE);
 
-        View content = layoutInflater.inflate(R.layout.activity_fpvfullscreen, null, false);
-        addView(content, new RelativeLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,
-                ViewGroup.LayoutParams.MATCH_PARENT));
+        View content = layoutInflater.inflate(R.layout.layout_fpvscreen, null, false);
+        RelativeLayout.LayoutParams rlParam = new RelativeLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,
+                ViewGroup.LayoutParams.MATCH_PARENT);
+        rlParam.addRule(RelativeLayout.ALIGN_PARENT_BOTTOM,1);
+        addView(content, rlParam);
 
         Log.v("TAG","Start to test");
 
@@ -50,7 +55,6 @@ public class BaseFpvView extends RelativeLayout implements TextureView.SurfaceTe
         if (null != mVideoSurface) {
             mVideoSurface.setSurfaceTextureListener(this);
 
-            // This callback is for
             mOnReceivedVideoCallback = new DJILBAirLink.DJIOnReceivedVideoCallback() {
                 @Override
                 public void onResult(byte[] videoBuffer, int size) {
@@ -71,6 +75,7 @@ public class BaseFpvView extends RelativeLayout implements TextureView.SurfaceTe
         }
 
         initSDKCallback();
+
     }
 
     private void initSDKCallback() {
@@ -111,4 +116,6 @@ public class BaseFpvView extends RelativeLayout implements TextureView.SurfaceTe
     public void onSurfaceTextureUpdated(SurfaceTexture surface) {
 
     }
+
+
 }

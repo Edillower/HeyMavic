@@ -9,5 +9,9 @@
 - FPV added
 - Minor UI changes
 
+## Feb 11 Update Notes (by Eddie):
+- FPV UI updated
+- Command Input UI added
+
 ## Feb XX Update Notes (by XXXX):
 - ALWAYS update this log when changes are made!!!
