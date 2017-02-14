@@ -33,7 +33,6 @@ import dji.sdk.flightcontroller.DJISimulator;
 import dji.sdk.products.DJIAircraft;
 import dji.sdk.base.DJIBaseProduct;
 import dji.common.error.DJIError;
-import dji.thirdparty.eventbus.EventBus;
 
 public class MainActivity extends Activity implements View.OnClickListener {
 

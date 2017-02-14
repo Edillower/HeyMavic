@@ -1,14 +1,19 @@
 package com.edillower.heymavic;
 
+import android.Manifest;
 import android.app.Activity;
-import android.app.FragmentManager;
-import android.app.FragmentTransaction;
 import android.app.Service;
+import android.content.BroadcastReceiver;
+import android.content.Context;
+import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.pm.ActivityInfo;
 import android.os.AsyncTask;
+import android.os.Build;
 import android.os.Bundle;
 import android.provider.Settings;
-import android.text.TextWatcher;
+import android.support.v4.app.ActivityCompat;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.TextureView;
@@ -17,7 +22,6 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.RelativeLayout;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import com.ibm.watson.developer_cloud.android.library.audio.MicrophoneInputStream;
@@ -35,16 +39,24 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 
+import dji.sdk.base.DJIBaseProduct;
+import dji.sdk.products.DJIAircraft;
+
 /**
  * FPV main control window
  * @author Eddie Wang
  */
 public class FPVFullscreenActivity extends Activity{
+    public static final String TAG = FPVFullscreenActivity.class.getName();
+
     // IBM watson varaibles
     private final String command_classfier_id = "f5b42fx173-nlc-2075";
     private final String direction_classfier_id = "f5b42fx173-nlc-2077";
     private SpeechToText speechService;
     private NaturalLanguageClassifier nlpService;
+    private MicrophoneInputStream capture;
+
+    private String mStrIntention="";
 
     // App button and views
     private TextureView fpvTexture;
@@ -52,14 +64,29 @@ public class FPVFullscreenActivity extends Activity{
     private boolean mBtnInput_flag=true;
     private EditText mTxtCmmand;
     private Button mBtmDummy;
-    private MicrophoneInputStream capture;
 
-    private String mStrIntention="";
+    private CommandInterpreter mCI;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         this.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_REVERSE_LANDSCAPE);
+
+        // When the compile and target version is higher than 22, please request the
+        // following permissions at runtime to ensure the
+        // SDK work well.
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            ActivityCompat.requestPermissions(this,
+                    new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE, Manifest.permission.VIBRATE,
+                            Manifest.permission.INTERNET, Manifest.permission.ACCESS_WIFI_STATE,
+                            Manifest.permission.WAKE_LOCK, Manifest.permission.ACCESS_COARSE_LOCATION,
+                            Manifest.permission.ACCESS_NETWORK_STATE, Manifest.permission.ACCESS_FINE_LOCATION,
+                            Manifest.permission.CHANGE_WIFI_STATE, Manifest.permission.MOUNT_UNMOUNT_FILESYSTEMS,
+                            Manifest.permission.READ_EXTERNAL_STORAGE, Manifest.permission.SYSTEM_ALERT_WINDOW,
+                            Manifest.permission.READ_PHONE_STATE,
+                    }
+                    , 1);
+        }
 
         fpvTexture=new TextureView(this);
         fpvTexture.setSurfaceTextureListener(new BaseFpvView(this));
@@ -75,6 +102,85 @@ public class FPVFullscreenActivity extends Activity{
         speechService = initSpeechToTextService();
         nlpService = initNaturalLanguageClassifierService();
 
+        mCI = new CommandInterpreter(TAG);
+        mCI.initFlightController();
+
+        // Register the broadcast receiver for receiving the device connection's changes.
+        IntentFilter filter = new IntentFilter();
+        filter.addAction(DJISimulatorApplication.FLAG_CONNECTION_CHANGE);
+        registerReceiver(mReceiver, filter);
+
+        Log.e(TAG, "onCreate");
+    }
+
+    @Override
+    public void onResume() {
+        Log.e(TAG, "onResume");
+        super.onResume();
+        updateConnection();
+        mCI.initFlightController();
+    }
+
+    @Override
+    public void onPause() {
+        Log.e(TAG, "onPause");
+        super.onPause();
+    }
+
+    @Override
+    public void onStop() {
+        Log.e(TAG, "onStop");
+        super.onStop();
+    }
+
+    public void onReturn(View view){
+        Log.e(TAG, "onReturn");
+        this.finish();
+    }
+
+    @Override
+    protected void onDestroy() {
+        Log.e(TAG, "onDestroy");
+        unregisterReceiver(mReceiver);
+        mCI.mDestroy();
+        super.onDestroy();
+    }
+
+    protected BroadcastReceiver mReceiver = new BroadcastReceiver() {
+
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            updateConnection();
+            if (mCI.mFlightController==null){
+                mCI.initFlightController();
+            }
+        }
+    };
+
+    private void updateConnection() {
+        boolean ret = false;
+        DJIBaseProduct product = DJISimulatorApplication.getProductInstance();
+        if (product != null) {
+            if(product.isConnected()) {
+                //The product is connected
+                showFpvToast(DJISimulatorApplication.getProductInstance().getModel() + " Connected");
+                ret = true;
+            } else {
+                if(product instanceof DJIAircraft) {
+                    DJIAircraft aircraft = (DJIAircraft)product;
+                    if(aircraft.getRemoteController() != null && aircraft.getRemoteController().isConnected()) {
+                        // The product is not connected, but the remote controller is connected
+                        showFpvToast("only RC Connected");
+                        ret = true;
+                    }
+                }
+            }
+        }
+
+        if(!ret) {
+            // The product or the remote controller are not connected.
+            showFpvToast("Disconnected");
+        }
     }
 
     private void initUI(){
@@ -314,7 +420,8 @@ public class FPVFullscreenActivity extends Activity{
             return encoded_string;
         }
 
-        @Override protected String doInBackground(String... params) {
+        @Override
+        protected String doInBackground(String... params) {
             // Classify command and direction
 //            String command = nlpService.classify(command_classfier_id,params[0]).execute().getTopClass();
 //            String direction = nlpService.classify(direction_classfier_id,params[0]).execute().getTopClass();
@@ -353,9 +460,15 @@ public class FPVFullscreenActivity extends Activity{
             System.out.println(command + ' ' + direction + ' ' + unit);
             System.out.println(encoded_string.toString());
             showFpvToast(encoded_string.toString());
+            callExecution(encoded_string);
             return "Did classify";
         }
     }
+
+    private void callExecution(ArrayList<Integer> encoded_string){
+        mCI.executeCmd(encoded_string);
+    }
+
     //
     public void showFpvToast(final String msg) {
         runOnUiThread(new Runnable() {
