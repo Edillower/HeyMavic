@@ -83,7 +83,7 @@ public class FPVFullscreenActivity extends Activity{
                             Manifest.permission.ACCESS_NETWORK_STATE, Manifest.permission.ACCESS_FINE_LOCATION,
                             Manifest.permission.CHANGE_WIFI_STATE, Manifest.permission.MOUNT_UNMOUNT_FILESYSTEMS,
                             Manifest.permission.READ_EXTERNAL_STORAGE, Manifest.permission.SYSTEM_ALERT_WINDOW,
-                            Manifest.permission.READ_PHONE_STATE,
+                            Manifest.permission.READ_PHONE_STATE, Manifest.permission.RECORD_AUDIO
                     }
                     , 1);
         }
