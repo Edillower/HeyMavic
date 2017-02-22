@@ -2,6 +2,7 @@ package com.edillower.heymavic;
 
 import android.Manifest;
 import android.app.Activity;
+import android.app.FragmentTransaction;
 import android.app.Service;
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -24,6 +25,12 @@ import android.widget.EditText;
 import android.widget.RelativeLayout;
 import android.widget.Toast;
 
+import com.google.android.gms.maps.CameraUpdateFactory;
+import com.google.android.gms.maps.GoogleMap;
+import com.google.android.gms.maps.MapFragment;
+import com.google.android.gms.maps.OnMapReadyCallback;
+import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.MarkerOptions;
 import com.ibm.watson.developer_cloud.android.library.audio.MicrophoneInputStream;
 import com.ibm.watson.developer_cloud.android.library.audio.utils.ContentType;
 import com.ibm.watson.developer_cloud.natural_language_classifier.v1.NaturalLanguageClassifier;
@@ -46,8 +53,11 @@ import dji.sdk.products.DJIAircraft;
  * FPV main control window
  * @author Eddie Wang
  */
-public class FPVFullscreenActivity extends Activity{
+public class FPVFullscreenActivity extends Activity implements OnMapReadyCallback {
     public static final String TAG = FPVFullscreenActivity.class.getName();
+
+    // Google map
+    private GoogleMap mMap;
 
     // IBM watson varaibles
     private final String command_classfier_id = "f5b42fx173-nlc-2075";
@@ -110,6 +120,12 @@ public class FPVFullscreenActivity extends Activity{
         filter.addAction(DJISimulatorApplication.FLAG_CONNECTION_CHANGE);
         registerReceiver(mReceiver, filter);
 
+        // Set up map
+        MapFragment mapFragment = (MapFragment) getFragmentManager()
+                .findFragmentById(R.id.mapFragment);
+        mapFragment.getMapAsync(this);
+
+
         Log.e(TAG, "onCreate");
     }
 
@@ -144,6 +160,25 @@ public class FPVFullscreenActivity extends Activity{
         unregisterReceiver(mReceiver);
         mCI.mDestroy();
         super.onDestroy();
+    }
+
+    @Override
+    public void onMapReady(GoogleMap map) {
+        mMap = map;
+        mMap.getUiSettings().setCompassEnabled(true);
+        mMap.getUiSettings().setMyLocationButtonEnabled(true);
+        mMap.getUiSettings().setAllGesturesEnabled(false);
+
+        LatLng currentLocation = new LatLng(-34, 151);
+        if (mCI.mFlightController!=null){
+
+        }else{
+
+        }
+
+        mMap.moveCamera(CameraUpdateFactory.newLatLng(currentLocation));
+        mMap.setMinZoomPreference(15.0f);
+        mMap.setMaxZoomPreference(15.0f);
     }
 
     protected BroadcastReceiver mReceiver = new BroadcastReceiver() {

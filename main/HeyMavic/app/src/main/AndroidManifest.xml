@@ -48,6 +48,9 @@
         <meta-data
             android:name="com.dji.sdk.API_KEY"
             android:value="48f115a46003fbac474fb094" />
+        <meta-data
+            android:name="com.google.android.maps.v2.API_KEY"
+            android:value="AIzaSyC9EFpIJXzlSzVrpaulzfu-T3amzcJCqvQ" /> //TODO: Enter your Google API Key here
 
         <service android:name="dji.sdk.sdkmanager.DJIGlobalService"></service>
 

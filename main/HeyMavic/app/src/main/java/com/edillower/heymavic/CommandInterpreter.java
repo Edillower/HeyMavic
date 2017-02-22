@@ -20,6 +20,8 @@ import dji.common.flightcontroller.DJIVirtualStickYawControlMode;
 import dji.common.util.DJICommonCallbacks;
 import dji.sdk.flightcontroller.DJIFlightController;
 import dji.sdk.flightcontroller.DJISimulator;
+import dji.sdk.missionmanager.DJIMission;
+import dji.sdk.missionmanager.DJIMissionManager;
 import dji.sdk.missionmanager.missionstep.DJIGoToStep;
 import dji.sdk.products.DJIAircraft;
 import dji.common.error.DJIError;
@@ -39,6 +41,10 @@ public class CommandInterpreter {
     private float mRoll = 0;
     private float mYaw = 0;
     private float mThrottle = 0;
+
+    // Mission Manager
+    protected DJIMission mDJIMission;
+    private DJIMissionManager mMissionManager;
 
     // default constructor
     public CommandInterpreter(String activityTag) {
@@ -472,5 +478,7 @@ public class CommandInterpreter {
             }
         }
     }
+
+
 
 }

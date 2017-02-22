@@ -13,6 +13,7 @@ Description:
 ## Modules
 **Compile SDK Version:** API 23: Android 6.0 (Marshmallow)  
 **Build Tools Version:** 23.0.1  
+**Google Map API Key:** AIzaSyC9EFpIJXzlSzVrpaulzfu-T3amzcJCqvQ
 
 ## Presentation
 https://drive.google.com/open?id=0B2GRbiJanDtOSFMzT01ZVkhZQU0

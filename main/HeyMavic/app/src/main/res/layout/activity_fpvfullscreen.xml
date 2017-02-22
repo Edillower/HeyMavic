@@ -47,6 +47,16 @@
             android:layout_toStartOf="@+id/input_btn"
             android:alpha="0" />
 
+        <fragment
+            android:id="@+id/mapFragment"
+            class="com.google.android.gms.maps.MapFragment"
+            android:layout_width="192dp"
+            android:layout_height="108dp"
+            android:layout_alignBottom="@+id/input_btn"
+            android:layout_alignParentStart="true"
+            android:layout_marginBottom="0dp"
+            android:layout_marginStart="5dp" />
+
         <!--<com.google.android.gms.maps.MapFragment-->
         <!--android:layout_width="192dp"-->
         <!--android:layout_height="108dp"-->

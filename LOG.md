@@ -26,5 +26,8 @@
 - Stop function added
 - FPV UI, Flight Control module, and Command Recognition module interconnected
 
+## Feb 21 Update Notes (by Eddie):
+- Google Map initials
+
 ## Feb XX Update Notes (by XXXX):
 - ALWAYS update this log when changes are made!!!
