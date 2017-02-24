@@ -9,6 +9,7 @@ import java.util.ArrayList;
 import java.util.Timer;
 import java.util.TimerTask;
 
+import dji.common.flightcontroller.DJIFlightControllerCurrentState;
 import dji.common.flightcontroller.DJILocationCoordinate3D;
 import dji.common.flightcontroller.DJISimulatorInitializationData;
 import dji.common.flightcontroller.DJISimulatorStateData;
@@ -19,6 +20,7 @@ import dji.common.flightcontroller.DJIVirtualStickVerticalControlMode;
 import dji.common.flightcontroller.DJIVirtualStickYawControlMode;
 import dji.common.util.DJICommonCallbacks;
 import dji.sdk.flightcontroller.DJIFlightController;
+import dji.sdk.flightcontroller.DJIFlightControllerDelegate;
 import dji.sdk.flightcontroller.DJISimulator;
 import dji.sdk.missionmanager.DJIMission;
 import dji.sdk.missionmanager.DJIMissionManager;
@@ -82,7 +84,8 @@ public class CommandInterpreter {
 //                    });
 //                }
 //            });
-            mEnableVS();
+
+//            mEnableVS();
         }
     }
 

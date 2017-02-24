@@ -29,5 +29,8 @@
 ## Feb 21 Update Notes (by Eddie):
 - Google Map initials
 
+## Feb 23 Update Notes (by Eddie):
+- Added the tracking of user's and drone's location on Google Map
+
 ## Feb XX Update Notes (by XXXX):
 - ALWAYS update this log when changes are made!!!

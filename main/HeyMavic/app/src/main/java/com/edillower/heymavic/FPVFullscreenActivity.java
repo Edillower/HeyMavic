@@ -9,11 +9,16 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.pm.ActivityInfo;
+import android.content.pm.PackageManager;
+import android.location.Location;
+import android.location.LocationListener;
+import android.location.LocationManager;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 import android.provider.Settings;
 import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.ContextCompat;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
@@ -25,11 +30,16 @@ import android.widget.EditText;
 import android.widget.RelativeLayout;
 import android.widget.Toast;
 
+import com.google.android.gms.common.ConnectionResult;
+import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapFragment;
 import com.google.android.gms.maps.OnMapReadyCallback;
+import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.ibm.watson.developer_cloud.android.library.audio.MicrophoneInputStream;
 import com.ibm.watson.developer_cloud.android.library.audio.utils.ContentType;
@@ -40,24 +50,41 @@ import com.ibm.watson.developer_cloud.speech_to_text.v1.model.SpeechResults;
 import com.ibm.watson.developer_cloud.speech_to_text.v1.websocket.RecognizeCallback;
 
 import java.util.ArrayList;
+import java.util.Timer;
+import java.util.TimerTask;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 
+import dji.common.error.DJIError;
+import dji.common.flightcontroller.DJIFlightControllerCurrentState;
+import dji.common.flightcontroller.DJILocationCoordinate3D;
+import dji.common.flightcontroller.DJIVirtualStickFlightControlData;
+import dji.common.util.DJICommonCallbacks;
 import dji.sdk.base.DJIBaseProduct;
+import dji.sdk.flightcontroller.DJIFlightControllerDelegate;
 import dji.sdk.products.DJIAircraft;
 
 /**
  * FPV main control window
+ *
  * @author Eddie Wang
  */
-public class FPVFullscreenActivity extends Activity implements OnMapReadyCallback {
+public class FPVFullscreenActivity extends Activity implements OnMapReadyCallback, GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener {
     public static final String TAG = FPVFullscreenActivity.class.getName();
 
-    // Google map
+    // Map
     private GoogleMap mMap;
+    private LatLng mDroneLocation = new LatLng(0, 0);
+    private float mDroneHeading = 0;
+    private Marker mDroneMarker = null;
+    //    private LocationManager mLocationManager;
+//    private LocationListener mLocationListener;
+    private GoogleApiClient mGoogleApiClient;
+    private LatLng mUserLocation = new LatLng(0, 0);
+    private boolean mCamFlag = true;
 
     // IBM watson varaibles
     private final String command_classfier_id = "f5b42fx173-nlc-2075";
@@ -66,12 +93,12 @@ public class FPVFullscreenActivity extends Activity implements OnMapReadyCallbac
     private NaturalLanguageClassifier nlpService;
     private MicrophoneInputStream capture;
 
-    private String mStrIntention="";
+    private String mStrIntention = "";
 
     // App button and views
     private TextureView fpvTexture;
     private Button mBtnInput;
-    private boolean mBtnInput_flag=true;
+    private boolean mBtnInput_flag = true;
     private EditText mTxtCmmand;
     private Button mBtmDummy;
 
@@ -98,7 +125,7 @@ public class FPVFullscreenActivity extends Activity implements OnMapReadyCallbac
                     , 1);
         }
 
-        fpvTexture=new TextureView(this);
+        fpvTexture = new TextureView(this);
         fpvTexture.setSurfaceTextureListener(new BaseFpvView(this));
         setContentView(fpvTexture);
 
@@ -106,14 +133,22 @@ public class FPVFullscreenActivity extends Activity implements OnMapReadyCallbac
         View content = layoutInflater.inflate(R.layout.activity_fpvfullscreen, null, false);
         RelativeLayout.LayoutParams rlParam = new RelativeLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,
                 ViewGroup.LayoutParams.MATCH_PARENT);
-        addContentView(content,rlParam);
+        addContentView(content, rlParam);
         initUI();
 
         speechService = initSpeechToTextService();
         nlpService = initNaturalLanguageClassifierService();
 
         mCI = new CommandInterpreter(TAG);
-        mCI.initFlightController();
+        initDrone();
+
+        if (mGoogleApiClient == null) {
+            mGoogleApiClient = new GoogleApiClient.Builder(this)
+                    .addConnectionCallbacks(this)
+                    .addOnConnectionFailedListener(this)
+                    .addApi(LocationServices.API)
+                    .build();
+        }
 
         // Register the broadcast receiver for receiving the device connection's changes.
         IntentFilter filter = new IntentFilter();
@@ -125,8 +160,13 @@ public class FPVFullscreenActivity extends Activity implements OnMapReadyCallbac
                 .findFragmentById(R.id.mapFragment);
         mapFragment.getMapAsync(this);
 
-
         Log.e(TAG, "onCreate");
+    }
+
+    @Override
+    public void onStart() {
+        mGoogleApiClient.connect();
+        super.onStart();
     }
 
     @Override
@@ -134,7 +174,7 @@ public class FPVFullscreenActivity extends Activity implements OnMapReadyCallbac
         Log.e(TAG, "onResume");
         super.onResume();
         updateConnection();
-        mCI.initFlightController();
+        initDrone();
     }
 
     @Override
@@ -146,10 +186,11 @@ public class FPVFullscreenActivity extends Activity implements OnMapReadyCallbac
     @Override
     public void onStop() {
         Log.e(TAG, "onStop");
+        mGoogleApiClient.disconnect();
         super.onStop();
     }
 
-    public void onReturn(View view){
+    public void onReturn(View view) {
         Log.e(TAG, "onReturn");
         this.finish();
     }
@@ -166,28 +207,120 @@ public class FPVFullscreenActivity extends Activity implements OnMapReadyCallbac
     public void onMapReady(GoogleMap map) {
         mMap = map;
         mMap.getUiSettings().setCompassEnabled(true);
-        mMap.getUiSettings().setMyLocationButtonEnabled(true);
         mMap.getUiSettings().setAllGesturesEnabled(false);
-
-        LatLng currentLocation = new LatLng(-34, 151);
-        if (mCI.mFlightController!=null){
-
-        }else{
-
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION)
+                == PackageManager.PERMISSION_GRANTED) {
+            mMap.setMyLocationEnabled(true);
+            mMap.getUiSettings().setMyLocationButtonEnabled(false);
+        } else {
+            showFpvToast("Permission required for using map");
         }
-
-        mMap.moveCamera(CameraUpdateFactory.newLatLng(currentLocation));
-        mMap.setMinZoomPreference(15.0f);
-        mMap.setMaxZoomPreference(15.0f);
     }
+
+    @Override
+    public void onConnected(Bundle connectionHint) {
+        mCamFlag = false;
+        updateMapCamera();
+        mCamFlag = true;
+    }
+
+    @Override
+    public void onConnectionSuspended(int cause){
+        showFpvToast("Google Play Suspended: " + cause);
+    }
+
+    @Override
+    public void onConnectionFailed(ConnectionResult result){
+        showFpvToast("Failed to Connect Google Play");
+    }
+
+    private void updateUserLocation(){
+        try {
+            Location loc = LocationServices.FusedLocationApi.getLastLocation(
+                    mGoogleApiClient);
+            mUserLocation=new LatLng(loc.getLatitude(),loc.getLongitude());
+        } catch (SecurityException e) {
+            showFpvToast("Permission required for using map");
+        }
+    }
+
+    //    private class custLocationListener implements LocationListener {
+//        @Override
+//        public void onLocationChanged(Location loc) {
+//            mUserLocation = new LatLng(loc.getLatitude(), loc.getLongitude());
+//        }
+//
+//        @Override
+//        public void onProviderDisabled(String provider) {
+//        }
+//
+//        @Override
+//        public void onProviderEnabled(String provider) {
+//        }
+//
+//        @Override
+//        public void onStatusChanged(String provider, int status, Bundle extras) {
+//        }
+//    }
+
+
+//    private void updateUserLocation() {
+//        mLocationManager = (LocationManager)
+//                getSystemService(Context.LOCATION_SERVICE);
+//        mLocationListener = new custLocationListener();
+//        try {
+//            mLocationManager.requestLocationUpdates(
+//                    LocationManager.GPS_PROVIDER, 5000, 0, mLocationListener);
+//        } catch (SecurityException e) {
+//            showFpvToast("Permission required for using map");
+//        }
+//    }
+
+    // Update the drone location based on states from MCU.
+    private void updateDroneLocation() {
+
+        //Create MarkerOptions object
+        final MarkerOptions markerOptions = new MarkerOptions();
+        markerOptions.position(mDroneLocation);
+        markerOptions.icon(BitmapDescriptorFactory.fromResource(R.drawable.aircraft));
+        markerOptions.rotation(mDroneHeading);
+        markerOptions.anchor(0.5f,0.5f);
+
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                if (mDroneMarker != null) {
+                    mDroneMarker.remove();
+                }
+                if (checkGpsCoordination(mDroneLocation.latitude, mDroneLocation.longitude)) {
+                    mDroneMarker = mMap.addMarker(markerOptions);
+                    updateMapCamera();
+                }
+            }
+        });
+    }
+
+    private void updateMapCamera() {
+        if (mCamFlag){
+            mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(mDroneLocation, 15.0f));
+        }else{
+            updateUserLocation();
+            mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(mUserLocation, 15.0f));
+        }
+    }
+
+    public static boolean checkGpsCoordination(double latitude, double longitude) {
+        return (latitude > -90 && latitude < 90 && longitude > -180 && longitude < 180) && (latitude != 0f && longitude != 0f);
+    }
+
 
     protected BroadcastReceiver mReceiver = new BroadcastReceiver() {
 
         @Override
         public void onReceive(Context context, Intent intent) {
             updateConnection();
-            if (mCI.mFlightController==null){
-                mCI.initFlightController();
+            if (mCI.mFlightController == null) {
+                initDrone();
             }
         }
     };
@@ -196,14 +329,14 @@ public class FPVFullscreenActivity extends Activity implements OnMapReadyCallbac
         boolean ret = false;
         DJIBaseProduct product = DJISimulatorApplication.getProductInstance();
         if (product != null) {
-            if(product.isConnected()) {
+            if (product.isConnected()) {
                 //The product is connected
                 showFpvToast(DJISimulatorApplication.getProductInstance().getModel() + " Connected");
                 ret = true;
             } else {
-                if(product instanceof DJIAircraft) {
-                    DJIAircraft aircraft = (DJIAircraft)product;
-                    if(aircraft.getRemoteController() != null && aircraft.getRemoteController().isConnected()) {
+                if (product instanceof DJIAircraft) {
+                    DJIAircraft aircraft = (DJIAircraft) product;
+                    if (aircraft.getRemoteController() != null && aircraft.getRemoteController().isConnected()) {
                         // The product is not connected, but the remote controller is connected
                         showFpvToast("only RC Connected");
                         ret = true;
@@ -212,30 +345,48 @@ public class FPVFullscreenActivity extends Activity implements OnMapReadyCallbac
             }
         }
 
-        if(!ret) {
+        if (!ret) {
             // The product or the remote controller are not connected.
             showFpvToast("Disconnected");
         }
     }
 
-    private void initUI(){
-        mTxtCmmand=(EditText) findViewById(R.id.command_text);
-        mBtnInput=(Button) findViewById(R.id.input_btn);
-        mBtmDummy=(Button) findViewById(R.id.dummy_btn);
+    private void initDrone() {
+        mCI.initFlightController();
+        if (mCI.mFlightController != null) {
+            showFpvToast("Set up call back");
+            mCI.mFlightController.setUpdateSystemStateCallback(new DJIFlightControllerDelegate.FlightControllerUpdateSystemStateCallback() {
+                @Override
+                public void onResult(DJIFlightControllerCurrentState state) {
+                    double mDroneLocationLat = state.getAircraftLocation().getLatitude();
+                    double mDroneLocationLng = state.getAircraftLocation().getLongitude();
+                    mDroneLocation = new LatLng(mDroneLocationLat, mDroneLocationLng);
+                    mDroneHeading = (float) mCI.mFlightController.getCompass().getHeading();
+                    updateDroneLocation();
+                }
+            });
+        }
+    }
+
+    private void initUI() {
+        mTxtCmmand = (EditText) findViewById(R.id.command_text);
+        mBtnInput = (Button) findViewById(R.id.input_btn);
+        mBtmDummy = (Button) findViewById(R.id.dummy_btn);
         voiceInputListener();
         inputBtnListener();
     }
 
-    private void voiceInputListener(){
+    private void voiceInputListener() {
         mBtmDummy.setOnTouchListener(new View.OnTouchListener() {
             @Override
             public boolean onTouch(View v, MotionEvent event) {
-                switch(event.getAction()) {
+                switch (event.getAction()) {
                     case MotionEvent.ACTION_DOWN:
-                        mTxtCmmand.setBackgroundResource(R.drawable.common_google_signin_btn_text_dark_pressed);
+                        mTxtCmmand.setBackgroundResource(R.drawable.common_google_signin_btn_text_dark_focused);
                         capture = new MicrophoneInputStream(true);
                         new Thread(new Runnable() {
-                            @Override public void run() {
+                            @Override
+                            public void run() {
                                 try {
                                     speechService.recognizeUsingWebSocket(capture, getRecognizeOptions(), new MicrophoneRecognizeDelegate());
                                 } catch (Exception e) {
@@ -260,16 +411,16 @@ public class FPVFullscreenActivity extends Activity implements OnMapReadyCallbac
         });
     }
 
-    private void inputBtnListener(){
+    private void inputBtnListener() {
         mBtnInput.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (mBtnInput_flag){
+                if (mBtnInput_flag) {
                     mBtnInput.setBackgroundResource(R.drawable.keyboard);
                     mTxtCmmand.setHint("Enter Your Command");
                     mTxtCmmand.setEnabled(true);
                     mBtmDummy.setVisibility(View.GONE);
-                    mBtnInput_flag=false;
+                    mBtnInput_flag = false;
 //                    mTxtCmmand.addTextChangedListener(new TextWatcher() {
 //                        @Override
 //                        public void beforeTextChanged(CharSequence s, int start, int count, int after) {
@@ -286,15 +437,15 @@ public class FPVFullscreenActivity extends Activity implements OnMapReadyCallbac
 //
 //                        }
 //                    });
-                }else{
+                } else {
                     mBtnInput.setBackgroundResource(R.drawable.mic);
-                    mStrIntention=mTxtCmmand.getText().toString();
+                    mStrIntention = mTxtCmmand.getText().toString();
                     new ClassificationTask().execute(mStrIntention);
                     mTxtCmmand.setText("");
                     mTxtCmmand.setHint("Hold for Voice Input");
                     mTxtCmmand.setEnabled(false);
                     mBtmDummy.setVisibility(View.VISIBLE);
-                    mBtnInput_flag=true;
+                    mBtnInput_flag = true;
                 }
             }
         });
@@ -302,7 +453,8 @@ public class FPVFullscreenActivity extends Activity implements OnMapReadyCallbac
 
     private void showMicText(final String text) {
         runOnUiThread(new Runnable() {
-            @Override public void run() {
+            @Override
+            public void run() {
                 // input.setText(text);
                 mTxtCmmand.setHint(text);
             }
@@ -311,7 +463,8 @@ public class FPVFullscreenActivity extends Activity implements OnMapReadyCallbac
 
     private void showError(final Exception e) {
         runOnUiThread(new Runnable() {
-            @Override public void run() {
+            @Override
+            public void run() {
                 Toast.makeText(FPVFullscreenActivity.this, e.getMessage(), Toast.LENGTH_SHORT).show();
                 e.printStackTrace();
             }
@@ -327,6 +480,7 @@ public class FPVFullscreenActivity extends Activity implements OnMapReadyCallbac
         service.setEndPoint("https://stream.watsonplatform.net/speech-to-text/api");
         return service;
     }
+
     private NaturalLanguageClassifier initNaturalLanguageClassifierService() {
         NaturalLanguageClassifier service = new NaturalLanguageClassifier();
         String username = "892a7e25-f38a-4d04-a725-028871966429";
@@ -335,6 +489,7 @@ public class FPVFullscreenActivity extends Activity implements OnMapReadyCallbac
         service.setEndPoint("https://gateway.watsonplatform.net/natural-language-classifier/api");
         return service;
     }
+
     private class MicrophoneRecognizeDelegate implements RecognizeCallback {
 
         @Override
@@ -352,7 +507,7 @@ public class FPVFullscreenActivity extends Activity implements OnMapReadyCallbac
         @Override
         public void onError(Exception e) {
             showError(e);
-           // mTxtCmmand.setEnabled(true);
+            // mTxtCmmand.setEnabled(true);
         }
 
         @Override
@@ -361,6 +516,7 @@ public class FPVFullscreenActivity extends Activity implements OnMapReadyCallbac
             new ClassificationTask().execute(mStrIntention);
         }
     }
+
     private RecognizeOptions getRecognizeOptions() {
         return new RecognizeOptions.Builder()
                 .continuous(true)
@@ -371,12 +527,13 @@ public class FPVFullscreenActivity extends Activity implements OnMapReadyCallbac
                 .smartFormatting(true)
                 .build();
     }
+
     private class ClassificationTask extends AsyncTask<String, Void, String> {
         // Parse classified command into decimal encoded string
-        private ArrayList<Integer> encode_string (String command, String direction, String unit){
+        private ArrayList<Integer> encode_string(String command, String direction, String unit) {
             ArrayList<Integer> encoded_string = new ArrayList<Integer>();
             int switch_num = 0; // 0 for null, 1 for move, 2 for turn
-            switch(command){
+            switch (command) {
                 case "takeoff":
                     encoded_string.add(100);
                     break;
@@ -389,7 +546,7 @@ public class FPVFullscreenActivity extends Activity implements OnMapReadyCallbac
                 case "move":
                     encoded_string.add(103);
                     switch_num = 1;
-                    switch(direction){
+                    switch (direction) {
                         case "left":
                             encoded_string.add(201);
                             encoded_string.add(303);
@@ -420,7 +577,7 @@ public class FPVFullscreenActivity extends Activity implements OnMapReadyCallbac
                     encoded_string.add(104);
                     encoded_string.add(203);
                     switch_num = 2;
-                    switch(direction) {
+                    switch (direction) {
                         case "left":
                             encoded_string.add(303);
                             break;
@@ -441,13 +598,13 @@ public class FPVFullscreenActivity extends Activity implements OnMapReadyCallbac
                 default:
                     // code to be executed if all cases are not matched;
             }
-            if (unit != null){
+            if (unit != null) {
                 //move
-                if (switch_num == 1){
+                if (switch_num == 1) {
                     encoded_string.add(202);
                 }
                 //turn
-                else if (switch_num == 2){
+                else if (switch_num == 2) {
                     encoded_string.add(204);
                 }
                 encoded_string.add(Integer.parseInt(unit));
@@ -479,8 +636,7 @@ public class FPVFullscreenActivity extends Activity implements OnMapReadyCallbac
                 unit = future0.get();
                 command = future1.get();
                 direction = future2.get();
-            }
-            catch (InterruptedException e) {
+            } catch (InterruptedException e) {
                 e.printStackTrace();
             } catch (ExecutionException e) {
                 e.printStackTrace();
@@ -500,7 +656,7 @@ public class FPVFullscreenActivity extends Activity implements OnMapReadyCallbac
         }
     }
 
-    private void callExecution(ArrayList<Integer> encoded_string){
+    private void callExecution(ArrayList<Integer> encoded_string) {
         mCI.executeCmd(encoded_string);
     }
 

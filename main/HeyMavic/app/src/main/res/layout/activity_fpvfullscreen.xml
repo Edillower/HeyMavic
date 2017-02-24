@@ -54,7 +54,7 @@
             android:layout_height="108dp"
             android:layout_alignBottom="@+id/input_btn"
             android:layout_alignParentStart="true"
-            android:layout_marginBottom="0dp"
+            android:layout_marginBottom="5dp"
             android:layout_marginStart="5dp" />
 
         <!--<com.google.android.gms.maps.MapFragment-->
