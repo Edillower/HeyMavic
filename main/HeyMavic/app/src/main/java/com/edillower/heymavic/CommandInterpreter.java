@@ -85,7 +85,7 @@ public class CommandInterpreter {
 //                }
 //            });
 
-//            mEnableVS();
+            mEnableVS();
         }
     }
 
