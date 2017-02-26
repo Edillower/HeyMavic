@@ -2,8 +2,6 @@ package com.edillower.heymavic;
 
 import android.Manifest;
 import android.app.Activity;
-import android.app.FragmentTransaction;
-import android.app.Service;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -11,12 +9,9 @@ import android.content.IntentFilter;
 import android.content.pm.ActivityInfo;
 import android.content.pm.PackageManager;
 import android.location.Location;
-import android.location.LocationListener;
-import android.location.LocationManager;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
-import android.provider.Settings;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.util.Log;
@@ -50,19 +45,13 @@ import com.ibm.watson.developer_cloud.speech_to_text.v1.model.SpeechResults;
 import com.ibm.watson.developer_cloud.speech_to_text.v1.websocket.RecognizeCallback;
 
 import java.util.ArrayList;
-import java.util.Timer;
-import java.util.TimerTask;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 
-import dji.common.error.DJIError;
 import dji.common.flightcontroller.DJIFlightControllerCurrentState;
-import dji.common.flightcontroller.DJILocationCoordinate3D;
-import dji.common.flightcontroller.DJIVirtualStickFlightControlData;
-import dji.common.util.DJICommonCallbacks;
 import dji.sdk.base.DJIBaseProduct;
 import dji.sdk.flightcontroller.DJIFlightControllerDelegate;
 import dji.sdk.products.DJIAircraft;
@@ -100,7 +89,12 @@ public class FPVFullscreenActivity extends Activity implements OnMapReadyCallbac
     private Button mBtnInput;
     private boolean mBtnInput_flag = true;
     private EditText mTxtCmmand;
-    private Button mBtmDummy;
+    private Button mBtnDummy;
+    private Button mBtnDummyMap;
+    private boolean mBtnDummyMap_flag = true;
+
+
+    private Context mContext;
 
     private CommandInterpreter mCI;
 
@@ -125,8 +119,9 @@ public class FPVFullscreenActivity extends Activity implements OnMapReadyCallbac
                     , 1);
         }
 
-        fpvTexture = new TextureView(this);
-        fpvTexture.setSurfaceTextureListener(new BaseFpvView(this));
+        mContext = this;
+        fpvTexture = new TextureView(mContext);
+        fpvTexture.setSurfaceTextureListener(new BaseFpvView(mContext));
         setContentView(fpvTexture);
 
         LayoutInflater layoutInflater = getLayoutInflater();
@@ -225,20 +220,20 @@ public class FPVFullscreenActivity extends Activity implements OnMapReadyCallbac
     }
 
     @Override
-    public void onConnectionSuspended(int cause){
+    public void onConnectionSuspended(int cause) {
         showFpvToast("Google Play Suspended: " + cause);
     }
 
     @Override
-    public void onConnectionFailed(ConnectionResult result){
+    public void onConnectionFailed(ConnectionResult result) {
         showFpvToast("Failed to Connect Google Play");
     }
 
-    private void updateUserLocation(){
+    private void updateUserLocation() {
         try {
             Location loc = LocationServices.FusedLocationApi.getLastLocation(
                     mGoogleApiClient);
-            mUserLocation=new LatLng(loc.getLatitude(),loc.getLongitude());
+            mUserLocation = new LatLng(loc.getLatitude(), loc.getLongitude());
         } catch (SecurityException e) {
             showFpvToast("Permission required for using map");
         }
@@ -284,7 +279,7 @@ public class FPVFullscreenActivity extends Activity implements OnMapReadyCallbac
         markerOptions.position(mDroneLocation);
         markerOptions.icon(BitmapDescriptorFactory.fromResource(R.drawable.aircraft));
         markerOptions.rotation(mDroneHeading);
-        markerOptions.anchor(0.5f,0.5f);
+        markerOptions.anchor(0.5f, 0.5f);
 
         runOnUiThread(new Runnable() {
             @Override
@@ -301,9 +296,9 @@ public class FPVFullscreenActivity extends Activity implements OnMapReadyCallbac
     }
 
     private void updateMapCamera() {
-        if (mCamFlag){
+        if (mCamFlag) {
             mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(mDroneLocation, 15.0f));
-        }else{
+        } else {
             updateUserLocation();
             mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(mUserLocation, 15.0f));
         }
@@ -371,13 +366,57 @@ public class FPVFullscreenActivity extends Activity implements OnMapReadyCallbac
     private void initUI() {
         mTxtCmmand = (EditText) findViewById(R.id.command_text);
         mBtnInput = (Button) findViewById(R.id.input_btn);
-        mBtmDummy = (Button) findViewById(R.id.dummy_btn);
+        mBtnDummy = (Button) findViewById(R.id.dummy_btn);
+        mBtnDummyMap = (Button) findViewById(R.id.dummy_map_btn);
         voiceInputListener();
         inputBtnListener();
+        mapBtnListener();
+    }
+
+    private void mapBtnListener() {
+        mBtnDummyMap.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                View mapView = findViewById(R.id.mapFragment);
+                ViewGroup.LayoutParams mapParams = mapView.getLayoutParams();
+                ViewGroup.LayoutParams fpvParams = fpvTexture.getLayoutParams();
+                if (mBtnDummyMap_flag) {
+                    mapParams.height = ViewGroup.LayoutParams.MATCH_PARENT;
+                    mapParams.width = ViewGroup.LayoutParams.MATCH_PARENT;
+                    mapView.setLayoutParams(mapParams);
+                    fpvParams.height = dpToPix(108);
+                    fpvParams.width = dpToPix(192);
+                    sendViewToBack(mapView);
+                    fpvTexture.bringToFront();
+                    mBtnDummyMap_flag=false;
+                } else {
+                    mapParams.height = dpToPix(108);
+                    mapParams.width = dpToPix(192);
+                    mapView.setLayoutParams(mapParams);
+                    fpvParams.height = ViewGroup.LayoutParams.MATCH_PARENT;
+                    fpvParams.width = ViewGroup.LayoutParams.MATCH_PARENT;
+                    sendViewToBack(fpvTexture);
+                    mBtnDummyMap_flag=true;
+                }
+            }
+        });
+    }
+
+    private int dpToPix(int dps){
+        final float scale = mContext.getResources().getDisplayMetrics().density;
+        return (int) (dps * scale + 0.5f);
+    }
+
+    private static void sendViewToBack(final View child) {
+        final ViewGroup parent = (ViewGroup)child.getParent();
+        if (null != parent) {
+            parent.removeView(child);
+            parent.addView(child, 0);
+        }
     }
 
     private void voiceInputListener() {
-        mBtmDummy.setOnTouchListener(new View.OnTouchListener() {
+        mBtnDummy.setOnTouchListener(new View.OnTouchListener() {
             @Override
             public boolean onTouch(View v, MotionEvent event) {
                 switch (event.getAction()) {
@@ -419,7 +458,7 @@ public class FPVFullscreenActivity extends Activity implements OnMapReadyCallbac
                     mBtnInput.setBackgroundResource(R.drawable.keyboard);
                     mTxtCmmand.setHint("Enter Your Command");
                     mTxtCmmand.setEnabled(true);
-                    mBtmDummy.setVisibility(View.GONE);
+                    mBtnDummy.setVisibility(View.GONE);
                     mBtnInput_flag = false;
 //                    mTxtCmmand.addTextChangedListener(new TextWatcher() {
 //                        @Override
@@ -444,7 +483,7 @@ public class FPVFullscreenActivity extends Activity implements OnMapReadyCallbac
                     mTxtCmmand.setText("");
                     mTxtCmmand.setHint("Hold for Voice Input");
                     mTxtCmmand.setEnabled(false);
-                    mBtmDummy.setVisibility(View.VISIBLE);
+                    mBtnDummy.setVisibility(View.VISIBLE);
                     mBtnInput_flag = true;
                 }
             }

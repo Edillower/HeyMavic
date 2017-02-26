@@ -45,7 +45,7 @@ public class BaseFpvView extends RelativeLayout implements TextureView.SurfaceTe
         View content = layoutInflater.inflate(R.layout.layout_fpvscreen, null, false);
         RelativeLayout.LayoutParams rlParam = new RelativeLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,
                 ViewGroup.LayoutParams.MATCH_PARENT);
-        rlParam.addRule(RelativeLayout.ALIGN_PARENT_BOTTOM,1);
+
         addView(content, rlParam);
 
         Log.v("TAG","Start to test");
@@ -100,7 +100,12 @@ public class BaseFpvView extends RelativeLayout implements TextureView.SurfaceTe
 
     @Override
     public void onSurfaceTextureSizeChanged(SurfaceTexture surface, int width, int height) {
-
+        if (mCodecManager != null) {
+            mCodecManager.cleanSurface();
+            mCodecManager = null;
+        }
+        mCodecManager = new DJICodecManager(getContext(), surface, width, height);
+        initUI();
     }
 
     @Override

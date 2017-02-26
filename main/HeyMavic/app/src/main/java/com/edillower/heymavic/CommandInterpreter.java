@@ -63,28 +63,6 @@ public class CommandInterpreter {
             return;
         } else {
             mFlightController = aircraft.getFlightController();
-//            mFlightController.getSimulator().setUpdatedSimulatorStateDataCallback(new DJISimulator.UpdatedSimulatorStateDataCallback() {
-//                @Override
-//                public void onSimulatorDataUpdated(final DJISimulatorStateData djiSimulatorStateData) {
-//                    new Handler(Looper.getMainLooper()).post(new Runnable() {
-//                        @Override
-//                        public void run() {
-//
-//                            String yaw = String.format("%.2f", djiSimulatorStateData.getYaw());
-//                            String pitch = String.format("%.2f", djiSimulatorStateData.getPitch());
-//                            String roll = String.format("%.2f", djiSimulatorStateData.getRoll());
-//                            String positionX = String.format("%.2f", djiSimulatorStateData.getPositionX());
-//                            String positionY = String.format("%.2f", djiSimulatorStateData.getPositionY());
-//                            String positionZ = String.format("%.2f", djiSimulatorStateData.getPositionZ());
-//
-//                            mTextView.setText("Yaw : " + yaw + ", Pitch : " + pitch + ", Roll : " + roll + "\n" + ", PosX : " + positionX +
-//                                    ", PosY : " + positionY +
-//                                    ", PosZ : " + positionZ);
-//                        }
-//                    });
-//                }
-//            });
-
             mEnableVS();
         }
     }
