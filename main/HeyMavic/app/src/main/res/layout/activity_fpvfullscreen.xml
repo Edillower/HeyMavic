@@ -1,4 +1,5 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/main_layout"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
@@ -40,7 +41,7 @@
         android:id="@+id/dummy_map_btn"
         android:layout_width="192dp"
         android:layout_height="108dp"
-        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
         android:layout_alignParentTop="true"
         android:alpha="0" />
 
@@ -49,6 +50,43 @@
         class="com.google.android.gms.maps.MapFragment"
         android:layout_width="192dp"
         android:layout_height="108dp"
-        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
         android:layout_alignParentTop="true" />
+
+    <Button
+        android:id="@+id/hide_btn"
+        android:layout_width="20dp"
+        android:layout_height="20dp"
+        android:layout_alignBottom="@+id/dummy_map_btn"
+        android:layout_alignEnd="@+id/dummy_map_btn"
+        android:background="@drawable/collapse" />
+
+    <Button
+        android:id="@+id/show_btn"
+        android:layout_width="20dp"
+        android:layout_height="20dp"
+        android:layout_alignStart="@+id/dummy_map_btn"
+        android:layout_alignTop="@+id/dummy_map_btn"
+        android:background="@drawable/expand" />
+
+    <Button
+        android:id="@+id/locate_button"
+        android:layout_width="32dp"
+        android:layout_height="32dp"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentTop="true"
+        android:layout_marginTop="15dp"
+        android:layout_marginEnd="15dp"
+        android:background="@drawable/locatedrone" />
+
+    <Button
+        android:id="@+id/tracking_button"
+        android:layout_width="32dp"
+        android:layout_height="32dp"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentTop="true"
+        android:layout_marginTop="60dp"
+        android:layout_marginEnd="15dp"
+        android:background="@drawable/refresh" />
+
 </RelativeLayout>

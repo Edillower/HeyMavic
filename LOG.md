@@ -36,5 +36,8 @@
 - Map UI changed
 - Switch map and fpv on click
 
+## Feb 26 Update Notes:
+- Different google map tracking modes added by Eddie
+
 ## Feb XX Update Notes (by XXXX):
 - ALWAYS update this log when changes are made!!!

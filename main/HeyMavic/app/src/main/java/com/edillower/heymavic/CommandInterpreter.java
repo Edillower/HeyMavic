@@ -63,7 +63,7 @@ public class CommandInterpreter {
             return;
         } else {
             mFlightController = aircraft.getFlightController();
-            mEnableVS();
+//            mEnableVS();
         }
     }
 

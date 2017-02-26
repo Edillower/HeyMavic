@@ -65,6 +65,7 @@ public class FPVFullscreenActivity extends Activity implements OnMapReadyCallbac
     public static final String TAG = FPVFullscreenActivity.class.getName();
 
     // Map
+    private View mMapView;
     private GoogleMap mMap;
     private LatLng mDroneLocation = new LatLng(0, 0);
     private float mDroneHeading = 0;
@@ -73,7 +74,10 @@ public class FPVFullscreenActivity extends Activity implements OnMapReadyCallbac
 //    private LocationListener mLocationListener;
     private GoogleApiClient mGoogleApiClient;
     private LatLng mUserLocation = new LatLng(0, 0);
-    private boolean mCamFlag = true;
+    private Button mBtnLoacte;
+    private boolean mMapLocate_flag=true;
+    private Button mBtnTracking;
+    private boolean mMapTracking_flag=true;
 
     // IBM watson varaibles
     private final String command_classfier_id = "f5b42fx173-nlc-2075";
@@ -92,7 +96,8 @@ public class FPVFullscreenActivity extends Activity implements OnMapReadyCallbac
     private Button mBtnDummy;
     private Button mBtnDummyMap;
     private boolean mBtnDummyMap_flag = true;
-
+    private Button mBtnShow;
+    private Button mBtnHide;
 
     private Context mContext;
 
@@ -201,7 +206,7 @@ public class FPVFullscreenActivity extends Activity implements OnMapReadyCallbac
     @Override
     public void onMapReady(GoogleMap map) {
         mMap = map;
-        mMap.getUiSettings().setCompassEnabled(true);
+        mMap.getUiSettings().setCompassEnabled(false);
         mMap.getUiSettings().setAllGesturesEnabled(false);
         if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION)
                 == PackageManager.PERMISSION_GRANTED) {
@@ -210,13 +215,14 @@ public class FPVFullscreenActivity extends Activity implements OnMapReadyCallbac
         } else {
             showFpvToast("Permission required for using map");
         }
+        mMapView = findViewById(R.id.mapFragment);
     }
 
     @Override
     public void onConnected(Bundle connectionHint) {
-        mCamFlag = false;
+        mMapLocate_flag = false;
         updateMapCamera();
-        mCamFlag = true;
+        mMapLocate_flag = true;
     }
 
     @Override
@@ -279,7 +285,7 @@ public class FPVFullscreenActivity extends Activity implements OnMapReadyCallbac
         markerOptions.position(mDroneLocation);
         markerOptions.icon(BitmapDescriptorFactory.fromResource(R.drawable.aircraft));
         markerOptions.rotation(mDroneHeading);
-        markerOptions.anchor(0.5f, 0.5f);
+        markerOptions.anchor(0.5f, 0.618f);
 
         runOnUiThread(new Runnable() {
             @Override
@@ -289,14 +295,16 @@ public class FPVFullscreenActivity extends Activity implements OnMapReadyCallbac
                 }
                 if (checkGpsCoordination(mDroneLocation.latitude, mDroneLocation.longitude)) {
                     mDroneMarker = mMap.addMarker(markerOptions);
-                    updateMapCamera();
+                    if (mMapTracking_flag) {
+                        updateMapCamera();
+                    }
                 }
             }
         });
     }
 
     private void updateMapCamera() {
-        if (mCamFlag) {
+        if (mMapLocate_flag) {
             mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(mDroneLocation, 15.0f));
         } else {
             updateUserLocation();
@@ -368,47 +376,127 @@ public class FPVFullscreenActivity extends Activity implements OnMapReadyCallbac
         mBtnInput = (Button) findViewById(R.id.input_btn);
         mBtnDummy = (Button) findViewById(R.id.dummy_btn);
         mBtnDummyMap = (Button) findViewById(R.id.dummy_map_btn);
+        mBtnShow = (Button) findViewById(R.id.show_btn);
+        mBtnHide = (Button) findViewById(R.id.hide_btn);
+        mBtnShow.setVisibility(View.GONE);
+        mBtnLoacte = (Button) findViewById(R.id.locate_button);
+        mBtnTracking = (Button) findViewById(R.id.tracking_button);
+        mBtnLoacte.setVisibility(View.GONE);
+        mBtnTracking.setVisibility(View.GONE);
         voiceInputListener();
         inputBtnListener();
         mapBtnListener();
+        showHideBtnListener();
+        locateTrackBtnListener();
+    }
+
+    private void locateTrackBtnListener() {
+        mBtnLoacte.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (mMapLocate_flag){
+                    mMapLocate_flag = false;
+                    mBtnLoacte.setBackgroundResource(R.drawable.locateuser);
+                }else{
+                    mMapLocate_flag = true;
+                    mBtnLoacte.setBackgroundResource(R.drawable.locatedrone);
+                }
+                updateMapCamera();
+            }
+        });
+
+        mBtnTracking.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (mMapTracking_flag){
+                    mMapTracking_flag = false;
+                    mBtnTracking.setBackgroundResource(R.drawable.stop);
+                }else{
+                    mMapTracking_flag = true;
+                    mBtnTracking.setBackgroundResource(R.drawable.refresh);
+                }
+            }
+        });
+    }
+
+    private void showHideBtnListener() {
+        mBtnShow.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (mBtnDummyMap_flag) {
+                    mMapView.setVisibility(View.VISIBLE);
+                } else {
+                    fpvTexture.setVisibility(View.VISIBLE);
+                }
+                mBtnShow.setVisibility(View.GONE);
+                mBtnHide.setVisibility(View.VISIBLE);
+                mBtnDummyMap.setVisibility(View.VISIBLE);
+            }
+        });
+
+        mBtnHide.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (mBtnDummyMap_flag) {
+                    mMapView.setVisibility(View.GONE);
+                } else {
+                    fpvTexture.setVisibility(View.GONE);
+                }
+                mBtnShow.setVisibility(View.VISIBLE);
+                mBtnHide.setVisibility(View.GONE);
+                mBtnDummyMap.setVisibility(View.GONE);
+            }
+        });
     }
 
     private void mapBtnListener() {
         mBtnDummyMap.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                View mapView = findViewById(R.id.mapFragment);
-                ViewGroup.LayoutParams mapParams = mapView.getLayoutParams();
+                View mMapView = findViewById(R.id.mapFragment);
+                ViewGroup.LayoutParams mapParams = mMapView.getLayoutParams();
                 ViewGroup.LayoutParams fpvParams = fpvTexture.getLayoutParams();
                 if (mBtnDummyMap_flag) {
                     mapParams.height = ViewGroup.LayoutParams.MATCH_PARENT;
                     mapParams.width = ViewGroup.LayoutParams.MATCH_PARENT;
-                    mapView.setLayoutParams(mapParams);
+                    mMapView.setLayoutParams(mapParams);
                     fpvParams.height = dpToPix(108);
                     fpvParams.width = dpToPix(192);
-                    sendViewToBack(mapView);
+                    sendViewToBack(mMapView);
                     fpvTexture.bringToFront();
-                    mBtnDummyMap_flag=false;
+                    mMap.getUiSettings().setAllGesturesEnabled(true);
+                    mBtnLoacte.setVisibility(View.VISIBLE);
+                    mBtnTracking.setVisibility(View.VISIBLE);
+                    mBtnDummyMap_flag = false;
                 } else {
                     mapParams.height = dpToPix(108);
                     mapParams.width = dpToPix(192);
-                    mapView.setLayoutParams(mapParams);
+                    mMapView.setLayoutParams(mapParams);
                     fpvParams.height = ViewGroup.LayoutParams.MATCH_PARENT;
                     fpvParams.width = ViewGroup.LayoutParams.MATCH_PARENT;
                     sendViewToBack(fpvTexture);
-                    mBtnDummyMap_flag=true;
+                    mMap.getUiSettings().setAllGesturesEnabled(false);
+                    mBtnLoacte.setVisibility(View.GONE);
+                    mBtnTracking.setVisibility(View.GONE);
+                    if (!mMapLocate_flag){
+                        mBtnLoacte.performClick();
+                    }
+                    if (!mMapTracking_flag){
+                        mBtnTracking.performClick();
+                    }
+                    mBtnDummyMap_flag = true;
                 }
             }
         });
     }
 
-    private int dpToPix(int dps){
+    private int dpToPix(int dps) {
         final float scale = mContext.getResources().getDisplayMetrics().density;
         return (int) (dps * scale + 0.5f);
     }
 
     private static void sendViewToBack(final View child) {
-        final ViewGroup parent = (ViewGroup)child.getParent();
+        final ViewGroup parent = (ViewGroup) child.getParent();
         if (null != parent) {
             parent.removeView(child);
             parent.addView(child, 0);
