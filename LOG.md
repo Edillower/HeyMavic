@@ -12,7 +12,7 @@
 ## Feb 11 Update Notes:
 - FPV UI updated by Eddie
 - Command Input UI added by Eddie
-- Voice Recognizer and Command Classifier added by Davic
+- Voice Recognizer and Command Classifier added by David
 - Voice Recognizer and Command Classifier connected to FPV UI by David and Eddie
 
 ## Feb 13 Update Notes (by Eric, committed with Feb 14 update by Eddie):
@@ -39,6 +39,7 @@
 ## Feb 26 Update Notes:
 - Different google map tracking modes added by Eddie
 - Fixed execute former command error in text mod by David
+- Added customization for IBM-watson speech-to-text service by David
 
 ## Feb XX Update Notes (by XXXX):
 - ALWAYS update this log when changes are made!!!

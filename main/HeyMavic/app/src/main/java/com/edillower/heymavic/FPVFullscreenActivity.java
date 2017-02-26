@@ -669,7 +669,7 @@ public class FPVFullscreenActivity extends Activity implements OnMapReadyCallbac
                 .contentType(ContentType.OPUS.toString())
                 .model("en-US_BroadbandModel")
                 .interimResults(true)
-                // TODO uncomment .customizationId("bf8c3a80-fba6-11e6-a1e7-a139b48a88e5")
+                .customizationId("bf8c3a80-fba6-11e6-a1e7-a139b48a88e5")
                 .inactivityTimeout(3000)
                 .smartFormatting(true)
                 .build();

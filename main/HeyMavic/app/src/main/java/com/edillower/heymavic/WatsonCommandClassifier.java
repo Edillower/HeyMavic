@@ -61,7 +61,7 @@ public class WatsonCommandClassifier {
         // parse into decimal encoded string
         ArrayList<Integer> encoded_string = encode_string(command, direction, unit);
 
-        // show result TODO comment out
+        // show result TODO final comment out
         System.out.println(command + ' ' + direction);
         System.out.println(encoded_string.toString());
 
