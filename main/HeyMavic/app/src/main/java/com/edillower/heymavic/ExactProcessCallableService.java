@@ -8,22 +8,17 @@ import java.util.StringTokenizer;
 import java.util.concurrent.Callable;
 
 public class ExactProcessCallableService implements Callable<String>{
-    private String command_text;
+    ArrayList<String> tokened_command;
 
-    ExactProcessCallableService(String command_text) {
-        this.command_text = command_text;
+    ExactProcessCallableService(ArrayList<String> tokened_command) {
+        this.tokened_command = tokened_command;
     }
 
     public String call() throws Exception {
         String result=null;
-        StringTokenizer st = new StringTokenizer(this.command_text);
-        ArrayList<String> ars = new ArrayList<>();
-        while (st.hasMoreTokens()) {
-            ars.add(st.nextToken());
-        }
-        for (int i = 0; i < ars.size(); i++) {
-            if (isNumeric(ars.get(i))) {
-                result = ars.get(i);
+        for (int i = 0; i < tokened_command.size(); i++) {
+            if (isNumeric(tokened_command.get(i))) {
+                result = tokened_command.get(i);
                 break;
             }
         }

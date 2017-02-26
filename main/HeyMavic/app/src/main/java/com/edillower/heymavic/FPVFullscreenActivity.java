@@ -14,6 +14,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
@@ -24,6 +25,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.RelativeLayout;
 import android.widget.Toast;
+import android.text.TextUtils;
 
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
@@ -38,18 +40,13 @@ import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.ibm.watson.developer_cloud.android.library.audio.MicrophoneInputStream;
 import com.ibm.watson.developer_cloud.android.library.audio.utils.ContentType;
-import com.ibm.watson.developer_cloud.natural_language_classifier.v1.NaturalLanguageClassifier;
 import com.ibm.watson.developer_cloud.speech_to_text.v1.SpeechToText;
 import com.ibm.watson.developer_cloud.speech_to_text.v1.model.RecognizeOptions;
 import com.ibm.watson.developer_cloud.speech_to_text.v1.model.SpeechResults;
 import com.ibm.watson.developer_cloud.speech_to_text.v1.websocket.RecognizeCallback;
 
 import java.util.ArrayList;
-import java.util.concurrent.Callable;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.Future;
+import java.util.StringTokenizer;
 
 import dji.common.flightcontroller.DJIFlightControllerCurrentState;
 import dji.sdk.base.DJIBaseProduct;
@@ -71,7 +68,7 @@ public class FPVFullscreenActivity extends Activity implements OnMapReadyCallbac
     private float mDroneHeading = 0;
     private Marker mDroneMarker = null;
     //    private LocationManager mLocationManager;
-//    private LocationListener mLocationListener;
+    //    private LocationListener mLocationListener;
     private GoogleApiClient mGoogleApiClient;
     private LatLng mUserLocation = new LatLng(0, 0);
     private Button mBtnLoacte;
@@ -80,13 +77,12 @@ public class FPVFullscreenActivity extends Activity implements OnMapReadyCallbac
     private boolean mMapTracking_flag=true;
 
     // IBM watson varaibles
-    private final String command_classfier_id = "f5b42fx173-nlc-2075";
-    private final String direction_classfier_id = "f5b42fx173-nlc-2077";
+    // IBM watson varaibles
+    private WatsonCommandClassifier cc1;
     private SpeechToText speechService;
-    private NaturalLanguageClassifier nlpService;
     private MicrophoneInputStream capture;
 
-    private String mStrIntention = "";
+    private String mStrIntention;
 
     // App button and views
     private TextureView fpvTexture;
@@ -137,7 +133,7 @@ public class FPVFullscreenActivity extends Activity implements OnMapReadyCallbac
         initUI();
 
         speechService = initSpeechToTextService();
-        nlpService = initNaturalLanguageClassifierService();
+        cc1 = new WatsonCommandClassifier();
 
         mCI = new CommandInterpreter(TAG);
         initDrone();
@@ -509,7 +505,11 @@ public class FPVFullscreenActivity extends Activity implements OnMapReadyCallbac
             public boolean onTouch(View v, MotionEvent event) {
                 switch (event.getAction()) {
                     case MotionEvent.ACTION_DOWN:
+                        // Reset string command_text input to null
+                        mStrIntention = null;
+                        // Change button back ground color
                         mTxtCmmand.setBackgroundResource(R.drawable.common_google_signin_btn_text_dark_focused);
+                        // Init MicrophoneInputStream and start watson speec-to-text websocket
                         capture = new MicrophoneInputStream(true);
                         new Thread(new Runnable() {
                             @Override
@@ -523,7 +523,9 @@ public class FPVFullscreenActivity extends Activity implements OnMapReadyCallbac
                         }).start();
                         break;
                     case MotionEvent.ACTION_UP:
+                        // Change button back ground color
                         mTxtCmmand.setBackgroundResource(R.drawable.common_google_signin_btn_text_dark_normal);
+                        // Close MicrophoneInputStream
                         try {
                             capture.close();
                         } catch (Exception e) {
@@ -542,6 +544,9 @@ public class FPVFullscreenActivity extends Activity implements OnMapReadyCallbac
         mBtnInput.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                // Reset string command_text input to null
+                mStrIntention = null;
+
                 if (mBtnInput_flag) {
                     mBtnInput.setBackgroundResource(R.drawable.keyboard);
                     mTxtCmmand.setHint("Enter Your Command");
@@ -566,13 +571,24 @@ public class FPVFullscreenActivity extends Activity implements OnMapReadyCallbac
 //                    });
                 } else {
                     mBtnInput.setBackgroundResource(R.drawable.mic);
-                    mStrIntention = mTxtCmmand.getText().toString();
-                    new ClassificationTask().execute(mStrIntention);
+                    mStrIntention=mTxtCmmand.getText().toString();
+                    // Tokenize command_in_text
+                    StringTokenizer st = new StringTokenizer(mStrIntention);
+                    ArrayList<String> tokenedCommand = new ArrayList<>();
+                    while (st.hasMoreTokens()) {
+                        tokenedCommand.add(st.nextToken());
+                    }
+                    // Replace mavic similar words
+                    tokenedCommand = findMavicSimilar(tokenedCommand);
+                    // Change arraylist to string
+                    mStrIntention = TextUtils.join(" ", tokenedCommand);
+                    // Execute NLC
+                    new ClassificationTask().execute(tokenedCommand);
                     mTxtCmmand.setText("");
                     mTxtCmmand.setHint("Hold for Voice Input");
                     mTxtCmmand.setEnabled(false);
                     mBtnDummy.setVisibility(View.VISIBLE);
-                    mBtnInput_flag = true;
+                    mBtnInput_flag=true;
                 }
             }
         });
@@ -608,15 +624,6 @@ public class FPVFullscreenActivity extends Activity implements OnMapReadyCallbac
         return service;
     }
 
-    private NaturalLanguageClassifier initNaturalLanguageClassifierService() {
-        NaturalLanguageClassifier service = new NaturalLanguageClassifier();
-        String username = "892a7e25-f38a-4d04-a725-028871966429";
-        String password = "1rFfpEEdA2k3";
-        service.setUsernameAndPassword(username, password);
-        service.setEndPoint("https://gateway.watsonplatform.net/natural-language-classifier/api");
-        return service;
-    }
-
     private class MicrophoneRecognizeDelegate implements RecognizeCallback {
 
         @Override
@@ -639,8 +646,20 @@ public class FPVFullscreenActivity extends Activity implements OnMapReadyCallbac
 
         @Override
         public void onDisconnected() {
-            // Add classification task here
-            new ClassificationTask().execute(mStrIntention);
+            // Tokenize command_in_text
+            StringTokenizer st = new StringTokenizer(mStrIntention);
+            ArrayList<String> tokenedCommand = new ArrayList<>();
+            while (st.hasMoreTokens()) {
+                tokenedCommand.add(st.nextToken());
+            }
+            // Replace mavic similar words
+            tokenedCommand = findMavicSimilar(tokenedCommand);
+            // Change arraylist to string
+            mStrIntention = TextUtils.join(" ", tokenedCommand);
+            // Display command in string format
+            showMicText(mStrIntention);
+            // Execute NLC
+            new ClassificationTask().execute(tokenedCommand);
         }
     }
 
@@ -650,138 +669,58 @@ public class FPVFullscreenActivity extends Activity implements OnMapReadyCallbac
                 .contentType(ContentType.OPUS.toString())
                 .model("en-US_BroadbandModel")
                 .interimResults(true)
-                .inactivityTimeout(2000)
+                // TODO uncomment .customizationId("bf8c3a80-fba6-11e6-a1e7-a139b48a88e5")
+                .inactivityTimeout(3000)
                 .smartFormatting(true)
                 .build();
     }
 
-    private class ClassificationTask extends AsyncTask<String, Void, String> {
-        // Parse classified command into decimal encoded string
-        private ArrayList<Integer> encode_string(String command, String direction, String unit) {
-            ArrayList<Integer> encoded_string = new ArrayList<Integer>();
-            int switch_num = 0; // 0 for null, 1 for move, 2 for turn
-            switch (command) {
-                case "takeoff":
-                    encoded_string.add(100);
-                    break;
-                case "landing":
-                    encoded_string.add(101);
-                    break;
-                case "stop":
-                    encoded_string.add(102);
-                    break;
-                case "move":
-                    encoded_string.add(103);
-                    switch_num = 1;
-                    switch (direction) {
-                        case "left":
-                            encoded_string.add(201);
-                            encoded_string.add(303);
-                            break;
-                        case "right":
-                            encoded_string.add(201);
-                            encoded_string.add(304);
-                            break;
-                        case "forward":
-                            encoded_string.add(201);
-                            encoded_string.add(301);
-                            break;
-                        case "backward":
-                            encoded_string.add(201);
-                            encoded_string.add(302);
-                            break;
-                        case "up":
-                            encoded_string.add(105);
-                            break;
-                        case "down":
-                            encoded_string.add(106);
-                            break;
-                        default:
-
-                    }
-                    break;
-                case "turn":
-                    encoded_string.add(104);
-                    encoded_string.add(203);
-                    switch_num = 2;
-                    switch (direction) {
-                        case "left":
-                            encoded_string.add(303);
-                            break;
-                        case "right":
-                            encoded_string.add(304);
-                            break;
-                        case "forward":
-                            encoded_string.add(202);
-                            encoded_string.add(180);
-                            break;
-                        case "backward":
-                            encoded_string.add(202);
-                            encoded_string.add(180);
-                            break;
-                        default:
-                    }
-                    break;
-                default:
-                    // code to be executed if all cases are not matched;
+    private class ClassificationTask extends AsyncTask<ArrayList , Void, String> {
+        protected String doInBackground(ArrayList ... params) {
+            String result = null;
+            if (params[0].size()!=0){
+                // show result
+                ArrayList<Integer> encoded_string = cc1.classify(params[0]);
+                showFpvToast(encoded_string.toString());
+                // TODO callExecution(encoded_string);
+                result = "Did classify";
+            }else{
+                result = "Not classify";
             }
-            if (unit != null) {
-                //move
-                if (switch_num == 1) {
-                    encoded_string.add(202);
-                }
-                //turn
-                else if (switch_num == 2) {
-                    encoded_string.add(204);
-                }
-                encoded_string.add(Integer.parseInt(unit));
-            }
-            return encoded_string;
-        }
+            return result;
 
-        @Override
-        protected String doInBackground(String... params) {
-            // Classify command and direction
-//            String command = nlpService.classify(command_classfier_id,params[0]).execute().getTopClass();
-//            String direction = nlpService.classify(direction_classfier_id,params[0]).execute().getTopClass();
-
-            String command = "stop";
-            String direction = null;
-            String unit = null;
-
-            ExecutorService executor = Executors.newCachedThreadPool();
-            Callable<String> task0 = new ExactProcessCallableService(params[0]);
-            Callable<String> task1 = new NLPCallableService(nlpService, command_classfier_id, params[0]);
-            Callable<String> task2 = new NLPCallableService(nlpService, direction_classfier_id, params[0]);
-
-            Future<String> future0 = executor.submit(task0);
-            Future<String> future1 = executor.submit(task1);
-            Future<String> future2 = executor.submit(task2);
-            executor.shutdown();
-
-            try {
-                unit = future0.get();
-                command = future1.get();
-                direction = future2.get();
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            } catch (ExecutionException e) {
-                e.printStackTrace();
-            }
-
-            // parse into decimal encoded string
-            ArrayList<Integer> encoded_string = encode_string(command, direction, unit);
-
-            // show result
-            //showResponse(command + ' ' + direction);
-            //showEncode(encoded_string.toString());
-            System.out.println(command + ' ' + direction + ' ' + unit);
-            System.out.println(encoded_string.toString());
-            showFpvToast(encoded_string.toString());
-            callExecution(encoded_string);
-            return "Did classify";
         }
     }
+
+    private static ArrayList<String> findMavicSimilar(ArrayList<String> original) {
+        ArrayList<String> mapSimilarList = new ArrayList<String>();
+        mapSimilarList.add("maverick");
+        mapSimilarList.add("mavericks");
+        mapSimilarList.add("magic");
+        mapSimilarList.add("eric");
+
+        ArrayList<String> lowcase_original = (ArrayList<String>) original
+                .clone();
+        for (int i = 0; i < lowcase_original.size(); i++) {
+            String tmp = lowcase_original.get(i).toLowerCase();
+            lowcase_original.set(i, tmp);
+        }
+
+        int i = 0;
+        int lastIndexSimilarMavic = -1;
+        while (i < mapSimilarList.size() && lastIndexSimilarMavic == -1) {
+            lastIndexSimilarMavic = lowcase_original.lastIndexOf(mapSimilarList
+                    .get(i));
+            i++;
+        }
+        if ((lastIndexSimilarMavic > 0)
+                && lowcase_original.get(lastIndexSimilarMavic - 1)
+                .equals("hey")) {
+            original.set(lastIndexSimilarMavic, "Mavic");
+        }
+        return original;
+    }
+
 
     private void callExecution(ArrayList<Integer> encoded_string) {
         mCI.executeCmd(encoded_string);
