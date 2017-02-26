@@ -682,7 +682,7 @@ public class FPVFullscreenActivity extends Activity implements OnMapReadyCallbac
                 // show result
                 ArrayList<Integer> encoded_string = cc1.classify(params[0]);
                 showFpvToast(encoded_string.toString());
-                // TODO callExecution(encoded_string);
+                callExecution(encoded_string);
                 result = "Did classify";
             }else{
                 result = "Not classify";

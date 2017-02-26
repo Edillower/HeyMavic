@@ -38,6 +38,7 @@
 
 ## Feb 26 Update Notes:
 - Different google map tracking modes added by Eddie
+- Fixed execute former command error in text mod by David
 
 ## Feb XX Update Notes (by XXXX):
 - ALWAYS update this log when changes are made!!!
