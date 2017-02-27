@@ -19,8 +19,8 @@ import java.util.concurrent.Future;
  */
 
 public class WatsonCommandClassifier {
-    private final String command_classfier_id = "f5b42fx173-nlc-2075";
-    private final String direction_classfier_id = "f5b42fx173-nlc-2077";
+    private final String command_classfier_id = "715f86x192-nlc-300";
+    private final String direction_classfier_id = "716034x193-nlc-295";
     private NaturalLanguageClassifier nlpService;
 
     public WatsonCommandClassifier(){
