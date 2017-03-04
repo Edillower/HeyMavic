@@ -24,6 +24,7 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.RelativeLayout;
+import android.widget.TextView;
 import android.widget.Toast;
 import android.text.TextUtils;
 
@@ -48,10 +49,14 @@ import com.ibm.watson.developer_cloud.speech_to_text.v1.websocket.RecognizeCallb
 import java.util.ArrayList;
 import java.util.StringTokenizer;
 
+import dji.common.battery.DJIBatteryAggregationState;
+import dji.common.battery.DJIBatteryState;
 import dji.common.flightcontroller.DJIFlightControllerCurrentState;
 import dji.sdk.base.DJIBaseProduct;
+import dji.sdk.battery.DJIBattery;
 import dji.sdk.flightcontroller.DJIFlightControllerDelegate;
 import dji.sdk.products.DJIAircraft;
+
 
 /**
  * FPV main control window
@@ -72,9 +77,9 @@ public class FPVFullscreenActivity extends Activity implements OnMapReadyCallbac
     private GoogleApiClient mGoogleApiClient;
     private LatLng mUserLocation = new LatLng(0, 0);
     private Button mBtnLoacte;
-    private boolean mMapLocate_flag=true;
+    private boolean mMapLocate_flag = true;
     private Button mBtnTracking;
-    private boolean mMapTracking_flag=true;
+    private boolean mMapTracking_flag = true;
 
     // IBM watson varaibles
     // IBM watson varaibles
@@ -94,6 +99,10 @@ public class FPVFullscreenActivity extends Activity implements OnMapReadyCallbac
     private boolean mBtnDummyMap_flag = true;
     private Button mBtnShow;
     private Button mBtnHide;
+    //Battery
+    BatteryView mBatteryView;
+    private TextView mBatteryData;
+    private int mBatteryPercent;
 
     private Context mContext;
 
@@ -299,6 +308,7 @@ public class FPVFullscreenActivity extends Activity implements OnMapReadyCallbac
         });
     }
 
+
     private void updateMapCamera() {
         if (mMapLocate_flag) {
             mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(mDroneLocation, 15.0f));
@@ -364,7 +374,25 @@ public class FPVFullscreenActivity extends Activity implements OnMapReadyCallbac
                     updateDroneLocation();
                 }
             });
+            // set up battery
+            mCI.aircraft.getBattery().setBatteryStateUpdateCallback(new DJIBattery.DJIBatteryStateUpdateCallback() {
+                @Override
+                public void onResult(DJIBatteryState djiBatteryState) {
+                    mBatteryPercent = djiBatteryState.getBatteryEnergyRemainingPercent();
+                    mBatteryView.setProgress(mBatteryPercent);
+                    updateBatteryStatus();
+                }
+            });
         }
+    }
+
+    private void updateBatteryStatus(){
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                mBatteryData.setText(Integer.toString(mBatteryPercent) + "%");
+            }
+        });
     }
 
     private void initUI() {
@@ -379,6 +407,8 @@ public class FPVFullscreenActivity extends Activity implements OnMapReadyCallbac
         mBtnTracking = (Button) findViewById(R.id.tracking_button);
         mBtnLoacte.setVisibility(View.GONE);
         mBtnTracking.setVisibility(View.GONE);
+        mBatteryView = (BatteryView) findViewById(R.id.battery_view);
+        mBatteryData = (TextView) findViewById(R.id.battery_data);
         voiceInputListener();
         inputBtnListener();
         mapBtnListener();
@@ -390,10 +420,10 @@ public class FPVFullscreenActivity extends Activity implements OnMapReadyCallbac
         mBtnLoacte.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (mMapLocate_flag){
+                if (mMapLocate_flag) {
                     mMapLocate_flag = false;
                     mBtnLoacte.setBackgroundResource(R.drawable.locateuser);
-                }else{
+                } else {
                     mMapLocate_flag = true;
                     mBtnLoacte.setBackgroundResource(R.drawable.locatedrone);
                 }
@@ -404,10 +434,10 @@ public class FPVFullscreenActivity extends Activity implements OnMapReadyCallbac
         mBtnTracking.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (mMapTracking_flag){
+                if (mMapTracking_flag) {
                     mMapTracking_flag = false;
                     mBtnTracking.setBackgroundResource(R.drawable.stop);
-                }else{
+                } else {
                     mMapTracking_flag = true;
                     mBtnTracking.setBackgroundResource(R.drawable.refresh);
                 }
@@ -474,10 +504,10 @@ public class FPVFullscreenActivity extends Activity implements OnMapReadyCallbac
                     mMap.getUiSettings().setAllGesturesEnabled(false);
                     mBtnLoacte.setVisibility(View.GONE);
                     mBtnTracking.setVisibility(View.GONE);
-                    if (!mMapLocate_flag){
+                    if (!mMapLocate_flag) {
                         mBtnLoacte.performClick();
                     }
-                    if (!mMapTracking_flag){
+                    if (!mMapTracking_flag) {
                         mBtnTracking.performClick();
                     }
                     mBtnDummyMap_flag = true;
@@ -571,7 +601,7 @@ public class FPVFullscreenActivity extends Activity implements OnMapReadyCallbac
 //                    });
                 } else {
                     mBtnInput.setBackgroundResource(R.drawable.mic);
-                    mStrIntention=mTxtCmmand.getText().toString();
+                    mStrIntention = mTxtCmmand.getText().toString();
                     // Tokenize command_in_text
                     StringTokenizer st = new StringTokenizer(mStrIntention);
                     ArrayList<String> tokenedCommand = new ArrayList<>();
@@ -588,7 +618,7 @@ public class FPVFullscreenActivity extends Activity implements OnMapReadyCallbac
                     mTxtCmmand.setHint("Hold for Voice Input");
                     mTxtCmmand.setEnabled(false);
                     mBtnDummy.setVisibility(View.VISIBLE);
-                    mBtnInput_flag=true;
+                    mBtnInput_flag = true;
                 }
             }
         });
@@ -675,16 +705,16 @@ public class FPVFullscreenActivity extends Activity implements OnMapReadyCallbac
                 .build();
     }
 
-    private class ClassificationTask extends AsyncTask<ArrayList , Void, String> {
-        protected String doInBackground(ArrayList ... params) {
+    private class ClassificationTask extends AsyncTask<ArrayList, Void, String> {
+        protected String doInBackground(ArrayList... params) {
             String result = null;
-            if (params[0].size()!=0){
+            if (params[0].size() != 0) {
                 // show result
                 ArrayList<Integer> encoded_string = cc1.classify(params[0]);
                 showFpvToast(encoded_string.toString());
                 callExecution(encoded_string);
                 result = "Did classify";
-            }else{
+            } else {
                 result = "Not classify";
             }
             return result;

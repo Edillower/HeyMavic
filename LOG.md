@@ -41,8 +41,12 @@
 - Fixed execute former command error in text mod by David
 - Added customization for IBM-watson speech-to-text service by David
 
-## Feb 27 Update Notes:
-- Updated with new NLC by David
+## Feb 27 Update Notes (by David):
+- Updated with new NLC
 
-## Feb XX Update Notes (by XXXX):
+## Mar 03 Update Notes:
+- Battery monitor by Melody
+
+
+## Mar XX Update Notes (by XXXX):
 - ALWAYS update this log when changes are made!!!

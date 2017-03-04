@@ -32,6 +32,7 @@ public class CommandInterpreter {
 
     private static String TAG = "";
 
+    public DJIAircraft aircraft;
     public DJIFlightController mFlightController;
 
     private Timer mSendVirtualStickDataTimer;
@@ -56,7 +57,7 @@ public class CommandInterpreter {
 
     public void initFlightController() {
 
-        DJIAircraft aircraft = DJISimulatorApplication.getAircraftInstance();
+        aircraft = DJISimulatorApplication.getAircraftInstance();
         if (aircraft == null || !aircraft.isConnected()) {
             Log.e(TAG, "Disconnected");
             mFlightController = null;

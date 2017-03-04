@@ -89,4 +89,25 @@
         android:layout_marginEnd="15dp"
         android:background="@drawable/refresh" />
 
+    <view
+        android:layout_width="38dp"
+        android:layout_height="15dp"
+        class="com.edillower.heymavic.BatteryView"
+        android:layout_alignTop="@id/dummy_map_btn"
+        android:layout_alignStart="@id/dummy_map_btn"
+        android:layout_marginStart="200dp"
+        android:id="@+id/battery_view" />
+
+    <TextView
+        android:text="100%"
+        android:layout_width="40dp"
+        android:layout_height="15dp"
+        android:layout_alignParentTop="true"
+        android:layout_alignTop="@id/dummy_map_btn"
+        android:layout_alignStart="@id/dummy_map_btn"
+        android:layout_marginStart="240dp"
+        android:id="@+id/battery_data" />
+
+
+
 </RelativeLayout>
