@@ -46,6 +46,8 @@
 
 ## Mar 03 Update Notes:
 - Battery monitor by Melody
+## Mar 03 Update Notes:
+- Flight Data monitor by Melody
 
 
 ## Mar XX Update Notes (by XXXX):

@@ -46,10 +46,11 @@ import com.ibm.watson.developer_cloud.speech_to_text.v1.model.RecognizeOptions;
 import com.ibm.watson.developer_cloud.speech_to_text.v1.model.SpeechResults;
 import com.ibm.watson.developer_cloud.speech_to_text.v1.websocket.RecognizeCallback;
 
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.StringTokenizer;
 
-import dji.common.battery.DJIBatteryAggregationState;
+
 import dji.common.battery.DJIBatteryState;
 import dji.common.flightcontroller.DJIFlightControllerCurrentState;
 import dji.sdk.base.DJIBaseProduct;
@@ -103,6 +104,15 @@ public class FPVFullscreenActivity extends Activity implements OnMapReadyCallbac
     BatteryView mBatteryView;
     private TextView mBatteryData;
     private int mBatteryPercent;
+    //Aircraft State
+    private TextView mAttitute;
+    private TextView mVerSpeed;
+    private TextView mHorSpeed;
+    private TextView mDistance;
+    private double mAttitudeData;
+    private double mvs;
+    private double mhs;
+    private double mdistToHome;
 
     private Context mContext;
 
@@ -372,6 +382,15 @@ public class FPVFullscreenActivity extends Activity implements OnMapReadyCallbac
                     mDroneLocation = new LatLng(mDroneLocationLat, mDroneLocationLng);
                     mDroneHeading = (float) mCI.mFlightController.getCompass().getHeading();
                     updateDroneLocation();
+                    // set flight data
+                    mAttitudeData = (double) state.getUltrasonicHeight();
+                    mhs = Math.sqrt(state.getVelocityX() * state.getVelocityX()
+                            + state.getVelocityY() * state.getVelocityY());
+                    mvs = - state.getVelocityZ();
+
+                    updateFlightData();
+
+
                 }
             });
             // set up battery
@@ -384,6 +403,17 @@ public class FPVFullscreenActivity extends Activity implements OnMapReadyCallbac
                 }
             });
         }
+    }
+
+    private void updateFlightData(){
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                mAttitute.setText("H: " + new DecimalFormat("###.#").format(mAttitudeData) + "m");
+                mVerSpeed.setText("V.S: " + new DecimalFormat("##.#").format(mvs) + "m/s");
+                mHorSpeed.setText("H.S: " + new DecimalFormat("##.#").format(mhs) + "m/s");
+            }
+        });
     }
 
     private void updateBatteryStatus(){
@@ -409,6 +439,10 @@ public class FPVFullscreenActivity extends Activity implements OnMapReadyCallbac
         mBtnTracking.setVisibility(View.GONE);
         mBatteryView = (BatteryView) findViewById(R.id.battery_view);
         mBatteryData = (TextView) findViewById(R.id.battery_data);
+        mAttitute = (TextView) findViewById(R.id.Attitude);
+        mVerSpeed = (TextView) findViewById(R.id.VerticalSpeed);
+        mHorSpeed = (TextView) findViewById(R.id.HorizonSpeed);
+        mDistance = (TextView) findViewById(R.id.Distance);
         voiceInputListener();
         inputBtnListener();
         mapBtnListener();

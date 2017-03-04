@@ -108,6 +108,38 @@
         android:layout_marginStart="240dp"
         android:id="@+id/battery_data" />
 
+    <TextView
+        android:text="H: 0"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignTop="@+id/command_text"
+        android:layout_toEndOf="@+id/show_btn"
+        android:id="@+id/Attitude" />
+
+    <TextView
+        android:text="V.S: 0"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBottom="@+id/command_text"
+        android:layout_alignStart="@+id/Attitude"
+        android:id="@+id/VerticalSpeed" />
+
+    <TextView
+        android:text="H.S: 0"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBottom="@+id/VerticalSpeed"
+        android:layout_alignEnd="@+id/dummy_map_btn"
+        android:id="@+id/HorizonSpeed" />
+
+    <TextView
+        android:text="D: N/A"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignTop="@+id/command_text"
+        android:layout_alignStart="@+id/HorizonSpeed"
+        android:layout_marginEnd="32dp"
+        android:id="@+id/Distance" />
 
 
 </RelativeLayout>
