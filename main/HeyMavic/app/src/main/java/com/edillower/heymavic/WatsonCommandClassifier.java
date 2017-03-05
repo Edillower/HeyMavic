@@ -84,22 +84,25 @@ public class WatsonCommandClassifier {
                 encoded_string.add(102);
                 break;
             case "move":
-                encoded_string.add(103);
                 switch_num = 1;
                 switch(direction){
                     case "left":
+                        encoded_string.add(103);
                         encoded_string.add(201);
                         encoded_string.add(303);
                         break;
                     case "right":
+                        encoded_string.add(103);
                         encoded_string.add(201);
                         encoded_string.add(304);
                         break;
                     case "forward":
+                        encoded_string.add(103);
                         encoded_string.add(201);
                         encoded_string.add(301);
                         break;
                     case "backward":
+                        encoded_string.add(103);
                         encoded_string.add(201);
                         encoded_string.add(302);
                         break;
