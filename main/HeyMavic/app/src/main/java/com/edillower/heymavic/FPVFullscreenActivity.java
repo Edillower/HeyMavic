@@ -14,6 +14,7 @@ import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.app.ActivityCompat;
+import android.support.v4.app.FragmentActivity;
 import android.support.v4.content.ContextCompat;
 import android.text.TextUtils;
 import android.util.Log;
@@ -69,7 +70,7 @@ import dji.sdk.products.DJIAircraft;
  *
  * @author Eddie Wang
  */
-public class FPVFullscreenActivity extends Activity implements OnMapReadyCallback, GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener, CommandConfirmationDialogFragment.Communicator {
+public class FPVFullscreenActivity extends FragmentActivity implements OnMapReadyCallback, GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener, CommandConfirmationDialogFragment.Communicator {
     public static final String TAG = FPVFullscreenActivity.class.getName();
 
     private Context mContext;
@@ -125,6 +126,12 @@ public class FPVFullscreenActivity extends Activity implements OnMapReadyCallbac
     BatteryView mBatteryView;
     private TextView mBatteryData;
     private int mBatteryPercent;
+
+    // Retrieve and Rank fragment
+    private RARFragment rarFragment;
+    private boolean rarFlag;
+    private Button mRandR;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -408,6 +415,47 @@ public class FPVFullscreenActivity extends Activity implements OnMapReadyCallbac
         }
     }
 
+
+    /*
+    Retrieve and Rank button
+ */
+    private void RRInputListener(){
+        mRandR.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                rarFlag = ! rarFlag;
+                if (rarFlag){
+
+                    mAttitute.setVisibility(View.GONE);
+                    mVerSpeed.setVisibility(View.GONE);
+                    mBtnDummy.setVisibility(View.GONE);
+                    mBtnInput.setVisibility(View.GONE);
+                    mHorSpeed.setVisibility(View.GONE);
+                    mDistance.setVisibility(View.GONE);
+                    mTxtCmmand.setVisibility(View.GONE);
+                    rarFragment = new RARFragment();
+
+                    getSupportFragmentManager().beginTransaction().add(R.id.main_layout,rarFragment).commit();
+
+
+                }else{
+
+                    mAttitute.setVisibility(View.VISIBLE);
+                    mVerSpeed.setVisibility(View.VISIBLE);
+                    mBtnDummy.setVisibility(View.VISIBLE);
+                    mBtnInput.setVisibility(View.VISIBLE);
+                    mHorSpeed.setVisibility(View.VISIBLE);
+                    mDistance.setVisibility(View.VISIBLE);
+                    mTxtCmmand.setVisibility(View.VISIBLE);
+
+                    getSupportFragmentManager().beginTransaction().remove(rarFragment).commit();
+                }
+            }
+        });
+    }
+
+
+
     private void initDrone() {
         mCI.initFlightController();
         if (mCI.mFlightController != null) {
@@ -486,12 +534,14 @@ public class FPVFullscreenActivity extends Activity implements OnMapReadyCallbac
         mVerSpeed = (TextView) findViewById(R.id.VerticalSpeed);
         mHorSpeed = (TextView) findViewById(R.id.HorizonSpeed);
         mDistance = (TextView) findViewById(R.id.Distance);
+        mRandR = (Button) findViewById(R.id.RR_Button);
         stopBtnListener();
         voiceInputListener();
         inputBtnListener();
         mapBtnListener();
         showHideBtnListener();
         locateTrackBtnListener();
+        RRInputListener();
     }
 
     private void stopBtnListener() {
