@@ -34,6 +34,7 @@ public class CommandInterpreter {
 
     public DJIAircraft aircraft;
     public DJIFlightController mFlightController;
+    public boolean mVirtualStickEnabled=false;
 
     private Timer mSendVirtualStickDataTimer;
     private SendVirtualStickDataTask mSendVirtualStickDataTask;
@@ -61,7 +62,6 @@ public class CommandInterpreter {
         if (aircraft == null || !aircraft.isConnected()) {
             Log.e(TAG, "Disconnected");
             mFlightController = null;
-            return;
         } else {
             mFlightController = aircraft.getFlightController();
             mEnableVS();
@@ -114,6 +114,7 @@ public class CommandInterpreter {
                 mStop();
                 break;
             case 103:
+                checkSendVirtualStickDataTimer();
                 mYaw = (float) mFlightController.getCompass().getHeading();
                 if (idx + 2 < mCmdCode.length && mCmdCode[idx + 1] == 201) {
                     para_dir_go = mCmdCode[idx + 2];
@@ -154,7 +155,7 @@ public class CommandInterpreter {
         }
     }
 
-    private void mEnableVS() {
+    public void mEnableVS() {
         if (mFlightController != null) {
             mFlightController.setRollPitchControlMode(DJIVirtualStickRollPitchControlMode.Velocity);
             mFlightController.setYawControlMode(DJIVirtualStickYawControlMode.Angle);
@@ -167,6 +168,7 @@ public class CommandInterpreter {
                             if (djiError != null) {
                                 Log.e(TAG, djiError.getDescription());
                             } else {
+                                mVirtualStickEnabled = true;
                                 Log.e(TAG, "Enable Virtual Stick Success");
                             }
                         }
@@ -189,6 +191,7 @@ public class CommandInterpreter {
                             if (djiError != null) {
                                 Log.e(TAG, djiError.getDescription());
                             } else {
+                                mVirtualStickEnabled = false;
                                 Log.e(TAG, "Disable Virtual Stick Success");
                             }
                         }
@@ -237,7 +240,7 @@ public class CommandInterpreter {
     }
 
     public void mStop() {
-        if (!mFlightController.isVirtualStickControlModeAvailable()) {
+        if (!mVirtualStickEnabled) {
             mEnableVS();
         }
         mPitch = 0;

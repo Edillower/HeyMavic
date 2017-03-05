@@ -67,6 +67,9 @@ import dji.sdk.products.DJIAircraft;
 public class FPVFullscreenActivity extends Activity implements OnMapReadyCallback, GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener {
     public static final String TAG = FPVFullscreenActivity.class.getName();
 
+    private Context mContext;
+
+    private CommandInterpreter mCI;
     // Map
     private View mMapView;
     private GoogleMap mMap;
@@ -83,11 +86,9 @@ public class FPVFullscreenActivity extends Activity implements OnMapReadyCallbac
     private boolean mMapTracking_flag = true;
 
     // IBM watson varaibles
-    // IBM watson varaibles
     private WatsonCommandClassifier cc1;
     private SpeechToText speechService;
     private MicrophoneInputStream capture;
-
     private String mStrIntention;
 
     // App button and views
@@ -95,15 +96,13 @@ public class FPVFullscreenActivity extends Activity implements OnMapReadyCallbac
     private Button mBtnInput;
     private boolean mBtnInput_flag = true;
     private EditText mTxtCmmand;
+    private Button mBtnStop;
     private Button mBtnDummy;
     private Button mBtnDummyMap;
     private boolean mBtnDummyMap_flag = true;
     private Button mBtnShow;
     private Button mBtnHide;
-    //Battery
-    BatteryView mBatteryView;
-    private TextView mBatteryData;
-    private int mBatteryPercent;
+
     //Aircraft State
     private TextView mAttitute;
     private TextView mVerSpeed;
@@ -113,10 +112,10 @@ public class FPVFullscreenActivity extends Activity implements OnMapReadyCallbac
     private double mvs;
     private double mhs;
     private double mdistToHome;
-
-    private Context mContext;
-
-    private CommandInterpreter mCI;
+    //Battery
+    BatteryView mBatteryView;
+    private TextView mBatteryData;
+    private int mBatteryPercent;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -374,6 +373,9 @@ public class FPVFullscreenActivity extends Activity implements OnMapReadyCallbac
         mCI.initFlightController();
         if (mCI.mFlightController != null) {
             showFpvToast("Set up call back");
+            if (mCI.mVirtualStickEnabled) {
+                mBtnStop.setVisibility(View.VISIBLE);
+            }
             mCI.mFlightController.setUpdateSystemStateCallback(new DJIFlightControllerDelegate.FlightControllerUpdateSystemStateCallback() {
                 @Override
                 public void onResult(DJIFlightControllerCurrentState state) {
@@ -386,7 +388,7 @@ public class FPVFullscreenActivity extends Activity implements OnMapReadyCallbac
                     mAttitudeData = (double) state.getUltrasonicHeight();
                     mhs = Math.sqrt(state.getVelocityX() * state.getVelocityX()
                             + state.getVelocityY() * state.getVelocityY());
-                    mvs = - state.getVelocityZ();
+                    mvs = -state.getVelocityZ();
 
                     updateFlightData();
 
@@ -405,7 +407,7 @@ public class FPVFullscreenActivity extends Activity implements OnMapReadyCallbac
         }
     }
 
-    private void updateFlightData(){
+    private void updateFlightData() {
         runOnUiThread(new Runnable() {
             @Override
             public void run() {
@@ -416,7 +418,7 @@ public class FPVFullscreenActivity extends Activity implements OnMapReadyCallbac
         });
     }
 
-    private void updateBatteryStatus(){
+    private void updateBatteryStatus() {
         runOnUiThread(new Runnable() {
             @Override
             public void run() {
@@ -428,6 +430,8 @@ public class FPVFullscreenActivity extends Activity implements OnMapReadyCallbac
     private void initUI() {
         mTxtCmmand = (EditText) findViewById(R.id.command_text);
         mBtnInput = (Button) findViewById(R.id.input_btn);
+        mBtnStop = (Button) findViewById(R.id.stop_btn);
+        mBtnStop.setVisibility(View.GONE);
         mBtnDummy = (Button) findViewById(R.id.dummy_btn);
         mBtnDummyMap = (Button) findViewById(R.id.dummy_map_btn);
         mBtnShow = (Button) findViewById(R.id.show_btn);
@@ -443,11 +447,23 @@ public class FPVFullscreenActivity extends Activity implements OnMapReadyCallbac
         mVerSpeed = (TextView) findViewById(R.id.VerticalSpeed);
         mHorSpeed = (TextView) findViewById(R.id.HorizonSpeed);
         mDistance = (TextView) findViewById(R.id.Distance);
+        stopBtnListener();
         voiceInputListener();
         inputBtnListener();
         mapBtnListener();
         showHideBtnListener();
         locateTrackBtnListener();
+    }
+
+    private void stopBtnListener() {
+        mBtnStop.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+//                mCI.mDestroy();
+                mCI.mStop();
+                mBtnStop.setVisibility(View.GONE);
+            }
+        });
     }
 
     private void locateTrackBtnListener() {
@@ -470,7 +486,7 @@ public class FPVFullscreenActivity extends Activity implements OnMapReadyCallbac
             public void onClick(View v) {
                 if (mMapTracking_flag) {
                     mMapTracking_flag = false;
-                    mBtnTracking.setBackgroundResource(R.drawable.stop);
+                    mBtnTracking.setBackgroundResource(R.drawable.pause);
                 } else {
                     mMapTracking_flag = true;
                     mBtnTracking.setBackgroundResource(R.drawable.refresh);
@@ -785,9 +801,29 @@ public class FPVFullscreenActivity extends Activity implements OnMapReadyCallbac
         return original;
     }
 
+    private ArrayList<Integer> mEncodedStr;
 
     private void callExecution(ArrayList<Integer> encoded_string) {
-        mCI.executeCmd(encoded_string);
+        mEncodedStr = encoded_string;
+        boolean success = false;
+        if (mCI.mFlightController != null) {
+//            if (mCI.mVirtualStickEnabled == false) {
+//                mCI.mEnableVS();
+//            }
+            runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    mBtnStop.setVisibility(View.VISIBLE);
+                }
+            });
+            mCI.executeCmd(mEncodedStr);
+            success = true;
+        }
+        if (success) {
+            showFpvToast("Signal Sent");
+        } else {
+            showFpvToast("Flight Control Error");
+        }
     }
 
     //

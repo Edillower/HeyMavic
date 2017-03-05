@@ -46,8 +46,9 @@
 
 ## Mar 03 Update Notes:
 - Battery monitor by Melody
-## Mar 03 Update Notes:
 - Flight Data monitor by Melody
+- Emergency Stop Button v1 by Eddie
+- Minor UI changes by Eddie
 
 
 ## Mar XX Update Notes (by XXXX):
