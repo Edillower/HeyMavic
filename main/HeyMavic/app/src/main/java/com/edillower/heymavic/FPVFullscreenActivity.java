@@ -2,6 +2,7 @@ package com.edillower.heymavic;
 
 import android.Manifest;
 import android.app.Activity;
+import android.app.FragmentManager;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -64,7 +65,7 @@ import dji.sdk.products.DJIAircraft;
  *
  * @author Eddie Wang
  */
-public class FPVFullscreenActivity extends Activity implements OnMapReadyCallback, GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener {
+public class FPVFullscreenActivity extends Activity implements OnMapReadyCallback, GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener, CommandConfirmationDialogFragment.Communicator{
     public static final String TAG = FPVFullscreenActivity.class.getName();
 
     private Context mContext;
@@ -256,6 +257,30 @@ public class FPVFullscreenActivity extends Activity implements OnMapReadyCallbac
             mUserLocation = new LatLng(loc.getLatitude(), loc.getLongitude());
         } catch (SecurityException e) {
             showFpvToast("Permission required for using map");
+        }
+    }
+
+    // display command confirmation window
+    public void showDialog(View v){
+        // create FragmentManager and CommandConfirmationDialogFragment
+        FragmentManager manager =  getFragmentManager();
+        CommandConfirmationDialogFragment myDialogFragment = new CommandConfirmationDialogFragment();
+        // send encoded_string and command into pop up window
+        Bundle bundle = new Bundle();
+        bundle.putString("encoded_string", cc1.getEncodedString().toString());
+        bundle.putString("command", cc1.getCommand());
+        myDialogFragment.setArguments(bundle);
+        // show pop up window
+        myDialogFragment.show(manager, "MyDialogFragment");
+    }
+    // exectue based on user feedback from command confirmation window
+    @Override
+    public void onDialogMessage(boolean message){
+        if (message){
+            showFpvToast("Start executing command");
+            callExecution(cc1.getEncodedString()); // Start execution
+        }else{
+            showFpvToast("Command cancelled");
         }
     }
 
@@ -759,10 +784,11 @@ public class FPVFullscreenActivity extends Activity implements OnMapReadyCallbac
         protected String doInBackground(ArrayList... params) {
             String result = null;
             if (params[0].size() != 0) {
-                // show result
-                ArrayList<Integer> encoded_string = cc1.classify(params[0]);
-                showFpvToast(encoded_string.toString());
-                callExecution(encoded_string);
+                // call WatsonCommandClassifier to classify into
+                cc1.classify(params[0]);
+                // show execution confirmation dialog fragment
+                showDialog(findViewById(android.R.id.content));
+
                 result = "Did classify";
             } else {
                 result = "Not classify";

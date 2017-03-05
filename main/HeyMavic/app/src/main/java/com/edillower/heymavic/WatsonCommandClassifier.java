@@ -22,6 +22,8 @@ public class WatsonCommandClassifier {
     private final String command_classfier_id = "715f86x192-nlc-300";
     private final String direction_classfier_id = "716034x193-nlc-295";
     private NaturalLanguageClassifier nlpService;
+    private String command_direction;
+    private ArrayList<Integer> encoded_string;
 
     public WatsonCommandClassifier(){
         nlpService = new NaturalLanguageClassifier();
@@ -59,16 +61,26 @@ public class WatsonCommandClassifier {
         }
 
         // parse into decimal encoded string
-        ArrayList<Integer> encoded_string = encode_string(command, direction, unit);
+        ArrayList<Integer> result = encode_string(command, direction, unit);
+
+        // set encoded_string
+        this.command_direction = command + ' ' + direction;
+        this.encoded_string = result;
 
         // show result TODO final comment out
         System.out.println(command + ' ' + direction);
-        System.out.println(encoded_string.toString());
+        System.out.println(result.toString());
 
-        return encoded_string;
+        return result;
     }
 
+    public String getCommand(){
+        return this.command_direction;
+    }
 
+    public ArrayList<Integer> getEncodedString(){
+        return this.encoded_string;
+    }
 
     private ArrayList<Integer> encode_string (String command, String direction, String unit){
         ArrayList<Integer> encoded_string = new ArrayList<Integer>();
