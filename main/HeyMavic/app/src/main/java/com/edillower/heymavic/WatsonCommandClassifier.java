@@ -62,9 +62,18 @@ public class WatsonCommandClassifier {
 
         // parse into decimal encoded string
         ArrayList<Integer> result = encode_string(command, direction, unit);
+        int switch_num = result.remove(result.size()-1);
 
         // set encoded_string
-        this.command_direction = command + ' ' + direction;
+        if (switch_num == 0){
+            this.command_direction = command;
+        }else if ((switch_num == 1) || (switch_num == 2)){
+            this.command_direction = command + ' ' + direction;
+        }else if ((switch_num == 3) || (switch_num == 4)){
+            this.command_direction = command + ' ' + direction + ' ' + unit;
+        }else{
+            this.command_direction = "Error occured at WatsonCommandClassifier";
+        }
         this.encoded_string = result;
 
         // show result TODO final comment out
@@ -84,7 +93,7 @@ public class WatsonCommandClassifier {
 
     private ArrayList<Integer> encode_string (String command, String direction, String unit){
         ArrayList<Integer> encoded_string = new ArrayList<Integer>();
-        int switch_num = 0; // 0 for null, 1 for move, 2 for turn
+        int switch_num = 0; // 0 for null, 1 for move, 2 for turn, 3 for move unit, 4 for turn unit
         switch(command){
             case "takeoff":
                 encoded_string.add(100);
@@ -125,7 +134,6 @@ public class WatsonCommandClassifier {
                         encoded_string.add(106);
                         break;
                     default:
-
                 }
                 break;
             case "turn":
@@ -157,13 +165,16 @@ public class WatsonCommandClassifier {
             //move
             if (switch_num == 1){
                 encoded_string.add(202);
+                switch_num = 3;
             }
             //turn
             else if (switch_num == 2){
                 encoded_string.add(204);
+                switch_num = 4;
             }
             encoded_string.add(Integer.parseInt(unit));
         }
+        encoded_string.add(switch_num);
         return encoded_string;
     }
 
