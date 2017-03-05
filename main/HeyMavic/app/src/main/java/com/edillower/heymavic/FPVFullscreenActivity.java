@@ -40,6 +40,8 @@ import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 import com.ibm.watson.developer_cloud.android.library.audio.MicrophoneInputStream;
 import com.ibm.watson.developer_cloud.android.library.audio.utils.ContentType;
 import com.ibm.watson.developer_cloud.speech_to_text.v1.SpeechToText;
@@ -49,6 +51,8 @@ import com.ibm.watson.developer_cloud.speech_to_text.v1.websocket.RecognizeCallb
 
 import java.text.DecimalFormat;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.StringTokenizer;
 
 
@@ -65,12 +69,16 @@ import dji.sdk.products.DJIAircraft;
  *
  * @author Eddie Wang
  */
-public class FPVFullscreenActivity extends Activity implements OnMapReadyCallback, GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener, CommandConfirmationDialogFragment.Communicator{
+public class FPVFullscreenActivity extends Activity implements OnMapReadyCallback, GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener, CommandConfirmationDialogFragment.Communicator {
     public static final String TAG = FPVFullscreenActivity.class.getName();
 
     private Context mContext;
 
     private CommandInterpreter mCI;
+
+    private FirebaseDatabase mDatabase;
+    private DatabaseReference mDBRecog;
+
     // Map
     private View mMapView;
     private GoogleMap mMap;
@@ -170,6 +178,9 @@ public class FPVFullscreenActivity extends Activity implements OnMapReadyCallbac
         filter.addAction(DJISimulatorApplication.FLAG_CONNECTION_CHANGE);
         registerReceiver(mReceiver, filter);
 
+        // Set up firebase
+        mDatabase = FirebaseDatabase.getInstance();
+        mDBRecog = mDatabase.getReference("recog");
         // Set up map
         MapFragment mapFragment = (MapFragment) getFragmentManager()
                 .findFragmentById(R.id.mapFragment);
@@ -261,9 +272,9 @@ public class FPVFullscreenActivity extends Activity implements OnMapReadyCallbac
     }
 
     // display command confirmation window
-    public void showDialog(View v){
+    public void showDialog(View v) {
         // create FragmentManager and CommandConfirmationDialogFragment
-        FragmentManager manager =  getFragmentManager();
+        FragmentManager manager = getFragmentManager();
         CommandConfirmationDialogFragment myDialogFragment = new CommandConfirmationDialogFragment();
         // send encoded_string and command into pop up window
         Bundle bundle = new Bundle();
@@ -273,13 +284,16 @@ public class FPVFullscreenActivity extends Activity implements OnMapReadyCallbac
         // show pop up window
         myDialogFragment.show(manager, "MyDialogFragment");
     }
+
     // exectue based on user feedback from command confirmation window
     @Override
-    public void onDialogMessage(boolean message){
-        if (message){
+    public void onDialogMessage(boolean message) {
+        if (message) {
+            writeRecogRecord(true,mStrIntention,cc1.getEncodedString().toString(),cc1.getCommand());
             showFpvToast("Start executing command");
             callExecution(cc1.getEncodedString()); // Start execution
-        }else{
+        } else {
+            writeRecogRecord(false,mStrIntention,cc1.getEncodedString().toString(),cc1.getCommand());
             showFpvToast("Command cancelled");
         }
     }
@@ -850,6 +864,17 @@ public class FPVFullscreenActivity extends Activity implements OnMapReadyCallbac
         } else {
             showFpvToast("Flight Control Error");
         }
+    }
+
+    private void writeRecogRecord(boolean pos, String s2tStr, String encodedStr, String classifiedStr) {
+        String group = "neg";
+        if (pos) {
+            group = "pos";
+        }
+        String key = mDBRecog.child(group).push().getKey();
+        mDBRecog.child(group).child(key).child("s2tStr").setValue(s2tStr);
+        mDBRecog.child(group).child(key).child("classifiedStr").setValue(classifiedStr);
+        mDBRecog.child(group).child(key).child("encodedStr").setValue(encodedStr);
     }
 
     //

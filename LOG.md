@@ -52,6 +52,9 @@
 - Fixed protocal bud by David
 - Added command confirmation window by David
 
+## Mar 04 Update Notes:
+- Firebase added for collecting training data by Eddie
+
 
 ## Mar XX Update Notes (by XXXX):
 - ALWAYS update this log when changes are made!!!

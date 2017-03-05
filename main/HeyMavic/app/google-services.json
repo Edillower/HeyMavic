@@ -1,0 +1,42 @@
+{
+  "project_info": {
+    "project_number": "641201759393",
+    "firebase_url": "https://reflected-ion-159421.firebaseio.com",
+    "project_id": "reflected-ion-159421",
+    "storage_bucket": "reflected-ion-159421.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:641201759393:android:f86e64542e9e9b42",
+        "android_client_info": {
+          "package_name": "com.edillower.heymavic"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "641201759393-r559gqdpphe16jp3e0htg7kamiprp1mo.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAoh87iiZcsjJ3MfA-_EH58V0Di9hdldjk"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 1,
+          "other_platform_oauth_client": []
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
