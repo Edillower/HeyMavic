@@ -49,6 +49,8 @@
 - Flight Data monitor by Melody
 - Emergency Stop Button v1 by Eddie
 - Minor UI changes by Eddie
+- Fixed protocal bud by David
+- Added command confirmation window by David
 
 
 ## Mar XX Update Notes (by XXXX):
