@@ -117,7 +117,7 @@ public class FPVFullscreenActivity extends FragmentActivity implements OnMapRead
     private TextView mAttitute;
     private TextView mVerSpeed;
     private TextView mHorSpeed;
-    private TextView mDistance;
+//    private TextView mDistance;
     private double mAttitudeData;
     private double mvs;
     private double mhs;
@@ -425,29 +425,15 @@ public class FPVFullscreenActivity extends FragmentActivity implements OnMapRead
             public void onClick(View v) {
                 rarFlag = ! rarFlag;
                 if (rarFlag){
-
-                    mAttitute.setVisibility(View.GONE);
-                    mVerSpeed.setVisibility(View.GONE);
                     mBtnDummy.setVisibility(View.GONE);
                     mBtnInput.setVisibility(View.GONE);
-                    mHorSpeed.setVisibility(View.GONE);
-                    mDistance.setVisibility(View.GONE);
                     mTxtCmmand.setVisibility(View.GONE);
                     rarFragment = new RARFragment();
-
                     getSupportFragmentManager().beginTransaction().add(R.id.main_layout,rarFragment).commit();
-
-
                 }else{
-
-                    mAttitute.setVisibility(View.VISIBLE);
-                    mVerSpeed.setVisibility(View.VISIBLE);
                     mBtnDummy.setVisibility(View.VISIBLE);
                     mBtnInput.setVisibility(View.VISIBLE);
-                    mHorSpeed.setVisibility(View.VISIBLE);
-                    mDistance.setVisibility(View.VISIBLE);
                     mTxtCmmand.setVisibility(View.VISIBLE);
-
                     getSupportFragmentManager().beginTransaction().remove(rarFragment).commit();
                 }
             }
@@ -475,7 +461,7 @@ public class FPVFullscreenActivity extends FragmentActivity implements OnMapRead
                     mAttitudeData = (double) state.getUltrasonicHeight();
                     mhs = Math.sqrt(state.getVelocityX() * state.getVelocityX()
                             + state.getVelocityY() * state.getVelocityY());
-                    mvs = -state.getVelocityZ();
+                    mvs = -1*state.getVelocityZ();
 
                     updateFlightData();
 
@@ -533,7 +519,7 @@ public class FPVFullscreenActivity extends FragmentActivity implements OnMapRead
         mAttitute = (TextView) findViewById(R.id.Attitude);
         mVerSpeed = (TextView) findViewById(R.id.VerticalSpeed);
         mHorSpeed = (TextView) findViewById(R.id.HorizonSpeed);
-        mDistance = (TextView) findViewById(R.id.Distance);
+//        mDistance = (TextView) findViewById(R.id.Distance);
         mRandR = (Button) findViewById(R.id.RR_Button);
         stopBtnListener();
         voiceInputListener();
@@ -640,6 +626,7 @@ public class FPVFullscreenActivity extends FragmentActivity implements OnMapRead
                     fpvParams.height = ViewGroup.LayoutParams.MATCH_PARENT;
                     fpvParams.width = ViewGroup.LayoutParams.MATCH_PARENT;
                     sendViewToBack(fpvTexture);
+                    mMapView.bringToFront();
                     mMap.getUiSettings().setAllGesturesEnabled(false);
                     mBtnLoacte.setVisibility(View.GONE);
                     mBtnTracking.setVisibility(View.GONE);

@@ -13,7 +13,7 @@
         android:layout_height="180dp"
         android:background="@color/view_bg"
         android:textColor="@color/text_whi"
-        android:text="@string/RRAnswer"
+        android:text="Hello, I'm ready for answering your question about DJI Mavic Pro. Please enter your question by text or voice"
         android:id="@+id/RRView"
         android:layout_alignParentEnd="true"
         android:layout_alignParentStart="true"

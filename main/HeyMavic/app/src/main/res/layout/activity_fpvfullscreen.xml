@@ -4,6 +4,14 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
+    <TextView
+        android:background="@color/view_bg"
+        android:alpha="0.75"
+        android:layout_width="match_parent"
+        android:layout_height="25dp"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentEnd="true" />
+
     <Button
         android:id="@+id/input_btn"
         android:layout_width="48dp"
@@ -19,9 +27,9 @@
         android:layout_width="48dp"
         android:layout_height="48dp"
         android:layout_alignParentBottom="true"
-        android:layout_alignParentEnd="true"
-        android:layout_marginBottom="58dp"
-        android:layout_marginEnd="5dp"
+        android:layout_alignParentStart="true"
+        android:layout_marginBottom="5dp"
+        android:layout_marginStart="5dp"
         android:background="@drawable/stop" />
 
     <EditText
@@ -77,6 +85,8 @@
         android:layout_height="20dp"
         android:layout_alignStart="@+id/dummy_map_btn"
         android:layout_alignTop="@+id/dummy_map_btn"
+        android:layout_marginTop="2dp"
+        android:layout_marginStart="2dp"
         android:background="@drawable/expand" />
 
     <Button
@@ -85,7 +95,7 @@
         android:layout_height="32dp"
         android:layout_alignParentEnd="true"
         android:layout_alignParentTop="true"
-        android:layout_marginTop="15dp"
+        android:layout_marginTop="32dp"
         android:layout_marginEnd="15dp"
         android:background="@drawable/locatedrone" />
 
@@ -95,7 +105,7 @@
         android:layout_height="32dp"
         android:layout_alignParentEnd="true"
         android:layout_alignParentTop="true"
-        android:layout_marginTop="60dp"
+        android:layout_marginTop="75dp"
         android:layout_marginEnd="15dp"
         android:background="@drawable/refresh" />
 
@@ -103,63 +113,72 @@
         android:layout_width="38dp"
         android:layout_height="15dp"
         class="com.edillower.heymavic.BatteryView"
-        android:layout_alignTop="@id/dummy_map_btn"
-        android:layout_alignStart="@id/dummy_map_btn"
-        android:layout_marginStart="200dp"
+        android:layout_alignParentTop="true"
+        android:layout_toStartOf="@+id/battery_data"
+        android:layout_marginTop="5dp"
+        android:layout_marginEnd="5dp"
         android:id="@+id/battery_view" />
 
     <TextView
         android:text="100%"
-        android:layout_width="40dp"
-        android:layout_height="15dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
         android:layout_alignParentTop="true"
-        android:layout_alignTop="@id/dummy_map_btn"
-        android:layout_alignStart="@id/dummy_map_btn"
-        android:layout_marginStart="240dp"
+        android:layout_alignParentEnd="true"
+        android:layout_marginTop="3dp"
+        android:layout_marginEnd="5dp"
         android:id="@+id/battery_data" />
 
     <TextView
         android:text="H: 0"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignTop="@+id/command_text"
-        android:layout_toEndOf="@+id/show_btn"
+        android:layout_alignParentTop="true"
+        android:layout_toStartOf="@+id/HorizonSpeed"
+        android:layout_marginTop="3dp"
+        android:layout_marginEnd="8dp"
         android:id="@+id/Attitude" />
 
     <TextView
         android:text="V.S: 0"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignBottom="@+id/command_text"
-        android:layout_alignStart="@+id/Attitude"
+        android:layout_alignParentTop="true"
+        android:layout_toStartOf="@+id/Attitude"
+        android:layout_marginTop="3dp"
+        android:layout_marginEnd="8dp"
         android:id="@+id/VerticalSpeed" />
 
     <TextView
         android:text="H.S: 0"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignBottom="@+id/VerticalSpeed"
-        android:layout_alignEnd="@+id/dummy_map_btn"
+        android:layout_alignParentTop="true"
+        android:layout_toStartOf="@+id/battery_view"
+        android:layout_marginTop="3dp"
+        android:layout_marginEnd="8dp"
         android:id="@+id/HorizonSpeed" />
 
-    <TextView
-        android:text="D: N/A"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignTop="@+id/command_text"
-        android:layout_alignStart="@+id/HorizonSpeed"
-        android:layout_marginEnd="32dp"
-        android:id="@+id/Distance" />
+    <!--<TextView-->
+        <!--android:text="D: N/A"-->
+        <!--android:layout_width="wrap_content"-->
+        <!--android:layout_height="wrap_content"-->
+        <!--android:layout_alignParentTop="true"-->
+        <!--android:layout_alignParentEnd="true"-->
+        <!--android:layout_marginTop="3dp"-->
+        <!--android:layout_marginEnd="360dp"-->
+        <!--android:visibility="gone"-->
+        <!--android:id="@+id/Distance" />-->
 
     <Button
-        android:text="Instruction"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:background="@drawable/manual"
+        android:layout_width="48dp"
+        android:layout_height="48dp"
         android:id="@+id/RR_Button"
-        android:layout_marginTop="210dp"
+        android:layout_alignParentBottom="true"
         android:layout_alignParentEnd="true"
-        android:layout_marginBottom="22dp" />
-
+        android:layout_marginBottom="5dp"
+        android:layout_marginEnd="358dp" />
 
 
 </RelativeLayout>

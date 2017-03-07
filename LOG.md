@@ -55,7 +55,10 @@
 ## Mar 05 Update Notes:
 - Firebase added for collecting training data by Eddie
 - Fix command extra info by David
-- Add Retrive and Rank by Chen (done by Paul)
+- Add Retrive and Rank by Paul and Melody
+
+## Mar 05 Update Notes:
+- UI changes and minor fixes by Eddie
 
 ## Mar XX Update Notes (by XXXX):
 - ALWAYS update this log when changes are made!!!
