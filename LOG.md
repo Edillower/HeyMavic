@@ -44,7 +44,7 @@
 ## Feb 27 Update Notes (by David):
 - Updated with new NLC
 
-## Mar 04 Update Notes:
+## Mar 03 Update Notes:
 - Battery monitor by Melody
 - Flight Data monitor by Melody
 - Emergency Stop Button v1 by Eddie
@@ -52,12 +52,12 @@
 - Fixed protocal bud by David
 - Added command confirmation window by David
 
-## Mar 05 Update Notes:
+## Mar 04 Update Notes:
 - Firebase added for collecting training data by Eddie
 - Fix command extra info by David
 - Add Retrive and Rank by Paul and Melody
 
-## Mar 05 Update Notes:
+## Mar 06 Update Notes:
 - UI changes and minor fixes by Eddie
 
 ## Mar XX Update Notes (by XXXX):
