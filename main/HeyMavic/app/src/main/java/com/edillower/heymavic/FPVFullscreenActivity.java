@@ -9,6 +9,8 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.pm.ActivityInfo;
 import android.content.pm.PackageManager;
+import android.location.Address;
+import android.location.Geocoder;
 import android.location.Location;
 import android.os.AsyncTask;
 import android.os.Build;
@@ -50,9 +52,11 @@ import com.ibm.watson.developer_cloud.speech_to_text.v1.model.RecognizeOptions;
 import com.ibm.watson.developer_cloud.speech_to_text.v1.model.SpeechResults;
 import com.ibm.watson.developer_cloud.speech_to_text.v1.websocket.RecognizeCallback;
 
+import java.io.IOException;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.StringTokenizer;
 
@@ -95,6 +99,9 @@ public class FPVFullscreenActivity extends FragmentActivity implements OnMapRead
     private Button mBtnTracking;
     private boolean mMapTracking_flag = true;
 
+    private PlaceListFragment mPlaceListFragment;
+
+
     // IBM watson varaibles
     private WatsonCommandClassifier cc1;
     private SpeechToText speechService;
@@ -117,7 +124,7 @@ public class FPVFullscreenActivity extends FragmentActivity implements OnMapRead
     private TextView mAttitute;
     private TextView mVerSpeed;
     private TextView mHorSpeed;
-//    private TextView mDistance;
+    //    private TextView mDistance;
     private double mAttitudeData;
     private double mvs;
     private double mhs;
@@ -131,6 +138,9 @@ public class FPVFullscreenActivity extends FragmentActivity implements OnMapRead
     private RARFragment rarFragment;
     private boolean rarFlag;
     private Button mRandR;
+
+    // Test
+    private Button mTest;
 
 
     @Override
@@ -296,11 +306,11 @@ public class FPVFullscreenActivity extends FragmentActivity implements OnMapRead
     @Override
     public void onDialogMessage(boolean message) {
         if (message) {
-            writeRecogRecord(true,mStrIntention,cc1.getEncodedString().toString(),cc1.getCommand());
+            writeRecogRecord(true, mStrIntention, cc1.getEncodedString().toString(), cc1.getCommand());
             showFpvToast("Start executing command");
             callExecution(cc1.getEncodedString()); // Start execution
         } else {
-            writeRecogRecord(false,mStrIntention,cc1.getEncodedString().toString(),cc1.getCommand());
+            writeRecogRecord(false, mStrIntention, cc1.getEncodedString().toString(), cc1.getCommand());
             showFpvToast("Command cancelled");
         }
     }
@@ -419,18 +429,18 @@ public class FPVFullscreenActivity extends FragmentActivity implements OnMapRead
     /*
     Retrieve and Rank button
  */
-    private void RRInputListener(){
+    private void RRInputListener() {
         mRandR.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                rarFlag = ! rarFlag;
-                if (rarFlag){
+                rarFlag = !rarFlag;
+                if (rarFlag) {
                     mBtnDummy.setVisibility(View.GONE);
                     mBtnInput.setVisibility(View.GONE);
                     mTxtCmmand.setVisibility(View.GONE);
                     rarFragment = new RARFragment();
-                    getSupportFragmentManager().beginTransaction().add(R.id.main_layout,rarFragment).commit();
-                }else{
+                    getSupportFragmentManager().beginTransaction().add(R.id.main_layout, rarFragment).commit();
+                } else {
                     mBtnDummy.setVisibility(View.VISIBLE);
                     mBtnInput.setVisibility(View.VISIBLE);
                     mTxtCmmand.setVisibility(View.VISIBLE);
@@ -439,7 +449,6 @@ public class FPVFullscreenActivity extends FragmentActivity implements OnMapRead
             }
         });
     }
-
 
 
     private void initDrone() {
@@ -461,7 +470,7 @@ public class FPVFullscreenActivity extends FragmentActivity implements OnMapRead
                     mAttitudeData = (double) state.getUltrasonicHeight();
                     mhs = Math.sqrt(state.getVelocityX() * state.getVelocityX()
                             + state.getVelocityY() * state.getVelocityY());
-                    mvs = -1*state.getVelocityZ();
+                    mvs = -1 * state.getVelocityZ();
 
                     updateFlightData();
 
@@ -521,6 +530,13 @@ public class FPVFullscreenActivity extends FragmentActivity implements OnMapRead
         mHorSpeed = (TextView) findViewById(R.id.HorizonSpeed);
 //        mDistance = (TextView) findViewById(R.id.Distance);
         mRandR = (Button) findViewById(R.id.RR_Button);
+        mTest = (Button) findViewById(R.id.testBtn);
+        mTest.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                searchPlace("starbucks");
+            }
+        });
         stopBtnListener();
         voiceInputListener();
         inputBtnListener();
@@ -912,6 +928,55 @@ public class FPVFullscreenActivity extends FragmentActivity implements OnMapRead
         mDBRecog.child(group).child(key).child("s2tStr").setValue(s2tStr);
         mDBRecog.child(group).child(key).child("classifiedStr").setValue(classifiedStr);
         mDBRecog.child(group).child(key).child("encodedStr").setValue(encodedStr);
+    }
+
+    private List<Address> addressList = null;
+    private boolean addressList_flag = true;
+
+    private void searchPlace(String locationName) {
+        Geocoder mGeocoder = new Geocoder(this);
+        int maxResults = 5;
+        double lowerLeftLatitude = mUserLocation.latitude - 0.1;
+        double lowerLeftLongitude = mUserLocation.longitude - 0.1;
+        double upperRightLatitude = mUserLocation.latitude + 0.1;
+        double upperRightLongitude = mUserLocation.longitude + 0.1;
+        try {
+            addressList = mGeocoder.getFromLocationName(locationName, maxResults, lowerLeftLatitude, lowerLeftLongitude, upperRightLatitude, upperRightLongitude);
+        } catch (IOException e) {
+            Log.e(TAG, e.toString());
+            addressList_flag = false;
+        }
+        if (addressList_flag && addressList.size() != 0) {
+            Bundle args = new Bundle();
+            String[] places = new String[5];
+            for (int i = 0; i < addressList.size(); i++) {
+                String sb = "";
+                for (int k = 0; k < addressList.get(i).getMaxAddressLineIndex(); k++) {
+                    sb += addressList.get(i).getAddressLine(k);
+                    sb += "; ";
+                }
+                places[i] = sb;
+            }
+            args.putStringArray("places",places);
+            mPlaceListFragment = new PlaceListFragment();
+            mPlaceListFragment.setArguments(args);
+            Log.e(TAG, mPlaceListFragment.getArguments().toString());
+            getSupportFragmentManager().beginTransaction().add(R.id.main_layout, mPlaceListFragment).commit();
+        } else {
+            showFpvToast("No result available");
+            Log.e(TAG, "No result available");
+            addressList_flag = true;
+        }
+    }
+
+    public LatLng getPlaceCoordinates(int index) {
+        getSupportFragmentManager().beginTransaction().remove(mPlaceListFragment).commit();
+        double lat = addressList.get(index).getLatitude();
+        double lon = addressList.get(index).getLongitude();
+        LatLng targetLatLng = new LatLng(lat, lon);
+        showFpvToast(targetLatLng.toString());
+        addressList = null;
+        return targetLatLng;
     }
 
     //
