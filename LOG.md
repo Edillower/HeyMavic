@@ -60,5 +60,8 @@
 ## Mar 06 Update Notes:
 - UI changes and minor fixes by Eddie
 
+## Mar 25 Update Notes:
+- Place searcher and selector by Eddie
+
 ## Mar XX Update Notes (by XXXX):
 - ALWAYS update this log when changes are made!!!
