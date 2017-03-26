@@ -18,6 +18,7 @@ import android.os.Bundle;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.content.ContextCompat;
+import android.support.v4.util.ArrayMap;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -67,6 +68,8 @@ import dji.sdk.base.DJIBaseProduct;
 import dji.sdk.battery.DJIBattery;
 import dji.sdk.flightcontroller.DJIFlightControllerDelegate;
 import dji.sdk.products.DJIAircraft;
+
+import static com.edillower.heymavic.R.string.success;
 
 
 /**
@@ -308,7 +311,7 @@ public class FPVFullscreenActivity extends FragmentActivity implements OnMapRead
         if (message) {
             writeRecogRecord(true, mStrIntention, cc1.getEncodedString().toString(), cc1.getCommand());
             showFpvToast("Start executing command");
-            callExecution(cc1.getEncodedString()); // Start execution
+            preCheck(cc1.getEncodedString(), cc1.getGoogleMapSearchString()); // Start execution
         } else {
             writeRecogRecord(false, mStrIntention, cc1.getEncodedString().toString(), cc1.getCommand());
             showFpvToast("Command cancelled");
@@ -896,6 +899,15 @@ public class FPVFullscreenActivity extends FragmentActivity implements OnMapRead
 
     private ArrayList<Integer> mEncodedStr;
 
+    private void preCheck(ArrayList<Integer> encoded_string, String google_map_string){
+        // Get first and see if it is adnvacce mission
+        if (encoded_string.get(0)==107){
+            searchPlace(google_map_string);
+        }else{
+            callExecution(encoded_string);
+        }
+    }
+
     private void callExecution(ArrayList<Integer> encoded_string) {
         mEncodedStr = encoded_string;
         boolean success = false;
@@ -933,7 +945,7 @@ public class FPVFullscreenActivity extends FragmentActivity implements OnMapRead
     private List<Address> addressList = null;
     private boolean addressList_flag = true;
 
-    private void searchPlace(String locationName) {
+    public void searchPlace(String locationName) {
         Geocoder mGeocoder = new Geocoder(this);
         int maxResults = 5;
         double lowerLeftLatitude = mUserLocation.latitude - 0.1;
@@ -969,14 +981,26 @@ public class FPVFullscreenActivity extends FragmentActivity implements OnMapRead
         }
     }
 
-    public LatLng getPlaceCoordinates(int index) {
+    public void getPlaceCoordinates(int index) {
         getSupportFragmentManager().beginTransaction().remove(mPlaceListFragment).commit();
         double lat = addressList.get(index).getLatitude();
         double lon = addressList.get(index).getLongitude();
         LatLng targetLatLng = new LatLng(lat, lon);
         showFpvToast(targetLatLng.toString());
         addressList = null;
-        return targetLatLng;
+
+        int latInt = (int)lat;
+        int latDeci = (int)(lat - latInt)*100000;
+        int lonInt = (int)lon;
+        int lonDeci = (int)(lon - lonInt)*100000;
+
+        ArrayList<Integer> temp = cc1.getEncodedString();
+        temp.add(latInt);
+        temp.add(latDeci);
+        temp.add(lonInt);
+        temp.add(lonDeci);
+
+        callExecution(temp);
     }
 
     //

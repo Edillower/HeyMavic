@@ -62,6 +62,7 @@
 
 ## Mar 25 Update Notes:
 - Place searcher and selector by Eddie
+- Add NLU for advance mission by Zhiyue
 
 ## Mar XX Update Notes (by XXXX):
 - ALWAYS update this log when changes are made!!!
