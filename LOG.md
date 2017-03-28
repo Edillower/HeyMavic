@@ -64,5 +64,8 @@
 - Place searcher and selector by Eddie
 - Add NLU for advance mission by Zhiyue
 
+## Mar 28 Update Notes:
+- Fix place selector's bug by Eddie
+
 ## Mar XX Update Notes (by XXXX):
 - ALWAYS update this log when changes are made!!!

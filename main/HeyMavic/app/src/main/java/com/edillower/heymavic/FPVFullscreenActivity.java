@@ -960,7 +960,7 @@ public class FPVFullscreenActivity extends FragmentActivity implements OnMapRead
         }
         if (addressList_flag && addressList.size() != 0) {
             Bundle args = new Bundle();
-            String[] places = new String[5];
+            String[] places = new String[addressList.size()];
             for (int i = 0; i < addressList.size(); i++) {
                 String sb = "";
                 for (int k = 0; k < addressList.get(i).getMaxAddressLineIndex(); k++) {
