@@ -67,5 +67,8 @@
 ## Mar 28 Update Notes:
 - Fix place selector's bug by Eddie
 
+## May 3 Update Notes:
+- Update NLC for advance mission and object detection by David
+
 ## Mar XX Update Notes (by XXXX):
 - ALWAYS update this log when changes are made!!!

@@ -74,6 +74,7 @@ public class NLUCallableService implements Callable<String> {
         types.add("Organization");
         types.add("Facility");
         types.add("Location");
+        types.add("Company");
 
         try {
             JSONObject response = new JSONObject(json_response);
