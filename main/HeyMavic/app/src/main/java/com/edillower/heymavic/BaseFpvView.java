@@ -3,23 +3,18 @@ package com.edillower.heymavic;
 import android.app.Service;
 import android.content.Context;
 import android.graphics.SurfaceTexture;
-import android.util.AttributeSet;
 import android.util.Log;
 import android.view.LayoutInflater;
-import android.view.MotionEvent;
 import android.view.TextureView;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
-import android.widget.EditText;
 import android.widget.RelativeLayout;
 
-import com.edillower.heymavic.R;
+import com.edillower.heymavic.common.DJISimulatorApplication;
 
 import dji.common.product.Model;
-import dji.sdk.airlink.DJILBAirLink;
-import dji.sdk.base.DJIBaseProduct;
-import dji.sdk.camera.DJICamera;
+import dji.sdk.base.BaseProduct;
+import dji.sdk.camera.VideoFeeder;
 import dji.sdk.codec.DJICodecManager;
 
 /**
@@ -28,10 +23,8 @@ import dji.sdk.codec.DJICodecManager;
 public class BaseFpvView extends RelativeLayout implements TextureView.SurfaceTextureListener {
 
     private TextureView mVideoSurface = null;
-    private DJICamera.CameraReceivedVideoDataCallback mReceivedVideoDataCallback = null;
-    private DJILBAirLink.DJIOnReceivedVideoCallback mOnReceivedVideoCallback = null;
+    private VideoFeeder.VideoDataCallback receivedVideoDataCallback = null;
     private DJICodecManager mCodecManager = null;
-    private DJIBaseProduct mProduct = null;
 
     public BaseFpvView(Context context) {
         super(context);
@@ -55,20 +48,13 @@ public class BaseFpvView extends RelativeLayout implements TextureView.SurfaceTe
         if (null != mVideoSurface) {
             mVideoSurface.setSurfaceTextureListener(this);
 
-            mOnReceivedVideoCallback = new DJILBAirLink.DJIOnReceivedVideoCallback() {
-                @Override
-                public void onResult(byte[] videoBuffer, int size) {
-                    if (mCodecManager != null) {
-                        mCodecManager.sendDataToDecoder(videoBuffer, size);
-                    }
-                }
-            };
+            // This callback is for
 
-            mReceivedVideoDataCallback = new DJICamera.CameraReceivedVideoDataCallback() {
+            receivedVideoDataCallback = new VideoFeeder.VideoDataCallback() {
                 @Override
-                public void onResult(byte[] videoBuffer, int size) {
+                public void onReceive(byte[] bytes, int size) {
                     if (null != mCodecManager) {
-                        mCodecManager.sendDataToDecoder(videoBuffer, size);
+                        mCodecManager.sendDataToDecoder(bytes, size);
                     }
                 }
             };
@@ -80,15 +66,16 @@ public class BaseFpvView extends RelativeLayout implements TextureView.SurfaceTe
 
     private void initSDKCallback() {
         try {
-            mProduct = DJISimulatorApplication.getProductInstance();
+            BaseProduct mProduct = DJISimulatorApplication.getProductInstance();
 
-            if (mProduct.getModel() != Model.UnknownAircraft) {
-                mProduct.getCamera().setDJICameraReceivedVideoDataCallback(mReceivedVideoDataCallback);
-
-            } else {
-                mProduct.getAirLink().getLBAirLink().setDJIOnReceivedVideoCallback(mOnReceivedVideoCallback);
+            if (VideoFeeder.getInstance().getVideoFeeds() != null
+                    && VideoFeeder.getInstance().getVideoFeeds().size() > 0) {
+                VideoFeeder.getInstance().getVideoFeeds().get(0).setCallback(receivedVideoDataCallback);
             }
-        } catch (Exception exception) {}
+
+        } catch (Exception exception) {
+
+        }
     }
 
     @Override

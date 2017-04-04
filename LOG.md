@@ -70,5 +70,26 @@
 ## May 3 Update Notes:
 - Update NLC for advance mission and object detection by David
 
+## APR 4 Update Notes (by keao xu):
+- !!!! change to SDK 4.0 !!!!
+----> files need change for SDK4.0:
+----> FPVfullscreenAcitvity -finish!
+----> BaseFpvView - finish!
+----> DJISimulatorApplication - finish!
+----> CommandInterpreter
+
+- delete 4 files:
+----> MainActivity
+----> CmcCodeInterpreter
+----> JoyStick
+----> JoyStickListener
+
+- reconstucting:
++ common:
+	move DJISimulatorApplication.java
+	+ Utils.java
++ flightcontrol:
+	move CommandInterpreter.java
+
 ## Mar XX Update Notes (by XXXX):
 - ALWAYS update this log when changes are made!!!

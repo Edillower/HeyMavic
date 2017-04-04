@@ -1,7 +1,6 @@
 package com.edillower.heymavic;
 
 import android.Manifest;
-import android.app.Activity;
 import android.app.FragmentManager;
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -15,10 +14,10 @@ import android.location.Location;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.content.ContextCompat;
-import android.support.v4.util.ArrayMap;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -31,8 +30,9 @@ import android.widget.EditText;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
-import android.text.TextUtils;
 
+import com.edillower.heymavic.common.DJISimulatorApplication;
+import com.edillower.heymavic.flightcontrol.CommandInterpreter;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.location.LocationServices;
@@ -56,21 +56,13 @@ import com.ibm.watson.developer_cloud.speech_to_text.v1.websocket.RecognizeCallb
 import java.io.IOException;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.StringTokenizer;
 
-
-import dji.common.battery.DJIBatteryState;
-import dji.common.flightcontroller.DJIFlightControllerCurrentState;
-import dji.sdk.base.DJIBaseProduct;
-import dji.sdk.battery.DJIBattery;
-import dji.sdk.flightcontroller.DJIFlightControllerDelegate;
-import dji.sdk.products.DJIAircraft;
-
-import static com.edillower.heymavic.R.string.success;
-
+import dji.common.battery.BatteryState;
+import dji.common.flightcontroller.FlightControllerState;
+import dji.sdk.base.BaseProduct;
+import dji.sdk.products.Aircraft;
 
 /**
  * FPV main control window
@@ -182,7 +174,7 @@ public class FPVFullscreenActivity extends FragmentActivity implements OnMapRead
         speechService = initSpeechToTextService();
         cc1 = new WatsonCommandClassifier();
 
-        mCI = new CommandInterpreter(TAG);
+        mCI = new CommandInterpreter(mContext);
         initDrone();
 
         if (mGoogleApiClient == null) {
@@ -245,7 +237,8 @@ public class FPVFullscreenActivity extends FragmentActivity implements OnMapRead
     protected void onDestroy() {
         Log.e(TAG, "onDestroy");
         unregisterReceiver(mReceiver);
-        mCI.mDestroy();
+        //eric command this out, april 3
+//        mCI.mDestroy();
         super.onDestroy();
     }
 
@@ -404,15 +397,15 @@ public class FPVFullscreenActivity extends FragmentActivity implements OnMapRead
 
     private void updateConnection() {
         boolean ret = false;
-        DJIBaseProduct product = DJISimulatorApplication.getProductInstance();
+        BaseProduct product = DJISimulatorApplication.getProductInstance();
         if (product != null) {
             if (product.isConnected()) {
                 //The product is connected
                 showFpvToast(DJISimulatorApplication.getProductInstance().getModel() + " Connected");
                 ret = true;
             } else {
-                if (product instanceof DJIAircraft) {
-                    DJIAircraft aircraft = (DJIAircraft) product;
+                if (product instanceof Aircraft) {
+                    Aircraft aircraft = (Aircraft) product;
                     if (aircraft.getRemoteController() != null && aircraft.getRemoteController().isConnected()) {
                         // The product is not connected, but the remote controller is connected
                         showFpvToast("only RC Connected");
@@ -458,38 +451,38 @@ public class FPVFullscreenActivity extends FragmentActivity implements OnMapRead
         mCI.initFlightController();
         if (mCI.mFlightController != null) {
             showFpvToast("Set up call back");
-            if (mCI.mVirtualStickEnabled) {
+            if (mCI.mFlightController.isVirtualStickControlModeAvailable()) {
                 mBtnStop.setVisibility(View.VISIBLE);
             }
-            mCI.mFlightController.setUpdateSystemStateCallback(new DJIFlightControllerDelegate.FlightControllerUpdateSystemStateCallback() {
+            mCI.mFlightController.setStateCallback(new FlightControllerState.Callback() {
                 @Override
-                public void onResult(DJIFlightControllerCurrentState state) {
-                    double mDroneLocationLat = state.getAircraftLocation().getLatitude();
-                    double mDroneLocationLng = state.getAircraftLocation().getLongitude();
+                public void onUpdate(@NonNull FlightControllerState flightControllerState) {
+                    double mDroneLocationLat = flightControllerState.getAircraftLocation().getAltitude();
+                    double mDroneLocationLng = flightControllerState.getAircraftLocation().getLongitude();
                     mDroneLocation = new LatLng(mDroneLocationLat, mDroneLocationLng);
-                    mDroneHeading = (float) mCI.mFlightController.getCompass().getHeading();
+                    mDroneHeading = mCI.mFlightController.getCompass().getHeading();
                     updateDroneLocation();
                     // set flight data
-                    mAttitudeData = (double) state.getUltrasonicHeight();
-                    mhs = Math.sqrt(state.getVelocityX() * state.getVelocityX()
-                            + state.getVelocityY() * state.getVelocityY());
-                    mvs = -1 * state.getVelocityZ();
+                    mAttitudeData = (double) flightControllerState.getUltrasonicHeightInMeters();
+                    mhs = Math.sqrt(flightControllerState.getVelocityX() * flightControllerState.getVelocityX()
+                            + flightControllerState.getVelocityY() * flightControllerState.getVelocityY());
+                    mvs = -1*flightControllerState.getVelocityZ();
 
                     updateFlightData();
-
-
                 }
             });
+
             // set up battery
-            mCI.aircraft.getBattery().setBatteryStateUpdateCallback(new DJIBattery.DJIBatteryStateUpdateCallback() {
+            mCI.aircraft.getBattery().setStateCallback(new BatteryState.Callback() {
                 @Override
-                public void onResult(DJIBatteryState djiBatteryState) {
-                    mBatteryPercent = djiBatteryState.getBatteryEnergyRemainingPercent();
+                public void onUpdate(BatteryState batteryState) {
+                    mBatteryPercent = batteryState.getChargeRemainingInPercent();
                     mBatteryView.setProgress(mBatteryPercent);
                     updateBatteryStatus();
                 }
             });
         }
+
     }
 
     private void updateFlightData() {
@@ -911,6 +904,7 @@ public class FPVFullscreenActivity extends FragmentActivity implements OnMapRead
     private void callExecution(ArrayList<Integer> encoded_string) {
         mEncodedStr = encoded_string;
         boolean success = false;
+        mCI.initFlightController(); //added by keao xu
         if (mCI.mFlightController != null) {
 //            if (mCI.mVirtualStickEnabled == false) {
 //                mCI.mEnableVS();
