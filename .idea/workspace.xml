@@ -1,155 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="cdd42668-d09d-484c-8042-17c72163901a" name="Default" comment="">
-      <change type="DELETED" beforePath="$PROJECT_DIR$/main/HeyMavic/app/src/main/java/com/edillower/heymavic/CmdCodeInterpreter.java" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/main/HeyMavic/app/src/main/java/com/edillower/heymavic/CommandInterpreter.java" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/main/HeyMavic/app/src/main/java/com/edillower/heymavic/DJISimulatorApplication.java" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/main/HeyMavic/app/src/main/java/com/edillower/heymavic/MainActivity.java" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/main/HeyMavic/app/src/main/java/com/edillower/heymavic/OnScreenJoystick.java" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/main/HeyMavic/app/src/main/java/com/edillower/heymavic/OnScreenJoystickListener.java" afterPath="" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/main/HeyMavic/dJISDKLIB/libs/converter-gson-2.0.1.jar" afterPath="$PROJECT_DIR$/main/HeyMavic/dJISDKLIB/libs/converter-gson-2.0.1.jar" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/main/HeyMavic/dJISDKLIB/libs/dji-sdk.jar" afterPath="$PROJECT_DIR$/main/HeyMavic/dJISDKLIB/libs/dji-sdk.jar" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/main/HeyMavic/dJISDKLIB/libs/dji_eventbus.jar" afterPath="$PROJECT_DIR$/main/HeyMavic/dJISDKLIB/libs/dji_eventbus.jar" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/main/HeyMavic/dJISDKLIB/libs/dji_gson.jar" afterPath="$PROJECT_DIR$/main/HeyMavic/dJISDKLIB/libs/dji_gson.jar" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/main/HeyMavic/dJISDKLIB/libs/okhttp-3.2.0.jar" afterPath="$PROJECT_DIR$/main/HeyMavic/dJISDKLIB/libs/okhttp-3.2.0.jar" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/main/HeyMavic/dJISDKLIB/libs/okio-1.7.0.jar" afterPath="$PROJECT_DIR$/main/HeyMavic/dJISDKLIB/libs/okio-1.7.0.jar" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/main/HeyMavic/dJISDKLIB/libs/retrofit-2.0.1.jar" afterPath="$PROJECT_DIR$/main/HeyMavic/dJISDKLIB/libs/retrofit-2.0.1.jar" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/main/HeyMavic/dJISDKLIB/libs/rxandroid-1.1.0.jar" afterPath="$PROJECT_DIR$/main/HeyMavic/dJISDKLIB/libs/rxandroid-1.1.0.jar" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/main/HeyMavic/dJISDKLIB/libs/rxjava-1.1.2.jar" afterPath="$PROJECT_DIR$/main/HeyMavic/dJISDKLIB/libs/rxjava-1.1.2.jar" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/main/HeyMavic/dJISDKLIB/libs/rxjava-computation-expressions-0.21.1.jar" afterPath="$PROJECT_DIR$/main/HeyMavic/dJISDKLIB/libs/rxjava-computation-expressions-0.21.1.jar" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/main/HeyMavic/dJISDKLIB/libs/sqlbrite-0.6.2.jar" afterPath="$PROJECT_DIR$/main/HeyMavic/dJISDKLIB/libs/sqlbrite-0.6.2.jar" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/main/HeyMavic/dJISDKLIB/src/main/assets/data_file/datafile1.bin" afterPath="$PROJECT_DIR$/main/HeyMavic/dJISDKLIB/src/main/assets/data_file/datafile1.bin" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/main/HeyMavic/dJISDKLIB/src/main/assets/data_file/datafile10.bin" afterPath="$PROJECT_DIR$/main/HeyMavic/dJISDKLIB/src/main/assets/data_file/datafile10.bin" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/main/HeyMavic/dJISDKLIB/src/main/assets/data_file/datafile11.bin" afterPath="$PROJECT_DIR$/main/HeyMavic/dJISDKLIB/src/main/assets/data_file/datafile11.bin" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/main/HeyMavic/dJISDKLIB/src/main/assets/data_file/datafile12.bin" afterPath="$PROJECT_DIR$/main/HeyMavic/dJISDKLIB/src/main/assets/data_file/datafile12.bin" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/main/HeyMavic/dJISDKLIB/src/main/assets/data_file/datafile13.bin" afterPath="$PROJECT_DIR$/main/HeyMavic/dJISDKLIB/src/main/assets/data_file/datafile13.bin" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/main/HeyMavic/dJISDKLIB/src/main/assets/data_file/datafile14.bin" afterPath="$PROJECT_DIR$/main/HeyMavic/dJISDKLIB/src/main/assets/data_file/datafile14.bin" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/main/HeyMavic/dJISDKLIB/src/main/assets/data_file/datafile15.bin" afterPath="$PROJECT_DIR$/main/HeyMavic/dJISDKLIB/src/main/assets/data_file/datafile15.bin" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/main/HeyMavic/dJISDKLIB/src/main/assets/data_file/datafile16.bin" afterPath="$PROJECT_DIR$/main/HeyMavic/dJISDKLIB/src/main/assets/data_file/datafile16.bin" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/main/HeyMavic/dJISDKLIB/src/main/assets/data_file/datafile17.bin" afterPath="$PROJECT_DIR$/main/HeyMavic/dJISDKLIB/src/main/assets/data_file/datafile17.bin" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/main/HeyMavic/dJISDKLIB/src/main/assets/data_file/datafile18.bin" afterPath="$PROJECT_DIR$/main/HeyMavic/dJISDKLIB/src/main/assets/data_file/datafile18.bin" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/main/HeyMavic/dJISDKLIB/src/main/assets/data_file/datafile19.bin" afterPath="$PROJECT_DIR$/main/HeyMavic/dJISDKLIB/src/main/assets/data_file/datafile19.bin" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/main/HeyMavic/dJISDKLIB/src/main/assets/data_file/datafile2.bin" afterPath="$PROJECT_DIR$/main/HeyMavic/dJISDKLIB/src/main/assets/data_file/datafile2.bin" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/main/HeyMavic/dJISDKLIB/src/main/assets/data_file/datafile20.bin" afterPath="$PROJECT_DIR$/main/HeyMavic/dJISDKLIB/src/main/assets/data_file/datafile20.bin" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/main/HeyMavic/dJISDKLIB/src/main/assets/data_file/datafile21.bin" afterPath="$PROJECT_DIR$/main/HeyMavic/dJISDKLIB/src/main/assets/data_file/datafile21.bin" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/main/HeyMavic/dJISDKLIB/src/main/assets/data_file/datafile22.bin" afterPath="$PROJECT_DIR$/main/HeyMavic/dJISDKLIB/src/main/assets/data_file/datafile22.bin" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/main/HeyMavic/dJISDKLIB/src/main/assets/data_file/datafile23.bin" afterPath="$PROJECT_DIR$/main/HeyMavic/dJISDKLIB/src/main/assets/data_file/datafile23.bin" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/main/HeyMavic/dJISDKLIB/src/main/assets/data_file/datafile24.bin" afterPath="$PROJECT_DIR$/main/HeyMavic/dJISDKLIB/src/main/assets/data_file/datafile24.bin" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/main/HeyMavic/dJISDKLIB/src/main/assets/data_file/datafile25.bin" afterPath="$PROJECT_DIR$/main/HeyMavic/dJISDKLIB/src/main/assets/data_file/datafile25.bin" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/main/HeyMavic/dJISDKLIB/src/main/assets/data_file/datafile26.bin" afterPath="$PROJECT_DIR$/main/HeyMavic/dJISDKLIB/src/main/assets/data_file/datafile26.bin" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/main/HeyMavic/dJISDKLIB/src/main/assets/data_file/datafile27.bin" afterPath="$PROJECT_DIR$/main/HeyMavic/dJISDKLIB/src/main/assets/data_file/datafile27.bin" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/main/HeyMavic/dJISDKLIB/src/main/assets/data_file/datafile28.bin" afterPath="$PROJECT_DIR$/main/HeyMavic/dJISDKLIB/src/main/assets/data_file/datafile28.bin" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/main/HeyMavic/dJISDKLIB/src/main/assets/data_file/datafile3.bin" afterPath="$PROJECT_DIR$/main/HeyMavic/dJISDKLIB/src/main/assets/data_file/datafile3.bin" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/main/HeyMavic/dJISDKLIB/src/main/assets/data_file/datafile4.bin" afterPath="$PROJECT_DIR$/main/HeyMavic/dJISDKLIB/src/main/assets/data_file/datafile4.bin" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/main/HeyMavic/dJISDKLIB/src/main/assets/data_file/datafile5.bin" afterPath="$PROJECT_DIR$/main/HeyMavic/dJISDKLIB/src/main/assets/data_file/datafile5.bin" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/main/HeyMavic/dJISDKLIB/src/main/assets/data_file/datafile6.bin" afterPath="$PROJECT_DIR$/main/HeyMavic/dJISDKLIB/src/main/assets/data_file/datafile6.bin" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/main/HeyMavic/dJISDKLIB/src/main/assets/data_file/datafile7.bin" afterPath="$PROJECT_DIR$/main/HeyMavic/dJISDKLIB/src/main/assets/data_file/datafile7.bin" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/main/HeyMavic/dJISDKLIB/src/main/assets/data_file/datafile8.bin" afterPath="$PROJECT_DIR$/main/HeyMavic/dJISDKLIB/src/main/assets/data_file/datafile8.bin" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/main/HeyMavic/dJISDKLIB/src/main/assets/data_file/datafile9.bin" afterPath="$PROJECT_DIR$/main/HeyMavic/dJISDKLIB/src/main/assets/data_file/datafile9.bin" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/main/HeyMavic/dJISDKLIB/src/main/jniLibs/arm64-v8a/libFREncrypt.so" afterPath="$PROJECT_DIR$/main/HeyMavic/dJISDKLIB/src/main/jniLibs/arm64-v8a/libFREncrypt.so" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/main/HeyMavic/dJISDKLIB/src/main/jniLibs/arm64-v8a/libFlyForbid.so" afterPath="$PROJECT_DIR$/main/HeyMavic/dJISDKLIB/src/main/jniLibs/arm64-v8a/libFlyForbid.so" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/main/HeyMavic/dJISDKLIB/src/main/jniLibs/arm64-v8a/libGroudStation.so" afterPath="$PROJECT_DIR$/main/HeyMavic/dJISDKLIB/src/main/jniLibs/arm64-v8a/libGroudStation.so" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/main/HeyMavic/dJISDKLIB/src/main/jniLibs/arm64-v8a/libSDKRelativeJNI.so" afterPath="$PROJECT_DIR$/main/HeyMavic/dJISDKLIB/src/main/jniLibs/arm64-v8a/libSDKRelativeJNI.so" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/main/HeyMavic/dJISDKLIB/src/main/jniLibs/arm64-v8a/libUpgradeVerify.so" afterPath="$PROJECT_DIR$/main/HeyMavic/dJISDKLIB/src/main/jniLibs/arm64-v8a/libUpgradeVerify.so" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/main/HeyMavic/dJISDKLIB/src/main/jniLibs/arm64-v8a/libdjivideo.so" afterPath="$PROJECT_DIR$/main/HeyMavic/dJISDKLIB/src/main/jniLibs/arm64-v8a/libdjivideo.so" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/main/HeyMavic/dJISDKLIB/src/main/jniLibs/arm64-v8a/libstlport_shared.so" afterPath="$PROJECT_DIR$/main/HeyMavic/dJISDKLIB/src/main/jniLibs/arm64-v8a/libstlport_shared.so" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/main/HeyMavic/dJISDKLIB/src/main/jniLibs/arm64-v8a/libudt.so" afterPath="$PROJECT_DIR$/main/HeyMavic/dJISDKLIB/src/main/jniLibs/arm64-v8a/libudt.so" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/main/HeyMavic/dJISDKLIB/src/main/jniLibs/arm64-v8a/libudtjni.so" afterPath="$PROJECT_DIR$/main/HeyMavic/dJISDKLIB/src/main/jniLibs/arm64-v8a/libudtjni.so" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/main/HeyMavic/dJISDKLIB/src/main/jniLibs/arm64-v8a/libyuv2.so" afterPath="$PROJECT_DIR$/main/HeyMavic/dJISDKLIB/src/main/jniLibs/arm64-v8a/libyuv2.so" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/main/HeyMavic/dJISDKLIB/src/main/jniLibs/armeabi-v7a/libFREncrypt.so" afterPath="$PROJECT_DIR$/main/HeyMavic/dJISDKLIB/src/main/jniLibs/armeabi-v7a/libFREncrypt.so" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/main/HeyMavic/dJISDKLIB/src/main/jniLibs/armeabi-v7a/libFlyForbid.so" afterPath="$PROJECT_DIR$/main/HeyMavic/dJISDKLIB/src/main/jniLibs/armeabi-v7a/libFlyForbid.so" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/main/HeyMavic/dJISDKLIB/src/main/jniLibs/armeabi-v7a/libGroudStation.so" afterPath="$PROJECT_DIR$/main/HeyMavic/dJISDKLIB/src/main/jniLibs/armeabi-v7a/libGroudStation.so" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/main/HeyMavic/dJISDKLIB/src/main/jniLibs/armeabi-v7a/libSDKRelativeJNI.so" afterPath="$PROJECT_DIR$/main/HeyMavic/dJISDKLIB/src/main/jniLibs/armeabi-v7a/libSDKRelativeJNI.so" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/main/HeyMavic/dJISDKLIB/src/main/jniLibs/armeabi-v7a/libUpgradeVerify.so" afterPath="$PROJECT_DIR$/main/HeyMavic/dJISDKLIB/src/main/jniLibs/armeabi-v7a/libUpgradeVerify.so" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/main/HeyMavic/dJISDKLIB/src/main/jniLibs/armeabi-v7a/libdjivideo.so" afterPath="$PROJECT_DIR$/main/HeyMavic/dJISDKLIB/src/main/jniLibs/armeabi-v7a/libdjivideo.so" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/main/HeyMavic/dJISDKLIB/src/main/jniLibs/armeabi-v7a/libstlport_shared.so" afterPath="$PROJECT_DIR$/main/HeyMavic/dJISDKLIB/src/main/jniLibs/armeabi-v7a/libstlport_shared.so" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/main/HeyMavic/dJISDKLIB/src/main/jniLibs/armeabi-v7a/libudt.so" afterPath="$PROJECT_DIR$/main/HeyMavic/dJISDKLIB/src/main/jniLibs/armeabi-v7a/libudt.so" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/main/HeyMavic/dJISDKLIB/src/main/jniLibs/armeabi-v7a/libudtjni.so" afterPath="$PROJECT_DIR$/main/HeyMavic/dJISDKLIB/src/main/jniLibs/armeabi-v7a/libudtjni.so" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/main/HeyMavic/dJISDKLIB/src/main/jniLibs/armeabi-v7a/libyuv2.so" afterPath="$PROJECT_DIR$/main/HeyMavic/dJISDKLIB/src/main/jniLibs/armeabi-v7a/libyuv2.so" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/main/HeyMavic/dJISDKLIB/src/main/jniLibs/x86/libFREncrypt.so" afterPath="$PROJECT_DIR$/main/HeyMavic/dJISDKLIB/src/main/jniLibs/x86/libFREncrypt.so" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/main/HeyMavic/dJISDKLIB/src/main/jniLibs/x86/libFlyForbid.so" afterPath="$PROJECT_DIR$/main/HeyMavic/dJISDKLIB/src/main/jniLibs/x86/libFlyForbid.so" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/main/HeyMavic/dJISDKLIB/src/main/jniLibs/x86/libGroudStation.so" afterPath="$PROJECT_DIR$/main/HeyMavic/dJISDKLIB/src/main/jniLibs/x86/libGroudStation.so" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/main/HeyMavic/dJISDKLIB/src/main/jniLibs/x86/libSDKRelativeJNI.so" afterPath="$PROJECT_DIR$/main/HeyMavic/dJISDKLIB/src/main/jniLibs/x86/libSDKRelativeJNI.so" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/main/HeyMavic/dJISDKLIB/src/main/jniLibs/x86/libUpgradeVerify.so" afterPath="$PROJECT_DIR$/main/HeyMavic/dJISDKLIB/src/main/jniLibs/x86/libUpgradeVerify.so" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/main/HeyMavic/dJISDKLIB/src/main/jniLibs/x86/libdjivideo.so" afterPath="$PROJECT_DIR$/main/HeyMavic/dJISDKLIB/src/main/jniLibs/x86/libdjivideo.so" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/main/HeyMavic/dJISDKLIB/src/main/jniLibs/x86/libstlport_shared.so" afterPath="$PROJECT_DIR$/main/HeyMavic/dJISDKLIB/src/main/jniLibs/x86/libstlport_shared.so" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/main/HeyMavic/dJISDKLIB/src/main/jniLibs/x86/libudt.so" afterPath="$PROJECT_DIR$/main/HeyMavic/dJISDKLIB/src/main/jniLibs/x86/libudt.so" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/main/HeyMavic/dJISDKLIB/src/main/jniLibs/x86/libudtjni.so" afterPath="$PROJECT_DIR$/main/HeyMavic/dJISDKLIB/src/main/jniLibs/x86/libudtjni.so" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/main/HeyMavic/dJISDKLIB/src/main/jniLibs/x86/libyuv2.so" afterPath="$PROJECT_DIR$/main/HeyMavic/dJISDKLIB/src/main/jniLibs/x86/libyuv2.so" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/main/HeyMavic/dJISDKLIB/src/main/res/drawable/ic_launcher.png" afterPath="$PROJECT_DIR$/main/HeyMavic/dJISDKLIB/src/main/res/drawable/ic_launcher.png" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/main/HeyMavic/dJISDKLIB/src/main/res/drawable/radio_checked.png" afterPath="$PROJECT_DIR$/main/HeyMavic/dJISDKLIB/src/main/res/drawable/radio_checked.png" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/main/HeyMavic/dJISDKLIB/src/main/res/drawable/radio_unchecked.png" afterPath="$PROJECT_DIR$/main/HeyMavic/dJISDKLIB/src/main/res/drawable/radio_unchecked.png" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/main/HeyMavic/dJISDKLIB/src/main/res/raw/dock.ogg" afterPath="$PROJECT_DIR$/main/HeyMavic/dJISDKLIB/src/main/res/raw/dock.ogg" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/main/HeyMavic/dJISDKLIB/src/main/res/raw/effect_tick.ogg" afterPath="$PROJECT_DIR$/main/HeyMavic/dJISDKLIB/src/main/res/raw/effect_tick.ogg" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/main/HeyMavic/dJISDKLIB/src/main/res/raw/iframe_1080x720_gd600.h264" afterPath="$PROJECT_DIR$/main/HeyMavic/dJISDKLIB/src/main/res/raw/iframe_1080x720_gd600.h264" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/main/HeyMavic/dJISDKLIB/src/main/res/raw/iframe_1080x720_wm620.h264" afterPath="$PROJECT_DIR$/main/HeyMavic/dJISDKLIB/src/main/res/raw/iframe_1080x720_wm620.h264" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/main/HeyMavic/dJISDKLIB/src/main/res/raw/iframe_1088x720_wm620.h264" afterPath="$PROJECT_DIR$/main/HeyMavic/dJISDKLIB/src/main/res/raw/iframe_1088x720_wm620.h264" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/main/HeyMavic/dJISDKLIB/src/main/res/raw/iframe_1280x720_3s.h264" afterPath="$PROJECT_DIR$/main/HeyMavic/dJISDKLIB/src/main/res/raw/iframe_1280x720_3s.h264" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/main/HeyMavic/dJISDKLIB/src/main/res/raw/iframe_1280x720_ins.h264" afterPath="$PROJECT_DIR$/main/HeyMavic/dJISDKLIB/src/main/res/raw/iframe_1280x720_ins.h264" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/main/HeyMavic/dJISDKLIB/src/main/res/raw/iframe_1280x720_p4.h264" afterPath="$PROJECT_DIR$/main/HeyMavic/dJISDKLIB/src/main/res/raw/iframe_1280x720_p4.h264" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/main/HeyMavic/dJISDKLIB/src/main/res/raw/iframe_1280x720_wm220.h264" afterPath="$PROJECT_DIR$/main/HeyMavic/dJISDKLIB/src/main/res/raw/iframe_1280x720_wm220.h264" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/main/HeyMavic/dJISDKLIB/src/main/res/raw/iframe_1280x720_wm620.h264" afterPath="$PROJECT_DIR$/main/HeyMavic/dJISDKLIB/src/main/res/raw/iframe_1280x720_wm620.h264" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/main/HeyMavic/dJISDKLIB/src/main/res/raw/iframe_1344x720_wm620.h264" afterPath="$PROJECT_DIR$/main/HeyMavic/dJISDKLIB/src/main/res/raw/iframe_1344x720_wm620.h264" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/main/HeyMavic/dJISDKLIB/src/main/res/raw/iframe_1360x720_wm620.h264" afterPath="$PROJECT_DIR$/main/HeyMavic/dJISDKLIB/src/main/res/raw/iframe_1360x720_wm620.h264" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/main/HeyMavic/dJISDKLIB/src/main/res/raw/iframe_1632x1080_wm620.h264" afterPath="$PROJECT_DIR$/main/HeyMavic/dJISDKLIB/src/main/res/raw/iframe_1632x1080_wm620.h264" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/main/HeyMavic/dJISDKLIB/src/main/res/raw/iframe_1760x720_wm620.h264" afterPath="$PROJECT_DIR$/main/HeyMavic/dJISDKLIB/src/main/res/raw/iframe_1760x720_wm620.h264" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/main/HeyMavic/dJISDKLIB/src/main/res/raw/iframe_1920x1024_wm620.h264" afterPath="$PROJECT_DIR$/main/HeyMavic/dJISDKLIB/src/main/res/raw/iframe_1920x1024_wm620.h264" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/main/HeyMavic/dJISDKLIB/src/main/res/raw/iframe_1920x1088_wm620.h264" afterPath="$PROJECT_DIR$/main/HeyMavic/dJISDKLIB/src/main/res/raw/iframe_1920x1088_wm620.h264" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/main/HeyMavic/dJISDKLIB/src/main/res/raw/iframe_1920x1440_wm620.h264" afterPath="$PROJECT_DIR$/main/HeyMavic/dJISDKLIB/src/main/res/raw/iframe_1920x1440_wm620.h264" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/main/HeyMavic/dJISDKLIB/src/main/res/raw/iframe_1920x800_wm620.h264" afterPath="$PROJECT_DIR$/main/HeyMavic/dJISDKLIB/src/main/res/raw/iframe_1920x800_wm620.h264" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/main/HeyMavic/dJISDKLIB/src/main/res/raw/iframe_608x448_wm620.h264" afterPath="$PROJECT_DIR$/main/HeyMavic/dJISDKLIB/src/main/res/raw/iframe_608x448_wm620.h264" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/main/HeyMavic/dJISDKLIB/src/main/res/raw/iframe_640x368_wm620.h264" afterPath="$PROJECT_DIR$/main/HeyMavic/dJISDKLIB/src/main/res/raw/iframe_640x368_wm620.h264" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/main/HeyMavic/dJISDKLIB/src/main/res/raw/iframe_640x480.h264" afterPath="$PROJECT_DIR$/main/HeyMavic/dJISDKLIB/src/main/res/raw/iframe_640x480.h264" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/main/HeyMavic/dJISDKLIB/src/main/res/raw/iframe_720x480_wm620.h264" afterPath="$PROJECT_DIR$/main/HeyMavic/dJISDKLIB/src/main/res/raw/iframe_720x480_wm620.h264" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/main/HeyMavic/dJISDKLIB/src/main/res/raw/iframe_848x480.h264" afterPath="$PROJECT_DIR$/main/HeyMavic/dJISDKLIB/src/main/res/raw/iframe_848x480.h264" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/main/HeyMavic/dJISDKLIB/src/main/res/raw/iframe_960x720_3s.h264" afterPath="$PROJECT_DIR$/main/HeyMavic/dJISDKLIB/src/main/res/raw/iframe_960x720_3s.h264" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/main/HeyMavic/dJISDKLIB/src/main/res/raw/iframe_960x720_wm620.h264" afterPath="$PROJECT_DIR$/main/HeyMavic/dJISDKLIB/src/main/res/raw/iframe_960x720_wm620.h264" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/main/HeyMavic/dJISDKLIB/src/main/res/raw/iframe_cam_cap_4p.h264" afterPath="$PROJECT_DIR$/main/HeyMavic/dJISDKLIB/src/main/res/raw/iframe_cam_cap_4p.h264" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/main/HeyMavic/dJISDKLIB/src/main/res/raw/iframe_p4p_1344x720.h264" afterPath="$PROJECT_DIR$/main/HeyMavic/dJISDKLIB/src/main/res/raw/iframe_p4p_1344x720.h264" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/main/HeyMavic/dJISDKLIB/src/main/res/raw/iframe_p4p_720_16x9.h264" afterPath="$PROJECT_DIR$/main/HeyMavic/dJISDKLIB/src/main/res/raw/iframe_p4p_720_16x9.h264" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/main/HeyMavic/dJISDKLIB/src/main/res/raw/iframe_p4p_720_3x2.h264" afterPath="$PROJECT_DIR$/main/HeyMavic/dJISDKLIB/src/main/res/raw/iframe_p4p_720_3x2.h264" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/main/HeyMavic/dJISDKLIB/src/main/res/raw/iframe_p4p_720_4x3.h264" afterPath="$PROJECT_DIR$/main/HeyMavic/dJISDKLIB/src/main/res/raw/iframe_p4p_720_4x3.h264" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/main/HeyMavic/dJISDKLIB/src/main/res/raw/iframe_wm220_1280x720.h264" afterPath="$PROJECT_DIR$/main/HeyMavic/dJISDKLIB/src/main/res/raw/iframe_wm220_1280x720.h264" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/LOG.md" afterPath="$PROJECT_DIR$/LOG.md" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/main/HeyMavic/app/src/main/AndroidManifest.xml" afterPath="$PROJECT_DIR$/main/HeyMavic/app/src/main/AndroidManifest.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/main/HeyMavic/app/src/main/java/com/edillower/heymavic/BaseFpvView.java" afterPath="$PROJECT_DIR$/main/HeyMavic/app/src/main/java/com/edillower/heymavic/BaseFpvView.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/main/HeyMavic/app/src/main/java/com/edillower/heymavic/FPVFullscreenActivity.java" afterPath="$PROJECT_DIR$/main/HeyMavic/app/src/main/java/com/edillower/heymavic/FPVFullscreenActivity.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/main/HeyMavic/app/src/main/res/layout/activity_main.xml" afterPath="$PROJECT_DIR$/main/HeyMavic/app/src/main/res/layout/activity_main.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/main/HeyMavic/dJISDKLIB/build.gradle" afterPath="$PROJECT_DIR$/main/HeyMavic/dJISDKLIB/build.gradle" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/main/HeyMavic/dJISDKLIB/src/main/AndroidManifest.xml" afterPath="$PROJECT_DIR$/main/HeyMavic/dJISDKLIB/src/main/AndroidManifest.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/main/HeyMavic/dJISDKLIB/src/main/res/anim/core_hold.xml" afterPath="$PROJECT_DIR$/main/HeyMavic/dJISDKLIB/src/main/res/anim/core_hold.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/main/HeyMavic/dJISDKLIB/src/main/res/anim/core_hyperspace_in.xml" afterPath="$PROJECT_DIR$/main/HeyMavic/dJISDKLIB/src/main/res/anim/core_hyperspace_in.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/main/HeyMavic/dJISDKLIB/src/main/res/anim/core_hyperspace_out.xml" afterPath="$PROJECT_DIR$/main/HeyMavic/dJISDKLIB/src/main/res/anim/core_hyperspace_out.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/main/HeyMavic/dJISDKLIB/src/main/res/anim/core_other.xml" afterPath="$PROJECT_DIR$/main/HeyMavic/dJISDKLIB/src/main/res/anim/core_other.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/main/HeyMavic/dJISDKLIB/src/main/res/anim/core_push_left_in.xml" afterPath="$PROJECT_DIR$/main/HeyMavic/dJISDKLIB/src/main/res/anim/core_push_left_in.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/main/HeyMavic/dJISDKLIB/src/main/res/anim/core_push_left_out.xml" afterPath="$PROJECT_DIR$/main/HeyMavic/dJISDKLIB/src/main/res/anim/core_push_left_out.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/main/HeyMavic/dJISDKLIB/src/main/res/anim/core_push_right_in.xml" afterPath="$PROJECT_DIR$/main/HeyMavic/dJISDKLIB/src/main/res/anim/core_push_right_in.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/main/HeyMavic/dJISDKLIB/src/main/res/anim/core_push_right_out.xml" afterPath="$PROJECT_DIR$/main/HeyMavic/dJISDKLIB/src/main/res/anim/core_push_right_out.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/main/HeyMavic/dJISDKLIB/src/main/res/anim/core_push_up_in.xml" afterPath="$PROJECT_DIR$/main/HeyMavic/dJISDKLIB/src/main/res/anim/core_push_up_in.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/main/HeyMavic/dJISDKLIB/src/main/res/anim/core_push_up_out.xml" afterPath="$PROJECT_DIR$/main/HeyMavic/dJISDKLIB/src/main/res/anim/core_push_up_out.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/main/HeyMavic/dJISDKLIB/src/main/res/anim/core_zoom_enter.xml" afterPath="$PROJECT_DIR$/main/HeyMavic/dJISDKLIB/src/main/res/anim/core_zoom_enter.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/main/HeyMavic/dJISDKLIB/src/main/res/anim/core_zoom_enter_back.xml" afterPath="$PROJECT_DIR$/main/HeyMavic/dJISDKLIB/src/main/res/anim/core_zoom_enter_back.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/main/HeyMavic/dJISDKLIB/src/main/res/anim/core_zoom_exit.xml" afterPath="$PROJECT_DIR$/main/HeyMavic/dJISDKLIB/src/main/res/anim/core_zoom_exit.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/main/HeyMavic/dJISDKLIB/src/main/res/anim/core_zoom_exit_back.xml" afterPath="$PROJECT_DIR$/main/HeyMavic/dJISDKLIB/src/main/res/anim/core_zoom_exit_back.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/main/HeyMavic/dJISDKLIB/src/main/res/drawable/btn_lock_selector.xml" afterPath="$PROJECT_DIR$/main/HeyMavic/dJISDKLIB/src/main/res/drawable/btn_lock_selector.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/main/HeyMavic/dJISDKLIB/src/main/res/drawable/btn_radio_selector.xml" afterPath="$PROJECT_DIR$/main/HeyMavic/dJISDKLIB/src/main/res/drawable/btn_radio_selector.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/main/HeyMavic/dJISDKLIB/src/main/res/drawable/btn_zoom_selector.xml" afterPath="$PROJECT_DIR$/main/HeyMavic/dJISDKLIB/src/main/res/drawable/btn_zoom_selector.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/main/HeyMavic/dJISDKLIB/src/main/res/layout/dialog_login.xml" afterPath="$PROJECT_DIR$/main/HeyMavic/dJISDKLIB/src/main/res/layout/dialog_login.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/main/HeyMavic/dJISDKLIB/src/main/res/layout/log_dialog_view.xml" afterPath="$PROJECT_DIR$/main/HeyMavic/dJISDKLIB/src/main/res/layout/log_dialog_view.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/main/HeyMavic/dJISDKLIB/src/main/res/raw/flyc_param_infos" afterPath="$PROJECT_DIR$/main/HeyMavic/dJISDKLIB/src/main/res/raw/flyc_param_infos" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/main/HeyMavic/dJISDKLIB/src/main/res/raw/flyforbid.json" afterPath="$PROJECT_DIR$/main/HeyMavic/dJISDKLIB/src/main/res/raw/flyforbid.json" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/main/HeyMavic/dJISDKLIB/src/main/res/raw/gimbal_param_infos" afterPath="$PROJECT_DIR$/main/HeyMavic/dJISDKLIB/src/main/res/raw/gimbal_param_infos" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/main/HeyMavic/dJISDKLIB/src/main/res/values-zh-rCN/sdk_strings.xml" afterPath="$PROJECT_DIR$/main/HeyMavic/dJISDKLIB/src/main/res/values-zh-rCN/sdk_strings.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/main/HeyMavic/dJISDKLIB/src/main/res/values-zh-rCN/strings.xml" afterPath="$PROJECT_DIR$/main/HeyMavic/dJISDKLIB/src/main/res/values-zh-rCN/strings.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/main/HeyMavic/dJISDKLIB/src/main/res/values/attrs.xml" afterPath="$PROJECT_DIR$/main/HeyMavic/dJISDKLIB/src/main/res/values/attrs.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/main/HeyMavic/dJISDKLIB/src/main/res/values/color.xml" afterPath="$PROJECT_DIR$/main/HeyMavic/dJISDKLIB/src/main/res/values/color.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/main/HeyMavic/dJISDKLIB/src/main/res/values/sdk_strings.xml" afterPath="$PROJECT_DIR$/main/HeyMavic/dJISDKLIB/src/main/res/values/sdk_strings.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/main/HeyMavic/dJISDKLIB/src/main/res/values/strings.xml" afterPath="$PROJECT_DIR$/main/HeyMavic/dJISDKLIB/src/main/res/values/strings.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/main/HeyMavic/dJISDKLIB/src/main/res/values/styles.xml" afterPath="$PROJECT_DIR$/main/HeyMavic/dJISDKLIB/src/main/res/values/styles.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/main/HeyMavic/dJISDKLIB/src/main/res/xml/accessory_filter.xml" afterPath="$PROJECT_DIR$/main/HeyMavic/dJISDKLIB/src/main/res/xml/accessory_filter.xml" />
-    </list>
+    <list default="true" id="cdd42668-d09d-484c-8042-17c72163901a" name="Default" comment="" />
     <ignored path="HeyMavic.iws" />
     <ignored path=".idea/workspace.xml" />
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
@@ -159,7 +11,6 @@
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
     <option name="LAST_RESOLUTION" value="IGNORE" />
   </component>
-  <component name="ChangesViewManager" flattened_view="true" show_ignored="false" />
   <component name="CreatePatchCommitExecutor">
     <option name="PATCH_PATH" value="" />
   </component>
@@ -176,10 +27,10 @@
     </option>
   </component>
   <component name="ProjectFrameBounds">
-    <option name="x" value="47" />
+    <option name="x" value="55" />
     <option name="y" value="23" />
-    <option name="width" value="1280" />
-    <option name="height" value="693" />
+    <option name="width" value="1385" />
+    <option name="height" value="877" />
   </component>
   <component name="ProjectLevelVcsManager" settingsEditedManually="false">
     <OptionsSetting value="true" id="Add" />
@@ -206,8 +57,6 @@
       <foldersAlwaysOnTop value="true" />
     </navigator>
     <panes>
-      <pane id="PackagesPane" />
-      <pane id="Scratches" />
       <pane id="AndroidView">
         <subPane />
       </pane>
@@ -222,6 +71,8 @@
         </subPane>
       </pane>
       <pane id="Scope" />
+      <pane id="PackagesPane" />
+      <pane id="Scratches" />
     </panes>
   </component>
   <component name="PropertiesComponent">
@@ -232,7 +83,7 @@
     <property name="MemberChooser.showClasses" value="true" />
     <property name="MemberChooser.copyJavadoc" value="false" />
     <property name="android.sdk.path" value="$USER_HOME$/AppData/Local/Android/Sdk" />
-    <property name="last_opened_file_path" value="$PROJECT_DIR$/main/HeyMavic" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$" />
   </component>
   <component name="RunManager">
     <configuration default="true" type="AndroidRunConfigurationType" factoryName="Android App">
@@ -242,86 +93,46 @@
       <option name="PM_INSTALL_OPTIONS" value="" />
       <option name="ACTIVITY_EXTRA_FLAGS" value="" />
       <option name="MODE" value="default_activity" />
-      <option name="TARGET_SELECTION_MODE" value="SHOW_DIALOG" />
       <option name="PREFERRED_AVD" value="" />
       <option name="CLEAR_LOGCAT" value="false" />
       <option name="SHOW_LOGCAT_AUTOMATICALLY" value="false" />
       <option name="SKIP_NOOP_APK_INSTALLATIONS" value="true" />
       <option name="FORCE_STOP_RUNNING_APP" value="true" />
-      <option name="DEBUGGER_TYPE" value="Auto" />
+      <option name="TARGET_SELECTION_MODE" value="SHOW_DIALOG" />
       <option name="USE_LAST_SELECTED_DEVICE" value="false" />
       <option name="PREFERRED_AVD" value="" />
       <option name="SELECTED_CLOUD_MATRIX_CONFIGURATION_ID" value="-1" />
       <option name="SELECTED_CLOUD_MATRIX_PROJECT_ID" value="" />
+      <option name="DEBUGGER_TYPE" value="Auto" />
       <Auto>
         <option name="USE_JAVA_AWARE_DEBUGGER" value="false" />
+        <option name="SHOW_STATIC_VARS" value="true" />
         <option name="WORKING_DIR" value="" />
         <option name="TARGET_LOGGING_CHANNELS" value="lldb process:gdb-remote packets" />
+        <option name="SHOW_OPTIMIZED_WARNING" value="true" />
       </Auto>
       <Hybrid>
         <option name="USE_JAVA_AWARE_DEBUGGER" value="false" />
+        <option name="SHOW_STATIC_VARS" value="true" />
         <option name="WORKING_DIR" value="" />
         <option name="TARGET_LOGGING_CHANNELS" value="lldb process:gdb-remote packets" />
+        <option name="SHOW_OPTIMIZED_WARNING" value="true" />
       </Hybrid>
       <Java />
       <Native>
         <option name="USE_JAVA_AWARE_DEBUGGER" value="false" />
+        <option name="SHOW_STATIC_VARS" value="true" />
         <option name="WORKING_DIR" value="" />
         <option name="TARGET_LOGGING_CHANNELS" value="lldb process:gdb-remote packets" />
+        <option name="SHOW_OPTIMIZED_WARNING" value="true" />
       </Native>
       <Profilers>
         <option name="ENABLE_ADVANCED_PROFILING" value="true" />
-        <option name="GAPID_ENABLED" value="false" />
-        <option name="GAPID_DISABLE_PCS" value="false" />
         <option name="SUPPORT_LIB_ENABLED" value="true" />
         <option name="INSTRUMENTATION_ENABLED" value="true" />
       </Profilers>
       <option name="DEEP_LINK" value="" />
       <option name="ACTIVITY_CLASS" value="" />
-      <method />
-    </configuration>
-    <configuration default="true" type="AndroidTestRunConfigurationType" factoryName="Android Tests">
-      <module name="" />
-      <option name="TESTING_TYPE" value="0" />
-      <option name="INSTRUMENTATION_RUNNER_CLASS" value="" />
-      <option name="METHOD_NAME" value="" />
-      <option name="CLASS_NAME" value="" />
-      <option name="PACKAGE_NAME" value="" />
-      <option name="EXTRA_OPTIONS" value="" />
-      <option name="TARGET_SELECTION_MODE" value="SHOW_DIALOG" />
-      <option name="PREFERRED_AVD" value="" />
-      <option name="CLEAR_LOGCAT" value="false" />
-      <option name="SHOW_LOGCAT_AUTOMATICALLY" value="false" />
-      <option name="SKIP_NOOP_APK_INSTALLATIONS" value="true" />
-      <option name="FORCE_STOP_RUNNING_APP" value="true" />
-      <option name="DEBUGGER_TYPE" value="Auto" />
-      <option name="USE_LAST_SELECTED_DEVICE" value="false" />
-      <option name="PREFERRED_AVD" value="" />
-      <option name="SELECTED_CLOUD_MATRIX_CONFIGURATION_ID" value="-1" />
-      <option name="SELECTED_CLOUD_MATRIX_PROJECT_ID" value="" />
-      <Auto>
-        <option name="USE_JAVA_AWARE_DEBUGGER" value="false" />
-        <option name="WORKING_DIR" value="" />
-        <option name="TARGET_LOGGING_CHANNELS" value="lldb process:gdb-remote packets" />
-      </Auto>
-      <Hybrid>
-        <option name="USE_JAVA_AWARE_DEBUGGER" value="false" />
-        <option name="WORKING_DIR" value="" />
-        <option name="TARGET_LOGGING_CHANNELS" value="lldb process:gdb-remote packets" />
-      </Hybrid>
-      <Java />
-      <Native>
-        <option name="USE_JAVA_AWARE_DEBUGGER" value="false" />
-        <option name="WORKING_DIR" value="" />
-        <option name="TARGET_LOGGING_CHANNELS" value="lldb process:gdb-remote packets" />
-      </Native>
-      <Profilers>
-        <option name="ENABLE_ADVANCED_PROFILING" value="true" />
-        <option name="GAPID_ENABLED" value="false" />
-        <option name="GAPID_DISABLE_PCS" value="false" />
-        <option name="SUPPORT_LIB_ENABLED" value="true" />
-        <option name="INSTRUMENTATION_ENABLED" value="true" />
-      </Profilers>
       <method />
     </configuration>
     <configuration default="true" type="Application" factoryName="Application">
@@ -353,27 +164,6 @@
         </option>
         <option name="vmOptions" />
       </ExternalSystemSettings>
-      <method />
-    </configuration>
-    <configuration default="true" type="JUnit" factoryName="JUnit">
-      <extension name="coverage" enabled="false" merge="false" sample_coverage="true" runner="idea" />
-      <module name="" />
-      <option name="ALTERNATIVE_JRE_PATH_ENABLED" value="false" />
-      <option name="ALTERNATIVE_JRE_PATH" />
-      <option name="PACKAGE_NAME" />
-      <option name="MAIN_CLASS_NAME" />
-      <option name="METHOD_NAME" />
-      <option name="TEST_OBJECT" value="class" />
-      <option name="VM_PARAMETERS" value="-ea" />
-      <option name="PARAMETERS" />
-      <option name="WORKING_DIRECTORY" value="$MODULE_DIR$" />
-      <option name="ENV_VARIABLES" />
-      <option name="PASS_PARENT_ENVS" value="true" />
-      <option name="TEST_SEARCH_SCOPE">
-        <value defaultName="singleModule" />
-      </option>
-      <envs />
-      <patterns />
       <method />
     </configuration>
     <configuration default="true" type="JarApplication" factoryName="JAR Application">
@@ -461,6 +251,50 @@
       <listeners />
       <method />
     </configuration>
+    <configuration default="true" type="AndroidTestRunConfigurationType" factoryName="Android Tests">
+      <module name="" />
+      <option name="TESTING_TYPE" value="0" />
+      <option name="INSTRUMENTATION_RUNNER_CLASS" value="" />
+      <option name="METHOD_NAME" value="" />
+      <option name="CLASS_NAME" value="" />
+      <option name="PACKAGE_NAME" value="" />
+      <option name="EXTRA_OPTIONS" value="" />
+      <option name="TARGET_SELECTION_MODE" value="SHOW_DIALOG" />
+      <option name="PREFERRED_AVD" value="" />
+      <option name="CLEAR_LOGCAT" value="false" />
+      <option name="SHOW_LOGCAT_AUTOMATICALLY" value="false" />
+      <option name="SKIP_NOOP_APK_INSTALLATIONS" value="true" />
+      <option name="FORCE_STOP_RUNNING_APP" value="true" />
+      <option name="DEBUGGER_TYPE" value="Auto" />
+      <option name="USE_LAST_SELECTED_DEVICE" value="false" />
+      <option name="PREFERRED_AVD" value="" />
+      <option name="SELECTED_CLOUD_MATRIX_CONFIGURATION_ID" value="-1" />
+      <option name="SELECTED_CLOUD_MATRIX_PROJECT_ID" value="" />
+      <Auto>
+        <option name="USE_JAVA_AWARE_DEBUGGER" value="false" />
+        <option name="WORKING_DIR" value="" />
+        <option name="TARGET_LOGGING_CHANNELS" value="lldb process:gdb-remote packets" />
+      </Auto>
+      <Hybrid>
+        <option name="USE_JAVA_AWARE_DEBUGGER" value="false" />
+        <option name="WORKING_DIR" value="" />
+        <option name="TARGET_LOGGING_CHANNELS" value="lldb process:gdb-remote packets" />
+      </Hybrid>
+      <Java />
+      <Native>
+        <option name="USE_JAVA_AWARE_DEBUGGER" value="false" />
+        <option name="WORKING_DIR" value="" />
+        <option name="TARGET_LOGGING_CHANNELS" value="lldb process:gdb-remote packets" />
+      </Native>
+      <Profilers>
+        <option name="ENABLE_ADVANCED_PROFILING" value="true" />
+        <option name="GAPID_ENABLED" value="false" />
+        <option name="GAPID_DISABLE_PCS" value="false" />
+        <option name="SUPPORT_LIB_ENABLED" value="true" />
+        <option name="INSTRUMENTATION_ENABLED" value="true" />
+      </Profilers>
+      <method />
+    </configuration>
     <configuration name="&lt;template&gt;" type="Applet" default="true" selected="false">
       <option name="MAIN_CLASS_NAME" />
       <option name="HTML_FILE_NAME" />
@@ -491,31 +325,31 @@
     <servers />
   </component>
   <component name="ToolWindowManager">
-    <frame x="47" y="23" width="1280" height="693" extended-state="0" />
+    <frame x="55" y="23" width="1385" height="877" extended-state="6" />
     <editor active="false" />
     <layout>
       <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
-      <window_info id="Nl-Palette" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
-      <window_info id="Palette&#9;" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Image Layers" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Capture Analysis" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="7" side_tool="true" content_ui="tabs" />
       <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
       <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
-      <window_info id="Properties" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Terminal" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Capture Tool" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
-      <window_info id="Designer" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Project" active="true" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="0" side_tool="false" content_ui="combo" />
       <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="Theme Preview" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.4" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Favorites" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="3" side_tool="true" content_ui="tabs" />
       <window_info id="Cvs" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
+      <window_info id="Nl-Palette" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Message" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
       <window_info id="Commander" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.4" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
+      <window_info id="Properties" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Hierarchy" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="2" side_tool="false" content_ui="combo" />
+      <window_info id="Designer" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Ant Build" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
+      <window_info id="Palette&#9;" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Inspection" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.4" sideWeight="0.5" order="5" side_tool="false" content_ui="tabs" />
       <window_info id="Captures" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
       <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
