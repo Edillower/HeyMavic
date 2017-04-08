@@ -136,7 +136,6 @@ public class MyVirtualStickExecutor {
         }
     }
 
-
     /**
      * This is completed !
      *
@@ -178,34 +177,9 @@ public class MyVirtualStickExecutor {
      * @restore mYaw, mPitch, mRoll
      * @updates mThrottle, mHomeAltitude
      * */
-    protected void mUp(final int optionalMovingDistance){
-        double mHomeAltitude = mFlightController.getState().getAircraftLocation().getAltitude();
-        mThrottle = 3;
+    protected void mUp(){
         checkSendVirtualStickDataTimer();
-
-        if(optionalMovingDistance!=-1){
-            double targetAltitude = mHomeAltitude+optionalMovingDistance;
-
-            double currAltitude = 0;
-            double x = 0; //home_to_dest_vector
-            double y = 0; //drone_to_dest_vector
-
-            int keep = 1;
-            while(keep == 1){
-                currAltitude = mFlightController.getState().getAircraftLocation().getAltitude();
-                if(Math.abs(currAltitude - targetAltitude)<EPS){
-                    mStop();
-                    keep = 0;
-                }else{
-                    x = targetAltitude - mHomeAltitude;
-                    y = targetAltitude - currAltitude;
-                    if (x*y < 0) {
-                        mStop();
-                        keep = 0;
-                    }
-                }
-            }
-        }
+        mThrottle = 3;
     }
 
     /**
@@ -225,47 +199,9 @@ public class MyVirtualStickExecutor {
      * @ensure
      * if currAltitude < 1.2m OR currAltitude < optionalMovingDistance, directly landing
      * */
-    protected void mDown(final int optionalMovingDistance){
-        double mHomeAltitude = mFlightController.getState().getAircraftLocation().getAltitude();
-
-        if(mHomeAltitude < 1.2f){
-            Log.e("eric", "mHomeAltitude < 1.2m, landing ...");
-            //mLand();
-            return;
-        }
-        mThrottle = -3;
+    protected void mDown(){
         checkSendVirtualStickDataTimer();
-        if(optionalMovingDistance!=-1){
-            if(optionalMovingDistance >= mHomeAltitude){
-                Log.e("eric", "mHomeAltitude < optionalMovingDistance, landing ...");
-                //mLand();
-                return;
-            }
-            double targetAltitude = mHomeAltitude-optionalMovingDistance;
-            Log.e("eric", "tar: "+ targetAltitude);
-            double currAltitude = 0;
-            double x = 0; //home_to_dest_vector
-            double y = 0; //drone_to_dest_vector
-            int keep = 1;
-            while(keep == 1){
-                currAltitude = mFlightController.getState().getAircraftLocation().getAltitude();
-                if(Math.abs(currAltitude - targetAltitude)<EPS){
-                    Log.e("eric", "arrive: "+ currAltitude);
-                    mStop();
-                    keep = 0;
-
-                }else{
-                    x = targetAltitude - mHomeAltitude;
-                    y = targetAltitude - currAltitude;
-                    if (x*y < 0) {
-                        Log.e("eric", "arrive: "+ currAltitude);
-                        mStop();
-                        keep = 0;
-
-                    }
-                }
-            }
-        }
+        mThrottle = -3;
     }
 
     /**
@@ -302,7 +238,6 @@ public class MyVirtualStickExecutor {
     }
 
     /**
-     * todo need review
      * only use vectors to double check the arriving condition
      *
      * in order to avoid bias effect, do not use EPS to check arriving
@@ -318,93 +253,19 @@ public class MyVirtualStickExecutor {
      * @restore mYaw, mThrottle
      * @update mPitch, mRoll, mDestination[], mHomeLatitude, mHomeLongitude
      * */
-    protected void mGo(int movingDirection, final int optionalMovingDistance){
-        LocationCoordinate3D location = mFlightController.getState().getAircraftLocation();
-        double mHomeLatitude = location.getLatitude();
-        double mHomeLongitude = location.getLongitude();
-        Log.e("eric", "home: "+mHomeLatitude+","+mHomeLongitude);
-        double bearing = mFlightController.getCompass().getHeading();
+    protected void mGo(int movingDirection){
+        checkSendVirtualStickDataTimer();
+
         int dir[] = {0,1,0,-1,0};
-        float pitchJoyControlMaxSpeed = 3;
-        float rollJoyControlMaxSpeed = 3;
         int idx = 0;
         if(movingDirection==302){
             idx = 2;
-            bearing += 180;
         }else if(movingDirection==303){
             idx = 3;
-            bearing -= 90;
         }else if(movingDirection==304){
             idx = 1;
-            bearing += 90;
         }
-        mPitch = (float)(pitchJoyControlMaxSpeed * dir[idx]); //pX
-        mRoll = (float)(rollJoyControlMaxSpeed * dir[idx+1]); //pY
-        checkSendVirtualStickDataTimer();
-        if (optionalMovingDistance!=-1) {
-            double[] mDestination = calcDestination(mHomeLatitude, mHomeLongitude, bearing, optionalMovingDistance);
-            double targetLatitude = mDestination[0];
-            double targetLongitude = mDestination[1];
-//            double targetLatitude = mHomeLatitude + optionalMovingDistance*dir[idx]*Utils.ONE_METER_OFFSET;
-//            double targetLongitude = mHomeLongitude + optionalMovingDistance*dir[idx+1]*Utils.ONE_METER_OFFSET;
-            Log.e("eric", "tar: "+targetLatitude+","+targetLongitude);
-            double currLatitude = 0;
-            double currLongitude = 0;
-            double x[] = {0,0};//home_to_dest_vector
-            double y[] = {0,0};//drone_to_dest_vector
-            double cos_xy = 0;//cosine
-            int keep = 1;
-            while (keep == 1) {
-                location = mFlightController.getState().getAircraftLocation();
-                currLatitude = location.getLatitude();
-                currLongitude = location.getLongitude();
-                x[0] = targetLatitude - mHomeLatitude;
-                x[1] = targetLongitude - mHomeLongitude;
-                y[0] = targetLatitude - currLatitude;
-                y[1] = targetLongitude - currLongitude;
-                cos_xy = (x[0] * x[1] + y[0] * y[1]) / (Math.sqrt(x[0] * x[0] + x[1] * x[1]) * Math.sqrt(y[0] * y[0] + y[1] * y[1]));
-                if (cos_xy < 0) {
-                    Log.e("eric", "exceed: "+currLatitude+","+currLongitude);
-                    mStop();
-                    keep = 0;
-                }
-            }
-        }
-    }
-
-    /**
-     *
-     * This is completed ! pass test!
-     *
-     * @param lati
-     * @param longi
-     * @param bearing [-180, 180]
-     * @param distance
-     * @return
-     */
-    private static double[] calcDestination(double lati, double longi,
-                                            double bearing, double distance) {
-        double[] destination = new double[2]; // double[0]=latitude double[1]=longitude
-
-        // Setup parameters
-        double radius = 6371000; // Earth radius in meters
-        double ber = bearing; // Heading direction, clockwise from north
-        if (bearing < 0) {
-            ber += 360;
-        }
-        ber = Math.toRadians(ber);
-        double oriLati = Math.toRadians(lati); // Latitude of the origin point
-        double oriLongi = Math.toRadians(longi); // Longitude of the origin point
-        double agDist = distance / radius; // Angular distance
-        destination[0] = Math.asin(Math.sin(oriLati) * Math.cos(agDist)
-                + Math.cos(oriLati) * Math.sin(agDist) * Math.cos(ber));
-        destination[1] = oriLongi
-                + Math.atan2(
-                Math.sin(ber) * Math.sin(agDist) * Math.cos(oriLati),
-                Math.cos(agDist) - Math.sin(oriLati)
-                        * Math.sin(destination[0]));
-        destination[0] = Math.toDegrees(destination[0]);
-        destination[1] = Math.toDegrees(destination[1]);
-        return destination;
+        mPitch = (float)(3 * dir[idx]);
+        mRoll = (float)(3 * dir[idx+1]);
     }
 }

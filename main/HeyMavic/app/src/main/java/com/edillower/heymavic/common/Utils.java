@@ -85,4 +85,41 @@ public class Utils{
                 append(value == null ? "" : value + "").
                 append("\n");
     }
+
+    /**
+     * added by Eric on april 4
+     *
+     * This is completed ! pass test!
+     *
+     * @param lati
+     * @param longi
+     * @param bearing [-180, 180]
+     * @param distance
+     * @return
+     */
+    public static double[] calcDestination(double lati, double longi,
+                                           double bearing, double distance) {
+        double[] destination = new double[2]; // double[0]=latitude double[1]=longitude
+
+        // Setup parameters
+        double radius = 6371000; // Earth radius in meters
+        double ber = bearing; // Heading direction, clockwise from north
+        if (bearing < 0) {
+            ber += 360;
+        }
+        ber = Math.toRadians(ber);
+        double oriLati = Math.toRadians(lati); // Latitude of the origin point
+        double oriLongi = Math.toRadians(longi); // Longitude of the origin point
+        double agDist = distance / radius; // Angular distance
+        destination[0] = Math.asin(Math.sin(oriLati) * Math.cos(agDist)
+                + Math.cos(oriLati) * Math.sin(agDist) * Math.cos(ber));
+        destination[1] = oriLongi
+                + Math.atan2(
+                Math.sin(ber) * Math.sin(agDist) * Math.cos(oriLati),
+                Math.cos(agDist) - Math.sin(oriLati)
+                        * Math.sin(destination[0]));
+        destination[0] = Math.toDegrees(destination[0]);
+        destination[1] = Math.toDegrees(destination[1]);
+        return destination;
+    }
 }

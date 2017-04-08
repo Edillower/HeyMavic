@@ -17,6 +17,7 @@ import dji.sdk.sdkmanager.DJISDKManager;
 import dji.common.error.DJIError;
 import dji.common.error.DJISDKError;
 
+
 public class DJISimulatorApplication extends Application {
 
     private static final String TAG = DJISimulatorApplication.class.getName();
@@ -66,6 +67,7 @@ public class DJISimulatorApplication extends Application {
     @Override
     public void onCreate() {
         super.onCreate();
+        mHandler = new Handler(Looper.getMainLooper());
 
         /*
          * handles SDK Registration using the API_KEY
@@ -148,8 +150,18 @@ public class DJISimulatorApplication extends Application {
         };
 
         private void notifyStatusChange() {
-
+            mHandler.removeCallbacks(updateRunnable);
+            mHandler.postDelayed(updateRunnable, 500);
         }
+
+        private Runnable updateRunnable = new Runnable() {
+
+            @Override
+            public void run() {
+                Intent intent = new Intent(FLAG_CONNECTION_CHANGE);
+                sendBroadcast(intent);
+            }
+        };
     };
 
 }

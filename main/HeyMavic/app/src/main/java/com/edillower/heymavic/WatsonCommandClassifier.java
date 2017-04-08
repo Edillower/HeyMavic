@@ -19,7 +19,7 @@ import java.util.concurrent.Future;
  */
 
 public class WatsonCommandClassifier {
-    private final String command_classfier_id = "90e7b7x198-nlc-18356";
+    private final String command_classfier_id = "90e7acx197-nlc-35102";
     private final String direction_classfier_id = "90e7b4x199-nlc-18482";
     private NaturalLanguageClassifier nlpService;
     private String command_direction;
@@ -177,11 +177,13 @@ public class WatsonCommandClassifier {
                         encoded_string.add(304);
                         break;
                     case "forward":
-                        encoded_string.add(202);
+                        encoded_string.add(303);
+                        encoded_string.add(204);
                         encoded_string.add(180);
                         break;
                     case "backward":
-                        encoded_string.add(202);
+                        encoded_string.add(303);
+                        encoded_string.add(204);
                         encoded_string.add(180);
                         break;
                     default:

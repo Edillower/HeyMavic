@@ -44,7 +44,7 @@ public class RARFragment extends Fragment {
     private static final String USERNAME = "3a92a1a2-6d59-4ae0-9a38-cc2dc0785d80";
     private static final String PASSWORD = "Je8iOi18gSGY";
     private static final String SOLR_CLUSTER_ID = "sc1afc2fba_ebc2_4630_a1df_d0ec76078c26";
-    private static final String RANKDER_ID = "1eec74x28-rank-965";
+    private static final String RANKDER_ID = "1eec7cx29-rank-4228";
     private static final String COLLECTION_NAME = "V2";
     private static final String ERROR = "No answer available.";
 

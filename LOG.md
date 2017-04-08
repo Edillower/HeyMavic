@@ -91,5 +91,8 @@
 + flightcontrol:
 	move CommandInterpreter.java
 
+## APR 8 Update Notes (by keao xu):
+fix connection error, and base flight control
+
 ## Mar XX Update Notes (by XXXX):
 - ALWAYS update this log when changes are made!!!

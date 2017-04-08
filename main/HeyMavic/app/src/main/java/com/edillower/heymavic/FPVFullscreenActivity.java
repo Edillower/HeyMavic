@@ -32,6 +32,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.edillower.heymavic.common.DJISimulatorApplication;
+import com.edillower.heymavic.common.Utils;
 import com.edillower.heymavic.flightcontrol.CommandInterpreter;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
@@ -61,6 +62,7 @@ import java.util.StringTokenizer;
 
 import dji.common.battery.BatteryState;
 import dji.common.flightcontroller.FlightControllerState;
+import dji.internal.util.Util;
 import dji.sdk.base.BaseProduct;
 import dji.sdk.products.Aircraft;
 
@@ -457,7 +459,7 @@ public class FPVFullscreenActivity extends FragmentActivity implements OnMapRead
             mCI.mFlightController.setStateCallback(new FlightControllerState.Callback() {
                 @Override
                 public void onUpdate(@NonNull FlightControllerState flightControllerState) {
-                    double mDroneLocationLat = flightControllerState.getAircraftLocation().getAltitude();
+                    double mDroneLocationLat = flightControllerState.getAircraftLocation().getLatitude();
                     double mDroneLocationLng = flightControllerState.getAircraftLocation().getLongitude();
                     mDroneLocation = new LatLng(mDroneLocationLat, mDroneLocationLng);
                     mDroneHeading = mCI.mFlightController.getCompass().getHeading();
@@ -505,6 +507,7 @@ public class FPVFullscreenActivity extends FragmentActivity implements OnMapRead
         });
     }
 
+    private int counter = 0;
     private void initUI() {
         mTxtCmmand = (EditText) findViewById(R.id.command_text);
         mBtnInput = (Button) findViewById(R.id.input_btn);
@@ -530,7 +533,18 @@ public class FPVFullscreenActivity extends FragmentActivity implements OnMapRead
         mTest.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                searchPlace("starbucks");
+                if (counter==0){
+                    searchPlace("starbucks");
+                    counter++;
+                }else if (counter==1){
+                    searchPlace("Ohio Union");
+                    counter++;
+                }else if (counter==2){
+                    searchPlace("starbucks");
+                    counter++;
+                }else {
+                    searchPlace("Ohio Union");
+                }
             }
         });
         stopBtnListener();
@@ -904,7 +918,9 @@ public class FPVFullscreenActivity extends FragmentActivity implements OnMapRead
     private void callExecution(ArrayList<Integer> encoded_string) {
         mEncodedStr = encoded_string;
         boolean success = false;
-        mCI.initFlightController(); //added by keao xu
+        if (mCI!=null){
+            mCI.initFlightController(); //added by keao xu
+        }
         if (mCI.mFlightController != null) {
 //            if (mCI.mVirtualStickEnabled == false) {
 //                mCI.mEnableVS();
@@ -993,6 +1009,8 @@ public class FPVFullscreenActivity extends FragmentActivity implements OnMapRead
         temp.add(latDeci);
         temp.add(lonInt);
         temp.add(lonDeci);
+
+        showFpvToast(temp.toString());
 
         callExecution(temp);
     }
