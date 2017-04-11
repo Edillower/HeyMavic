@@ -67,32 +67,18 @@
 ## Mar 28 Update Notes:
 - Fix place selector's bug by Eddie
 
-## May 3 Update Notes:
+## Apr 03 Update Notes:
 - Update NLC for advance mission and object detection by David
 
-## APR 4 Update Notes (by keao xu):
-- !!!! change to SDK 4.0 !!!!
-----> files need change for SDK4.0:
-----> FPVfullscreenAcitvity -finish!
-----> BaseFpvView - finish!
-----> DJISimulatorApplication - finish!
-----> CommandInterpreter
+## Apr 4 Update Notes (by keao xu):
+- Upgrade to DJI SDK 4.0
+- Reconstruct code structure
 
-- delete 4 files:
-----> MainActivity
-----> CmcCodeInterpreter
-----> JoyStick
-----> JoyStickListener
+## Apr 8 Update Notes (by Eddie, committed with Apr 08 update by Eric):
+- Fix connection error, and base flight control
 
-- reconstucting:
-+ common:
-	move DJISimulatorApplication.java
-	+ Utils.java
-+ flightcontrol:
-	move CommandInterpreter.java
-
-## APR 8 Update Notes (by keao xu):
-fix connection error, and base flight control
+## Apr 9 Update Notes (by Eddie):
+- Upgrade build & compile tools
 
 ## APR 11 Update Notes (by David Yang:
 fix Watson Classifier error about starbucks
