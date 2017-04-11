@@ -1,6 +1,7 @@
 package com.edillower.heymavic;
 
 import android.os.AsyncTask;
+import android.provider.Settings;
 import android.text.TextUtils;
 import android.util.Log;
 
@@ -40,7 +41,7 @@ public class WatsonCommandClassifier {
         String command = "stop";
         String direction = null;
         String unit = null;
-        this.google_map_search_string = null;
+        String map_search_string = null;
 
         String commandInText = TextUtils.join(" ", tokenedCommand);
         if (tokenedCommand != null) {
@@ -60,11 +61,17 @@ public class WatsonCommandClassifier {
                 unit = future0.get();
                 command = future1.get();
                 direction = future2.get();
-                this.google_map_search_string = future3.get();
+                map_search_string = future3.get();
             } catch (InterruptedException e) {
                 e.printStackTrace();
             } catch (ExecutionException e) {
                 e.printStackTrace();
+            }
+
+            if (map_search_string.equals("")){
+                this.google_map_search_string = commandInText;
+            }else{
+                this.google_map_search_string = map_search_string;
             }
         }
 
@@ -86,11 +93,7 @@ public class WatsonCommandClassifier {
                 this.command_direction = command + ' ' + direction + ' ' + unit;
                 break;
             case 5:
-                if (this.google_map_search_string.equals("")){
-                    this.command_direction = "Advance mission: " + TextUtils.join(" ", tokenedCommand.subList(2,tokenedCommand.size()));
-                }else{
-                    this.command_direction = "Advance mission: " + this.google_map_search_string;
-                }
+                this.command_direction = "Advance Mission: " + this.google_map_search_string;
                 break;
             case 7:
                 this.command_direction = "photo"; //TODO: add object to detect

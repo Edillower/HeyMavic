@@ -94,5 +94,8 @@
 ## APR 8 Update Notes (by keao xu):
 fix connection error, and base flight control
 
+## APR 11 Update Notes (by David Yang:
+fix Watson Classifier error about starbucks
+
 ## Mar XX Update Notes (by XXXX):
 - ALWAYS update this log when changes are made!!!
