@@ -59,7 +59,7 @@ public class NLUCallableService implements Callable<String> {
                 }
                 json_response = text.toString();
             }else{
-                System.out.printf("ERROR retriving response from IBM service, code %d\n" + connection.getResponseCode());
+                System.out.printf("ERROR retrieving response from IBM service, code %d\n" + connection.getResponseCode());
             }
         }catch (MalformedURLException e) {
             e.printStackTrace();
@@ -90,9 +90,7 @@ public class NLUCallableService implements Callable<String> {
         }
         /*
         if (json_response.length() == 0) {
-            result_str = json_response;
-        } else {
-
+            result_str = sentence.substring(sentence.indexOf(" to ") + 4);
         }
         */
         return result_str;
