@@ -80,8 +80,11 @@
 ## Apr 9 Update Notes (by Eddie):
 - Upgrade build & compile tools
 
-## APR 11 Update Notes (by David Yang:
+## APR 11 Update Notes (by David Yang):
 fix Watson Classifier error about starbucks
+
+## APR 15 Update Notes (by David Yang):
+fix Watson Classifier error about Union
 
 ## Mar XX Update Notes (by XXXX):
 - ALWAYS update this log when changes are made!!!

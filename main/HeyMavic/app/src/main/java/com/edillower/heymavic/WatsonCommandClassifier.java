@@ -1,14 +1,11 @@
 package com.edillower.heymavic;
 
-import android.os.AsyncTask;
-import android.provider.Settings;
-import android.text.TextUtils;
-import android.util.Log;
-
 import com.ibm.watson.developer_cloud.natural_language_classifier.v1.NaturalLanguageClassifier;
 
+import android.text.TextUtils;
 import java.util.ArrayList;
-import java.util.StringTokenizer;
+import java.util.Arrays;
+import java.util.List;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
@@ -22,6 +19,12 @@ import java.util.concurrent.Future;
 public class WatsonCommandClassifier {
     private final String command_classfier_id = "90e7acx197-nlc-35102";
     private final String direction_classfier_id = "90e7b4x199-nlc-18482";
+    private final String object_detect_classfier_id = "90e7acx197-nlc-37646";
+    private final List<String> object_list = Arrays.asList("aeroplane", "bicycle", "bird", "boat",
+            "bottle", "bus", "car", "cat", "chair",
+            "cow", "diningtable", "dog", "horse",
+            "motorbike", "person", "pottedplant",
+            "sheep", "sofa", "train", "tvmonitor");
     private NaturalLanguageClassifier nlpService;
     private String command_direction;
 
@@ -42,6 +45,7 @@ public class WatsonCommandClassifier {
         String direction = null;
         String unit = null;
         String map_search_string = null;
+        String object_detect_class_string = null;
 
         String commandInText = TextUtils.join(" ", tokenedCommand);
         if (tokenedCommand != null) {
@@ -50,11 +54,13 @@ public class WatsonCommandClassifier {
             Callable<String> task1 = new NLPCallableService(nlpService, command_classfier_id, commandInText);
             Callable<String> task2 = new NLPCallableService(nlpService, direction_classfier_id, commandInText);
             Callable<String> task3 = new NLUCallableService(commandInText);
+            Callable<String> task4 = new NLPCallableService(nlpService, object_detect_classfier_id, commandInText);
 
             Future<String> future0 = executor.submit(task0);
             Future<String> future1 = executor.submit(task1);
             Future<String> future2 = executor.submit(task2);
             Future<String> future3 = executor.submit(task3);
+            Future<String> future4 = executor.submit(task4);
             executor.shutdown();
 
             try {
@@ -62,6 +68,7 @@ public class WatsonCommandClassifier {
                 command = future1.get();
                 direction = future2.get();
                 map_search_string = future3.get();
+                object_detect_class_string = future4.get();
             } catch (InterruptedException e) {
                 e.printStackTrace();
             } catch (ExecutionException e) {
@@ -76,7 +83,7 @@ public class WatsonCommandClassifier {
         }
 
         // parse into decimal encoded string
-        ArrayList<Integer> result = encode_string(command, direction, unit);
+        ArrayList<Integer> result = encode_string(command, direction, unit, object_detect_class_string);
         int switch_num = result.remove(result.size()-1);
 
         // set encoded_string
@@ -96,7 +103,7 @@ public class WatsonCommandClassifier {
                 this.command_direction = "Advance Mission: " + this.google_map_search_string;
                 break;
             case 7:
-                this.command_direction = "photo"; //TODO: add object to detect
+                this.command_direction = "Take photo: "+object_detect_class_string;
                 break;
             default:
                 this.command_direction = "Unrecognize command in WatsonCommandClassifier";
@@ -123,7 +130,7 @@ public class WatsonCommandClassifier {
         return this.google_map_search_string;
     }
 
-    private ArrayList<Integer> encode_string (String command, String direction, String unit){
+    private ArrayList<Integer> encode_string (String command, String direction, String unit, String object_detect_class_string){
         ArrayList<Integer> encoded_string = new ArrayList<Integer>();
         int switch_num = 0; // 0 for null, 1 for move, 2 for turn, 3 for move unit, 4 for turn unit, 5 for advance mission, 6 for setting, 7 for image recong
         switch (command) {
@@ -199,6 +206,8 @@ public class WatsonCommandClassifier {
                 break;
             case "photo":
                 encoded_string.add(109);
+                int id = this.object_list.indexOf(object_detect_class_string)+1;
+                encoded_string.add(id);
                 switch_num = 7;
                 break;
             default:
