@@ -176,7 +176,8 @@ public class FPVFullscreenActivity extends FragmentActivity implements OnMapRead
         speechService = initSpeechToTextService();
         cc1 = new WatsonCommandClassifier();
 
-        mCI = new CommandInterpreter(mContext);
+//        mCI = new CommandInterpreter(mContext); // command out by keao xu
+        mCI = CommandInterpreter.getUniqueInstance(mContext);
         initDrone();
 
         if (mGoogleApiClient == null) {
