@@ -440,41 +440,23 @@ public class MyVirtualStickExecutor {
      * @param tarLog
      */
     protected void mFlyto(double tarLat, double tarLog){
-        mMode = MyVirtualStickExecutorMode.FLY_TO;
-        double homeLat = mFlightController.getState().getAircraftLocation().getLatitude();
-        double homeLog = mFlightController.getState().getAircraftLocation().getLongitude();
-        double home2tarX = tarLat- homeLat;
-        double home2tarY = tarLog - homeLog;
-
-        //set direction
-        if(home2tarX < 0){
-            if(home2tarY == 0){
-                mYaw = -90;
-            }else{
-                mYaw = -(float)(Math.atan(-home2tarX/home2tarY));
+        final double initLati = mFlightController.getState().getAircraftLocation().getLatitude();
+        final double initLongi = mFlightController.getState().getAircraftLocation().getLongitude();
+        final double destLati = tarLat;
+        final double destLogi = tarLog;
+        final float targetBearing = (float) Utils.calcBearing(initLati,initLongi,destLati,destLogi);
+        mMode = MyVirtualStickExecutorMode.TURN;
+        checkSendVirtualStickDataTimer();
+        destroyLocationTrackTimer();
+        mYaw = targetBearing;
+        new Thread(new Runnable() {
+            public void run() {
+                while (Math.abs(mFlightController.getCompass().getHeading()-targetBearing)>1){
+                }
+                mRoll=3;
+                mMode = MyVirtualStickExecutorMode.MOVE_DIS;
+                check2DLocationTrackTimer(mMode, initLati, initLongi, destLati, destLogi);
             }
-        }else if(home2tarX > 0){
-            if(home2tarY == 0){
-                mYaw = 90;
-            }else{
-                mYaw = (float)(Math.atan(home2tarX/home2tarY));
-            }
-        }else{
-            //north or south or original point
-            if(home2tarY > 0){
-                mYaw = 0;
-            }else if(home2tarY == 0){
-                //do nothing, restore mYaw
-                mStop();
-                return;
-            }else{
-                mYaw = 180;
-            }
-        }
-
-        //set Y velocity
-        mRoll = 3;
-
-        check2DLocationTrackTimer(mMode, homeLat, homeLog, tarLat, tarLog);
+        }).start();
     }
 }

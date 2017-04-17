@@ -86,8 +86,10 @@ fix Watson Classifier error about starbucks
 ## APR 15 Update Notes (by David Yang):
 fix Watson Classifier error about Union
 
-## APR 16 Update Notes (by keao xu):
-- complete flight control part
+## APR 16 Update Notes:
+- Complete flight control part by keao
+- Reimplement advanced mission fly to by Eddie
+- Fix coordinates bug by Eddie
 
 ## Mar XX Update Notes (by XXXX):
 - ALWAYS update this log when changes are made!!!

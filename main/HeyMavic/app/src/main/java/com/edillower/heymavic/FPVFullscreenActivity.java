@@ -959,10 +959,10 @@ public class FPVFullscreenActivity extends FragmentActivity implements OnMapRead
     public void searchPlace(String locationName) {
         Geocoder mGeocoder = new Geocoder(this);
         int maxResults = 5;
-        double lowerLeftLatitude = mUserLocation.latitude - 0.1;
-        double lowerLeftLongitude = mUserLocation.longitude - 0.1;
-        double upperRightLatitude = mUserLocation.latitude + 0.1;
-        double upperRightLongitude = mUserLocation.longitude + 0.1;
+        double lowerLeftLatitude = mDroneLocation.latitude - 0.1;
+        double lowerLeftLongitude = mDroneLocation.longitude - 0.1;
+        double upperRightLatitude = mDroneLocation.latitude + 0.1;
+        double upperRightLongitude = mDroneLocation.longitude + 0.1;
         try {
             addressList = mGeocoder.getFromLocationName(locationName, maxResults, lowerLeftLatitude, lowerLeftLongitude, upperRightLatitude, upperRightLongitude);
         } catch (IOException e) {
@@ -1001,9 +1001,9 @@ public class FPVFullscreenActivity extends FragmentActivity implements OnMapRead
         addressList = null;
 
         int latInt = (int)lat;
-        int latDeci = (int)(lat - latInt)*100000;
+        int latDeci = (int)((lat - latInt)*100000);
         int lonInt = (int)lon;
-        int lonDeci = (int)(lon - lonInt)*100000;
+        int lonDeci = (int)((lon - lonInt)*100000);
 
         ArrayList<Integer> temp = cc1.getEncodedString();
         temp.add(latInt);
