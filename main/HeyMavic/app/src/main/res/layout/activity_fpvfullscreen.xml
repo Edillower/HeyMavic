@@ -130,31 +130,41 @@
         android:id="@+id/battery_data" />
 
     <TextView
-        android:text="H: 0"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentTop="true"
-        android:layout_toStartOf="@+id/HorizonSpeed"
-        android:layout_marginTop="3dp"
-        android:layout_marginEnd="8dp"
-        android:id="@+id/Attitude" />
-
-    <TextView
-        android:text="V.S: 0"
+        android:text="D: 0"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentTop="true"
         android:layout_toStartOf="@+id/Attitude"
         android:layout_marginTop="3dp"
         android:layout_marginEnd="8dp"
+        android:id="@+id/Distance" />
+
+    <TextView
+        android:text="V.S: 0"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:layout_toStartOf="@+id/HorizonSpeed"
+        android:layout_marginTop="3dp"
+        android:layout_marginEnd="8dp"
         android:id="@+id/VerticalSpeed" />
+
+    <TextView
+        android:text="H: 0"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:layout_toStartOf="@+id/battery_view"
+        android:layout_marginTop="3dp"
+        android:layout_marginEnd="8dp"
+        android:id="@+id/Attitude" />
 
     <TextView
         android:text="H.S: 0"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentTop="true"
-        android:layout_toStartOf="@+id/battery_view"
+        android:layout_toStartOf="@+id/Distance"
         android:layout_marginTop="3dp"
         android:layout_marginEnd="8dp"
         android:id="@+id/HorizonSpeed" />

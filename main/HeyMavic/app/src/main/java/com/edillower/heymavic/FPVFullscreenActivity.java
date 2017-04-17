@@ -121,6 +121,7 @@ public class FPVFullscreenActivity extends FragmentActivity implements OnMapRead
     private TextView mAttitute;
     private TextView mVerSpeed;
     private TextView mHorSpeed;
+    private TextView mDistance;
     //    private TextView mDistance;
     private double mAttitudeData;
     private double mvs;
@@ -454,9 +455,6 @@ public class FPVFullscreenActivity extends FragmentActivity implements OnMapRead
         mCI.initFlightController();
         if (mCI.mFlightController != null) {
             showFpvToast("Set up call back");
-            if (mCI.mFlightController.isVirtualStickControlModeAvailable()) {
-                mBtnStop.setVisibility(View.VISIBLE);
-            }
             mCI.mFlightController.setStateCallback(new FlightControllerState.Callback() {
                 @Override
                 public void onUpdate(@NonNull FlightControllerState flightControllerState) {
@@ -470,7 +468,7 @@ public class FPVFullscreenActivity extends FragmentActivity implements OnMapRead
                     mhs = Math.sqrt(flightControllerState.getVelocityX() * flightControllerState.getVelocityX()
                             + flightControllerState.getVelocityY() * flightControllerState.getVelocityY());
                     mvs = -1*flightControllerState.getVelocityZ();
-
+                    mdistToHome = Utils.calcDistance(mUserLocation.latitude,mUserLocation.longitude,mDroneLocation.latitude,mDroneLocation.longitude);
                     updateFlightData();
                 }
             });
@@ -492,6 +490,7 @@ public class FPVFullscreenActivity extends FragmentActivity implements OnMapRead
         runOnUiThread(new Runnable() {
             @Override
             public void run() {
+                mDistance.setText("D: " + new DecimalFormat("####").format(mdistToHome) + "m");
                 mAttitute.setText("H: " + new DecimalFormat("###.#").format(mAttitudeData) + "m");
                 mVerSpeed.setText("V.S: " + new DecimalFormat("##.#").format(mvs) + "m/s");
                 mHorSpeed.setText("H.S: " + new DecimalFormat("##.#").format(mhs) + "m/s");
@@ -513,7 +512,6 @@ public class FPVFullscreenActivity extends FragmentActivity implements OnMapRead
         mTxtCmmand = (EditText) findViewById(R.id.command_text);
         mBtnInput = (Button) findViewById(R.id.input_btn);
         mBtnStop = (Button) findViewById(R.id.stop_btn);
-        mBtnStop.setVisibility(View.GONE);
         mBtnDummy = (Button) findViewById(R.id.dummy_btn);
         mBtnDummyMap = (Button) findViewById(R.id.dummy_map_btn);
         mBtnShow = (Button) findViewById(R.id.show_btn);
@@ -527,6 +525,7 @@ public class FPVFullscreenActivity extends FragmentActivity implements OnMapRead
         mBatteryData = (TextView) findViewById(R.id.battery_data);
         mAttitute = (TextView) findViewById(R.id.Attitude);
         mVerSpeed = (TextView) findViewById(R.id.VerticalSpeed);
+        mDistance = (TextView) findViewById(R.id.Distance);
         mHorSpeed = (TextView) findViewById(R.id.HorizonSpeed);
 //        mDistance = (TextView) findViewById(R.id.Distance);
         mRandR = (Button) findViewById(R.id.RR_Button);
@@ -563,7 +562,6 @@ public class FPVFullscreenActivity extends FragmentActivity implements OnMapRead
             public void onClick(View v) {
 //                mCI.mDestroy();
                 mCI.mStop();
-                mBtnStop.setVisibility(View.GONE);
             }
         });
     }
@@ -926,12 +924,6 @@ public class FPVFullscreenActivity extends FragmentActivity implements OnMapRead
 //            if (mCI.mVirtualStickEnabled == false) {
 //                mCI.mEnableVS();
 //            }
-            runOnUiThread(new Runnable() {
-                @Override
-                public void run() {
-                    mBtnStop.setVisibility(View.VISIBLE);
-                }
-            });
             mCI.executeCmd(mEncodedStr);
             success = true;
         }
@@ -971,6 +963,7 @@ public class FPVFullscreenActivity extends FragmentActivity implements OnMapRead
         }
         if (addressList_flag && addressList.size() != 0) {
             Bundle args = new Bundle();
+
             String[] places = new String[addressList.size()];
             for (int i = 0; i < addressList.size(); i++) {
                 String sb = "";
@@ -978,6 +971,10 @@ public class FPVFullscreenActivity extends FragmentActivity implements OnMapRead
                     sb += addressList.get(i).getAddressLine(k);
                     sb += "; ";
                 }
+                double lat = addressList.get(i).getLatitude();
+                double lon = addressList.get(i).getLongitude();
+                double distance = Utils.calcDistance(mDroneLocation.latitude,mDroneLocation.longitude,lat,lon);
+                sb += new DecimalFormat("##.###").format(distance/1000) + " km";
                 places[i] = sb;
             }
             args.putStringArray("places",places);
