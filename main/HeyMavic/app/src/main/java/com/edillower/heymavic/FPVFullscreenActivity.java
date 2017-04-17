@@ -946,15 +946,20 @@ public class FPVFullscreenActivity extends FragmentActivity implements OnMapRead
     }
 
     private List<Address> addressList = null;
+    private LatLng[] locList;
     private boolean addressList_flag = true;
 
     public void searchPlace(String locationName) {
         Geocoder mGeocoder = new Geocoder(this);
-        int maxResults = 5;
-        double lowerLeftLatitude = mDroneLocation.latitude - 0.1;
-        double lowerLeftLongitude = mDroneLocation.longitude - 0.1;
-        double upperRightLatitude = mDroneLocation.latitude + 0.1;
-        double upperRightLongitude = mDroneLocation.longitude + 0.1;
+        int maxResults = 20;
+        double lowerLeftLatitude = mDroneLocation.latitude - 0.05;
+        double lowerLeftLongitude = mDroneLocation.longitude - 0.05;
+        double upperRightLatitude = mDroneLocation.latitude + 0.05;
+        double upperRightLongitude = mDroneLocation.longitude + 0.05;
+//        double lowerLeftLatitude = mUserLocation.latitude - 0.05;
+//        double lowerLeftLongitude = mUserLocation.longitude - 0.05;
+//        double upperRightLatitude = mUserLocation.latitude + 0.05;
+//        double upperRightLongitude = mUserLocation.longitude + 0.05;
         try {
             addressList = mGeocoder.getFromLocationName(locationName, maxResults, lowerLeftLatitude, lowerLeftLongitude, upperRightLatitude, upperRightLongitude);
         } catch (IOException e) {
@@ -963,8 +968,9 @@ public class FPVFullscreenActivity extends FragmentActivity implements OnMapRead
         }
         if (addressList_flag && addressList.size() != 0) {
             Bundle args = new Bundle();
-
             String[] places = new String[addressList.size()];
+            double[] dist = new double[addressList.size()];
+            LatLng[] cdArray = new LatLng[addressList.size()];
             for (int i = 0; i < addressList.size(); i++) {
                 String sb = "";
                 for (int k = 0; k < addressList.get(i).getMaxAddressLineIndex(); k++) {
@@ -973,10 +979,27 @@ public class FPVFullscreenActivity extends FragmentActivity implements OnMapRead
                 }
                 double lat = addressList.get(i).getLatitude();
                 double lon = addressList.get(i).getLongitude();
+                LatLng currentCd = new LatLng(lat,lon);
                 double distance = Utils.calcDistance(mDroneLocation.latitude,mDroneLocation.longitude,lat,lon);
-                sb += new DecimalFormat("##.###").format(distance/1000) + " km";
+                sb += new DecimalFormat("####").format(distance) + "m";
                 places[i] = sb;
+                dist[i] = distance;
+                cdArray[i] = currentCd;
+                for (int j = i-1; j>=0; j--){
+                    if (dist[j+1]<dist[j]){
+                        double t1 = dist[j];
+                        String t2 = places[j];
+                        LatLng t3 = cdArray[j];
+                        dist[j] = dist[j+1];
+                        places[j] = places[j+1];
+                        cdArray[j] = cdArray[j+1];
+                        dist[j+1] = t1;
+                        places[j+1] = t2;
+                        cdArray[j+1] = t3;
+                    }
+                }
             }
+            locList=cdArray;
             args.putStringArray("places",places);
             mPlaceListFragment = new PlaceListFragment();
             mPlaceListFragment.setArguments(args);
@@ -991,11 +1014,12 @@ public class FPVFullscreenActivity extends FragmentActivity implements OnMapRead
 
     public void getPlaceCoordinates(int index) {
         getSupportFragmentManager().beginTransaction().remove(mPlaceListFragment).commit();
-        double lat = addressList.get(index).getLatitude();
-        double lon = addressList.get(index).getLongitude();
+        double lat = locList[index].latitude;
+        double lon = locList[index].longitude;
         LatLng targetLatLng = new LatLng(lat, lon);
         showFpvToast(targetLatLng.toString());
         addressList = null;
+        locList = null;
 
         int latInt = (int)lat;
         int latDeci = (int)((lat - latInt)*100000);
