@@ -134,7 +134,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentTop="true"
-        android:layout_toStartOf="@+id/Attitude"
+        android:layout_toStartOf="@+id/Altitude"
         android:layout_marginTop="3dp"
         android:layout_marginEnd="8dp"
         android:id="@+id/Distance" />
@@ -157,7 +157,7 @@
         android:layout_toStartOf="@+id/battery_view"
         android:layout_marginTop="3dp"
         android:layout_marginEnd="8dp"
-        android:id="@+id/Attitude" />
+        android:id="@+id/Altitude" />
 
     <TextView
         android:text="H.S: 0"
@@ -196,6 +196,7 @@
         android:layout_height="wrap_content"
         android:layout_alignBottom="@+id/RR_Button"
         android:layout_toStartOf="@+id/RR_Button"
+        android:visibility="gone"
         android:id="@+id/testBtn" />
 
 

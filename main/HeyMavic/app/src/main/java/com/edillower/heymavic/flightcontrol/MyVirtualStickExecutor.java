@@ -66,8 +66,13 @@ public class MyVirtualStickExecutor {
         initFlightController();
         MyChangeSettingsExecutor.mEnableVS();
         MyChangeSettingsExecutor.setConventionVirtualStickMode();
+        uniqueInstance.initYaw();
         uniqueInstance.checkSendVirtualStickDataTimer();
         return uniqueInstance;
+    }
+
+    private void initYaw(){
+        mYaw = mFlightController.getCompass().getHeading();
     }
 
     /**

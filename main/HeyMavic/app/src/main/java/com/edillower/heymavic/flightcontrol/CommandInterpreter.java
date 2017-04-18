@@ -72,11 +72,11 @@ public class CommandInterpreter {
         aircraft = DJISimulatorApplication.getAircraftInstance();
 
         if (aircraft == null || !aircraft.isConnected()) {
-            Utils.setResultToToast(mContext, "aircraft not found!");
+//            Utils.setResultToToast(mContext, "aircraft not found!");
             mFlightController = null;
         } else {
             mFlightController = aircraft.getFlightController();
-            Utils.setResultToToast(mContext, "CI init FlightController success with mode "+mFlightController.getState().getFlightMode());
+//            Utils.setResultToToast(mContext, "CI init FlightController success with mode "+mFlightController.getState().getFlightMode());
         }
     }
 
@@ -141,12 +141,12 @@ public class CommandInterpreter {
 
         BaseProduct product = DJISimulatorApplication.getProductInstance();
         if(product == null || !product.isConnected()){
-            Utils.setResultToToast(mContext, "CI: disconnect");
+//            Utils.setResultToToast(mContext, "CI: disconnect");
             return;
         }else{
             if(product instanceof Aircraft){
                 mFlightController = ((Aircraft)product).getFlightController();
-                Utils.setResultToToast(mContext, "CI: FC good");
+//                Utils.setResultToToast(mContext, "CI: FC good");
             }else{
                 return;
             }

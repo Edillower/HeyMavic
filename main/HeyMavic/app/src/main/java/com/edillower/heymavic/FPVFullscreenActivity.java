@@ -118,12 +118,12 @@ public class FPVFullscreenActivity extends FragmentActivity implements OnMapRead
     private Button mBtnHide;
 
     //Aircraft State
-    private TextView mAttitute;
+    private TextView mAltitude;
     private TextView mVerSpeed;
     private TextView mHorSpeed;
     private TextView mDistance;
     //    private TextView mDistance;
-    private double mAttitudeData;
+    private double mAltitudeData;
     private double mvs;
     private double mhs;
     private double mdistToHome;
@@ -307,7 +307,7 @@ public class FPVFullscreenActivity extends FragmentActivity implements OnMapRead
     public void onDialogMessage(boolean message) {
         if (message) {
             writeRecogRecord(true, mStrIntention, cc1.getEncodedString().toString(), cc1.getCommand());
-            showFpvToast("Start executing command");
+//            showFpvToast("Start executing command");
             preCheck(cc1.getEncodedString(), cc1.getGoogleMapSearchString()); // Start execution
         } else {
             writeRecogRecord(false, mStrIntention, cc1.getEncodedString().toString(), cc1.getCommand());
@@ -400,29 +400,29 @@ public class FPVFullscreenActivity extends FragmentActivity implements OnMapRead
     };
 
     private void updateConnection() {
-        boolean ret = false;
+//        boolean ret = false;
         BaseProduct product = DJISimulatorApplication.getProductInstance();
         if (product != null) {
             if (product.isConnected()) {
                 //The product is connected
                 showFpvToast(DJISimulatorApplication.getProductInstance().getModel() + " Connected");
-                ret = true;
+//                ret = true;
             } else {
                 if (product instanceof Aircraft) {
                     Aircraft aircraft = (Aircraft) product;
                     if (aircraft.getRemoteController() != null && aircraft.getRemoteController().isConnected()) {
                         // The product is not connected, but the remote controller is connected
                         showFpvToast("only RC Connected");
-                        ret = true;
+//                        ret = true;
                     }
                 }
             }
         }
 
-        if (!ret) {
-            // The product or the remote controller are not connected.
-            showFpvToast("Disconnected");
-        }
+//        if (!ret) {
+//            // The product or the remote controller are not connected.
+//            showFpvToast("Disconnected");
+//        }
     }
 
 
@@ -454,7 +454,7 @@ public class FPVFullscreenActivity extends FragmentActivity implements OnMapRead
     private void initDrone() {
         mCI.initFlightController();
         if (mCI.mFlightController != null) {
-            showFpvToast("Set up call back");
+//            showFpvToast("Set up call back");
             mCI.mFlightController.setStateCallback(new FlightControllerState.Callback() {
                 @Override
                 public void onUpdate(@NonNull FlightControllerState flightControllerState) {
@@ -464,7 +464,10 @@ public class FPVFullscreenActivity extends FragmentActivity implements OnMapRead
                     mDroneHeading = mCI.mFlightController.getCompass().getHeading();
                     updateDroneLocation();
                     // set flight data
-                    mAttitudeData = (double) flightControllerState.getUltrasonicHeightInMeters();
+                    mAltitudeData = (double) flightControllerState.getUltrasonicHeightInMeters();
+                    if (mAltitudeData>18){
+                        mAltitudeData = flightControllerState.getAircraftLocation().getAltitude();
+                    }
                     mhs = Math.sqrt(flightControllerState.getVelocityX() * flightControllerState.getVelocityX()
                             + flightControllerState.getVelocityY() * flightControllerState.getVelocityY());
                     mvs = -1*flightControllerState.getVelocityZ();
@@ -491,7 +494,7 @@ public class FPVFullscreenActivity extends FragmentActivity implements OnMapRead
             @Override
             public void run() {
                 mDistance.setText("D: " + new DecimalFormat("####").format(mdistToHome) + "m");
-                mAttitute.setText("H: " + new DecimalFormat("###.#").format(mAttitudeData) + "m");
+                mAltitude.setText("H: " + new DecimalFormat("###.#").format(mAltitudeData) + "m");
                 mVerSpeed.setText("V.S: " + new DecimalFormat("##.#").format(mvs) + "m/s");
                 mHorSpeed.setText("H.S: " + new DecimalFormat("##.#").format(mhs) + "m/s");
             }
@@ -523,7 +526,7 @@ public class FPVFullscreenActivity extends FragmentActivity implements OnMapRead
         mBtnTracking.setVisibility(View.GONE);
         mBatteryView = (BatteryView) findViewById(R.id.battery_view);
         mBatteryData = (TextView) findViewById(R.id.battery_data);
-        mAttitute = (TextView) findViewById(R.id.Attitude);
+        mAltitude = (TextView) findViewById(R.id.Altitude);
         mVerSpeed = (TextView) findViewById(R.id.VerticalSpeed);
         mDistance = (TextView) findViewById(R.id.Distance);
         mHorSpeed = (TextView) findViewById(R.id.HorizonSpeed);
@@ -928,7 +931,7 @@ public class FPVFullscreenActivity extends FragmentActivity implements OnMapRead
             success = true;
         }
         if (success) {
-            showFpvToast("Signal Sent");
+            showFpvToast("Instruction Sent");
         } else {
             showFpvToast("Flight Control Error");
         }
@@ -1017,7 +1020,7 @@ public class FPVFullscreenActivity extends FragmentActivity implements OnMapRead
         double lat = locList[index].latitude;
         double lon = locList[index].longitude;
         LatLng targetLatLng = new LatLng(lat, lon);
-        showFpvToast(targetLatLng.toString());
+//        showFpvToast(targetLatLng.toString());
         addressList = null;
         locList = null;
 
@@ -1032,7 +1035,7 @@ public class FPVFullscreenActivity extends FragmentActivity implements OnMapRead
         temp.add(lonInt);
         temp.add(lonDeci);
 
-        showFpvToast(temp.toString());
+//        showFpvToast(temp.toString());
 
         callExecution(temp);
     }
