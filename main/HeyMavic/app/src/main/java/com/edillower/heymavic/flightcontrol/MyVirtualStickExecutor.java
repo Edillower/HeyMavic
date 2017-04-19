@@ -1,5 +1,6 @@
 package com.edillower.heymavic.flightcontrol;
 
+import com.edillower.heymavic.FPVFullscreenActivity;
 import com.edillower.heymavic.common.DJISimulatorApplication;
 import com.edillower.heymavic.common.Utils;
 
@@ -23,6 +24,8 @@ public class MyVirtualStickExecutor {
     private float mRoll = 0;
     private float mYaw = 0;
     private float mThrottle = 0;
+
+//    private double hpAltitude=0;
 
     private Timer mSendVirtualStickDataTimer;
     private SendVirtualStickDataTask mSendVirtualStickDataTask;
@@ -67,12 +70,23 @@ public class MyVirtualStickExecutor {
         MyChangeSettingsExecutor.mEnableVS();
         MyChangeSettingsExecutor.setConventionVirtualStickMode();
         uniqueInstance.initYaw();
+//        uniqueInstance.initAltitude();
         uniqueInstance.checkSendVirtualStickDataTimer();
         return uniqueInstance;
     }
 
     private void initYaw(){
         mYaw = mFlightController.getCompass().getHeading();
+    }
+
+//    private void initAltitude (){hpAltitude=mFlightController.getState().getAircraftLocation().getAltitude();}
+
+    private double getCurrentAltitude(){
+        double alti =  (double) mFlightController.getState().getAircraftLocation().getAltitude(); //-hpAltitude;
+//        if (alti<18){
+//            alti = (double) mFlightController.getState().getUltrasonicHeightInMeters();
+//        }
+        return alti;
     }
 
     /**
@@ -214,7 +228,7 @@ public class MyVirtualStickExecutor {
         public void run() {
             if (mFlightController != null) {
                 if (m == MyVirtualStickExecutorMode.UP_DIS || m == MyVirtualStickExecutorMode.DOWN_DIS) {
-                    curH = mFlightController.getState().getAircraftLocation().getAltitude();
+                    curH = getCurrentAltitude();
                     double home2cur = curH - homeH;
                     double cur2tar = tarH - curH;
                     if (Math.abs(cur2tar) <= 0.5 || home2cur * cur2tar < 0) {
@@ -328,7 +342,7 @@ public class MyVirtualStickExecutor {
         if (dis != -1) {
             secFlag = true;
             mMode = MyVirtualStickExecutorMode.UP_DIS;
-            double homeH = mFlightController.getState().getAircraftLocation().getAltitude();
+            double homeH = getCurrentAltitude();
             double tarH = homeH + dis;
             checkHeightLocationTrackTimer(mMode, homeH, tarH);
         }
@@ -354,7 +368,7 @@ public class MyVirtualStickExecutor {
         if (dis != -1) {
             secFlag = true;
             mMode = MyVirtualStickExecutorMode.DOWN_DIS;
-            double homeH = mFlightController.getState().getAircraftLocation().getAltitude();
+            double homeH = getCurrentAltitude();
             double tarH = homeH - dis;
 
             if (homeH < 1.2 || tarH <= 0) {
