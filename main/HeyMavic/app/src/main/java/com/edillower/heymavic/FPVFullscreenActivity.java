@@ -137,7 +137,7 @@ public class FPVFullscreenActivity extends FragmentActivity implements OnMapRead
     private Button mRandR;
 
     // Test
-    private Button mTest;
+//    private Button mTest;
 
 
     @Override
@@ -455,7 +455,7 @@ public class FPVFullscreenActivity extends FragmentActivity implements OnMapRead
         mCI.initFlightController();
         if (mCI.mFlightController != null) {
             mCI.setPhotoMode();
-            showFpvToast("Set up call bacsk");
+//            showFpvToast("Set up call bacsk");
             if (mCI.mFlightController.isVirtualStickControlModeAvailable()) {
                 mBtnStop.setVisibility(View.VISIBLE);
             }
@@ -481,12 +481,12 @@ public class FPVFullscreenActivity extends FragmentActivity implements OnMapRead
                 }
             });
 
-            mTest.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    mCI.shootPhoto();
-                }
-            });
+//            mTest.setOnClickListener(new View.OnClickListener() {
+//                @Override
+//                public void onClick(View v) {
+//                    mCI.shootPhoto();
+//                }
+//            });
 
             // set up battery
             mCI.aircraft.getBattery().setStateCallback(new BatteryState.Callback() {
@@ -545,7 +545,7 @@ public class FPVFullscreenActivity extends FragmentActivity implements OnMapRead
         mHorSpeed = (TextView) findViewById(R.id.HorizonSpeed);
 //        mDistance = (TextView) findViewById(R.id.Distance);
         mRandR = (Button) findViewById(R.id.RR_Button);
-        mTest = (Button) findViewById(R.id.testBtn);
+//        mTest = (Button) findViewById(R.id.testBtn);
 
         stopBtnListener();
         voiceInputListener();

@@ -298,7 +298,7 @@ public class CommandInterpreter {
             @Override
             public void onResult(DJIError error) {
                 if (error == null) {
-                    Utils.setResultToToast(mContext, "shoot photo: success");
+//                    Utils.setResultToToast(mContext, "shoot photo: success");
                     try{
                         TimeUnit.SECONDS.sleep((long) 2.5);
                     }catch (Exception e){
@@ -413,7 +413,7 @@ public class CommandInterpreter {
                         if (null != djiError) {
                             //Log.e(TAG,djiError.getDescription());
                         }else{
-                            Utils.setResultToToast(mContext, "set single photo mode");
+//                            Utils.setResultToToast(mContext, "set single photo mode");
                         }
                     }
                 });
@@ -440,7 +440,7 @@ public class CommandInterpreter {
                                     //Log.e(TAG,djiError.getDescription());
                                     Utils.setResultToToast(mContext, "set mode " + djiError.getDescription());
                                 }else{
-                                    Utils.setResultToToast(mContext, "set to download mode!");
+//                                    Utils.setResultToToast(mContext, "set to download mode!");
                                 }
                             }});
 
@@ -458,7 +458,7 @@ public class CommandInterpreter {
                             if (error == null) {
                                 //if(mTrigger.value()) {
                                 //shootPhoto();
-                                Utils.setResultToToast(mContext, "focus success" );
+                                Utils.setResultToToast(mContext, "Focus and Shooting Succeed" ); // TODO: shooting not succeed yet
                             } else {
                                 Utils.setResultToToast(mContext, "focus " + error.getDescription());
                             }
@@ -474,7 +474,7 @@ public class CommandInterpreter {
             @Override
             public void onResult(DJIError error) {
                 if (error == null) {
-                    Utils.setResultToToast(mContext, "shoot photo with focus: success"); //TODO
+//                    Utils.setResultToToast(mContext, "Shooting Photo Succeed"); //TODO
                 } else {
                     Utils.setResultToToast(mContext, "shoot error:" + error.getDescription()); //TODO
                 }
