@@ -2,28 +2,30 @@ package com.edillower.heymavic.flightcontrol;
 
 
 import android.content.Context;
-import android.util.Log;
+import android.graphics.PointF;
+import android.os.Environment;
 
 import com.edillower.heymavic.common.DJISimulatorApplication;
 import com.edillower.heymavic.common.Utils;
 
+import java.io.File;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Date;
 import java.util.concurrent.TimeUnit;
 
-import dji.common.flightcontroller.LocationCoordinate3D;
+import dji.common.camera.SettingsDefinitions;
+import dji.common.error.DJIError;
 import dji.common.model.LocationCoordinate2D;
 import dji.common.util.CommonCallbacks;
+import dji.sdk.camera.MediaFile;
+import dji.sdk.camera.MediaManager;
 import dji.sdk.flightcontroller.FlightController;
 import dji.sdk.mission.MissionControl;
-import dji.sdk.mission.timeline.Mission;
-import dji.sdk.mission.timeline.TimelineElement;
-import dji.sdk.mission.timeline.TimelineEvent;
 import dji.sdk.mission.timeline.actions.GoToAction;
-import dji.sdk.mission.timeline.actions.MissionAction;
-import dji.sdk.mission.timeline.triggers.Trigger;
 import dji.sdk.products.Aircraft;
-import dji.common.error.DJIError;
 
 public class CommandInterpreter {
     private Context mContext;
@@ -38,14 +40,31 @@ public class CommandInterpreter {
     */
     private MyVirtualStickExecutor mSingletonVirtualStickExecutor;
     private GoToAction mGoToAction;
+    //private Trigger mTrigger;
+    private MediaManager mMediaManager;
+    private MediaFile media;
+    //int flag;
 
-    /**
-     * default constructor
-     * @param context
-     */
-    public CommandInterpreter(Context context) {
+
+    private int object_id;
+    int count = 1;
+
+    private static CommandInterpreter uniqueInstance = null;
+
+    private CommandInterpreter(Context context){
         mContext = context;
+        //mTrigger = Trigger.getInstance();
+        //flag = 0;
     }
+
+    public static CommandInterpreter getUniqueInstance(Context context){
+        if(uniqueInstance == null){
+            return new CommandInterpreter(context);
+        }else{
+            return uniqueInstance;
+        }
+    }
+
 
     /**
      * should be private, not be used by others
@@ -299,6 +318,8 @@ public class CommandInterpreter {
 //                MyChangeSettingsExecutor.execute(set_type, set_param);
                 break;
             case 109:
+                object_id = mCmdCode[1];
+                shootPhoto();
                 break;
             default:
                 mStop();
@@ -306,4 +327,202 @@ public class CommandInterpreter {
         }
 //        Utils.setResultToToast(mContext, "after cmd mode:"+mFlightController.getState().getFlightMode());
     }
+
+    public void shootPhoto() {
+        // take photo
+        //
+        // Utils.setResultToToast(mContext, mTrigger.trig());
+        //flag ++;
+        DJISimulatorApplication.getProductInstance().getCamera().startShootPhoto(new CommonCallbacks.CompletionCallback() {
+            @Override
+            public void onResult(DJIError error) {
+                if (error == null) {
+                    Utils.setResultToToast(mContext, "shoot photo: success"); //TODO
+                    try{
+                        TimeUnit.SECONDS.sleep((long) 2.5);
+                    }catch (Exception e){
+
+                    }
+                    getPhoto();
+                } else {
+                    Utils.setResultToToast(mContext, "shoot error:" + error.getDescription()); //TODO
+                }
+            }
+        });
+    }
+
+    public void getPhoto() {
+
+        //setDownloadMode();
+
+        mMediaManager = DJISimulatorApplication.getProductInstance().getCamera().getMediaManager();
+        // fetch photo from SD card
+        if (mMediaManager == null) {
+            Utils.setResultToToast(mContext, "error get media manager");
+        }else{
+            // get the photo at top and set camera to download mode
+
+            mMediaManager.fetchMediaList(new MediaManager.DownloadListener<List<MediaFile>>() {
+                @Override
+                public void onStart() {
+                    //Log.d(TAG, "Come to access data on SD card");
+                }
+
+                @Override
+                public void onRateUpdate(long l, long l1, long l2) {
+
+                }
+
+                @Override
+                public void onProgress(long l, long l1) {
+
+                }
+
+                @Override
+                public void onSuccess(List<MediaFile> djiMedias) {
+                    if(djiMedias == null) {
+                        Utils.setResultToToast(mContext, "no media in SD card");
+                    }
+                    else {
+                        Utils.setResultToToast(mContext, "get photo: success"); //TODO
+                        media = djiMedias.get(djiMedias.size()-1);
+
+                        fetchPhoto();
+                    }
+
+                }
+
+                @Override
+                public void onFailure(DJIError djiError) {
+                    //Log.e(TAG, djiError.getDescription());
+                }
+            });
+        }
+    }
+
+    public void fetchPhoto() {
+
+        final File destDir = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DCIM).toString()
+                + "/Camera");
+        DateFormat dateFormat = new SimpleDateFormat("yyyyMMddHHmmss");
+        Date date = new Date();
+        final String Name = "test" + Integer.toString(count) + "_" + dateFormat.format(date);
+        count ++;
+        // download photo to dir to achieve image processing
+        if(media == null) {
+            Utils.setResultToToast(mContext, "fetch photo: error"); //TODO
+        }else{
+            Utils.setResultToToast(mContext, "fetched photo: "+ media.getFileName()); //TODO
+            DownloadHandler<String> downloadHandler = new DownloadHandler<>(mContext, destDir+Name, uniqueInstance);
+            DJISimulatorApplication.getProductInstance().getCamera().getMediaManager().fetchMediaData(media,destDir,Name,downloadHandler);
+
+            try{
+                TimeUnit.SECONDS.sleep(3);
+            }catch (Exception e){
+
+            }
+            shoot();
+
+        }
+
+    }
+
+
+
+    public void setPhotoMode(){
+        DJISimulatorApplication.getProductInstance().getCamera().setPhotoAspectRatio(SettingsDefinitions.PhotoAspectRatio.RATIO_16_9,
+                new CommonCallbacks.CompletionCallback() {
+                    @Override
+                    public void onResult(DJIError djiError) {
+                        if (null != djiError) {
+                            //Log.e(TAG,djiError.getDescription());
+                        }
+                    }
+                });
+
+        DJISimulatorApplication.getProductInstance()
+                .getCamera()
+                .setMode(SettingsDefinitions.CameraMode.SHOOT_PHOTO, null);
+
+
+        DJISimulatorApplication.getProductInstance().getCamera().setShootPhotoMode(SettingsDefinitions.ShootPhotoMode.SINGLE,
+                new CommonCallbacks.CompletionCallback() {
+                    @Override
+                    public void onResult(DJIError djiError) {
+                        if (null != djiError) {
+                            //Log.e(TAG,djiError.getDescription());
+                        }else{
+                            Utils.setResultToToast(mContext, "set single photo mode");
+                        }
+                    }
+                });
+        DJISimulatorApplication.getProductInstance().getCamera().setPhotoFileFormat(SettingsDefinitions.PhotoFileFormat.JPEG,
+                new CommonCallbacks.CompletionCallback() {
+                    @Override
+                    public void onResult(DJIError djiError) {
+                        if (null != djiError) {
+                            //Log.e(TAG,djiError.getDescription());
+                        }
+                    }
+                });
+    }
+
+    public void setDownloadMode(){
+
+        DJISimulatorApplication.getProductInstance()
+                .getCamera()
+                .setMode(SettingsDefinitions.CameraMode.MEDIA_DOWNLOAD,
+                        new CommonCallbacks.CompletionCallback() {
+                            @Override
+                            public void onResult(DJIError djiError) {
+                                if (null != djiError) {
+                                    //Log.e(TAG,djiError.getDescription());
+                                    Utils.setResultToToast(mContext, "set mode " + djiError.getDescription());
+                                }else{
+                                    Utils.setResultToToast(mContext, "set to download mode!");
+                                }
+                            }});
+
+
+    }
+
+    public void focusLen(float[] focusCoordinates) {
+
+        PointF targ = new PointF(focusCoordinates[0], focusCoordinates[1]);
+
+        if (DJISimulatorApplication.getProductInstance().getCamera() != null) {
+            DJISimulatorApplication.getProductInstance().getCamera().setFocusTarget(targ, new CommonCallbacks.CompletionCallback() {
+                        @Override
+                        public void onResult(DJIError error) {
+                            if (error == null) {
+                                //if(mTrigger.value()) {
+                                //shootPhoto();
+                                Utils.setResultToToast(mContext, "focus success" );
+                            } else {
+                                Utils.setResultToToast(mContext, "focus " + error.getDescription());
+                            }
+
+                        }
+                    }
+            );
+        }
+    }
+
+    public void shoot(){
+        DJISimulatorApplication.getProductInstance().getCamera().startShootPhoto(new CommonCallbacks.CompletionCallback() {
+            @Override
+            public void onResult(DJIError error) {
+                if (error == null) {
+                    Utils.setResultToToast(mContext, "shoot photo with focus: success"); //TODO
+                } else {
+                    Utils.setResultToToast(mContext, "shoot error:" + error.getDescription()); //TODO
+                }
+            }
+        });
+    }
+
+
 }
+
+
+

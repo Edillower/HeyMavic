@@ -32,7 +32,6 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.edillower.heymavic.common.DJISimulatorApplication;
-import com.edillower.heymavic.common.Utils;
 import com.edillower.heymavic.flightcontrol.CommandInterpreter;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
@@ -62,7 +61,6 @@ import java.util.StringTokenizer;
 
 import dji.common.battery.BatteryState;
 import dji.common.flightcontroller.FlightControllerState;
-import dji.internal.util.Util;
 import dji.sdk.base.BaseProduct;
 import dji.sdk.products.Aircraft;
 
@@ -176,7 +174,8 @@ public class FPVFullscreenActivity extends FragmentActivity implements OnMapRead
         speechService = initSpeechToTextService();
         cc1 = new WatsonCommandClassifier();
 
-        mCI = new CommandInterpreter(mContext);
+        //mCI = new CommandInterpreter(mContext);
+        mCI = CommandInterpreter.getUniqueInstance(mContext);
         initDrone();
 
         if (mGoogleApiClient == null) {
@@ -452,6 +451,7 @@ public class FPVFullscreenActivity extends FragmentActivity implements OnMapRead
     private void initDrone() {
         mCI.initFlightController();
         if (mCI.mFlightController != null) {
+            mCI.setPhotoMode();
             showFpvToast("Set up call back");
             if (mCI.mFlightController.isVirtualStickControlModeAvailable()) {
                 mBtnStop.setVisibility(View.VISIBLE);
@@ -471,6 +471,13 @@ public class FPVFullscreenActivity extends FragmentActivity implements OnMapRead
                     mvs = -1*flightControllerState.getVelocityZ();
 
                     updateFlightData();
+                }
+            });
+
+            mTest.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    mCI.shootPhoto();
                 }
             });
 
@@ -530,23 +537,7 @@ public class FPVFullscreenActivity extends FragmentActivity implements OnMapRead
 //        mDistance = (TextView) findViewById(R.id.Distance);
         mRandR = (Button) findViewById(R.id.RR_Button);
         mTest = (Button) findViewById(R.id.testBtn);
-        mTest.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (counter==0){
-                    searchPlace("starbucks");
-                    counter++;
-                }else if (counter==1){
-                    searchPlace("Ohio Union");
-                    counter++;
-                }else if (counter==2){
-                    searchPlace("starbucks");
-                    counter++;
-                }else {
-                    searchPlace("Ohio Union");
-                }
-            }
-        });
+
         stopBtnListener();
         voiceInputListener();
         inputBtnListener();
