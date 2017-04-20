@@ -262,7 +262,7 @@ public class CommandInterpreter {
             @Override
             public void onResult(DJIError error) {
                 if (error == null) {
-                    Utils.setResultToToast(mContext, "shoot photo: success"); //TODO
+                    Utils.setResultToToast(mContext, "shoot photo: success");
                     try{
                         TimeUnit.SECONDS.sleep((long) 2.5);
                     }catch (Exception e){
@@ -309,7 +309,7 @@ public class CommandInterpreter {
                         Utils.setResultToToast(mContext, "no media in SD card");
                     }
                     else {
-                        Utils.setResultToToast(mContext, "get photo: success"); //TODO
+                        //Utils.setResultToToast(mContext, "get photo: success");
                         media = djiMedias.get(djiMedias.size()-1);
 
                         fetchPhoto();
@@ -337,7 +337,7 @@ public class CommandInterpreter {
         if(media == null) {
             Utils.setResultToToast(mContext, "fetch photo: error"); //TODO
         }else{
-            Utils.setResultToToast(mContext, "fetched photo: "+ media.getFileName()); //TODO
+//            Utils.setResultToToast(mContext, "fetched photo: "+ media.getFileName());
             DownloadHandler<String> downloadHandler = new DownloadHandler<>(mContext, destDir+Name, uniqueInstance);
             DJISimulatorApplication.getProductInstance().getCamera().getMediaManager().fetchMediaData(media,destDir,Name,downloadHandler);
 

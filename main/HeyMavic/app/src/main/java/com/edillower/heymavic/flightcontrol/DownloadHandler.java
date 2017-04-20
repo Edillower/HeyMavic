@@ -67,7 +67,7 @@ public class DownloadHandler<B> implements DownloadListener<B> {
 
     @Override
     public void onSuccess(B obj) {
-        Utils.setResultToToast(mContext, imgDecodableString); //TODO
+//        Utils.setResultToToast(mContext, imgDecodableString);
         if (obj instanceof Bitmap) {
             Bitmap bitmap = (Bitmap) obj;
             // TODO add more class
@@ -75,11 +75,11 @@ public class DownloadHandler<B> implements DownloadListener<B> {
             String query_id = "15";
             // Send image to serve
             try {
-                Utils.setResultToToast(mContext, "Start commute server"); //TODO
+//                Utils.setResultToToast(mContext, "Start commute server");
                 float [] bbox = new ObjectDetectTask().execute("129.114.109.171", "10097", query_id).get();
                 focusCoordinates[0] = (bbox[0] + bbox[2])/2;
                 focusCoordinates[1] = (bbox[1] + bbox[3])/2;
-                Utils.setResultToToast(mContext, Arrays.toString(bbox)); //TODO
+                Utils.setResultToToast(mContext, Arrays.toString(bbox));
                 Log.e(TAG, Arrays.toString(bbox));
             }catch (Exception e) {
                 Utils.setResultToToast(mContext, "Error in ObjectDetectTask"); //TODO
@@ -108,15 +108,12 @@ public class DownloadHandler<B> implements DownloadListener<B> {
                 focusCoordinates[1] = (bbox[1] + bbox[3])/2;
                 Utils.setResultToToast(mContext, Arrays.toString(bbox)); //TODO
                 Log.e(TAG, Arrays.toString(bbox));
-                Utils.setResultToToast(mContext, Arrays.toString(focusCoordinates)); //TODO
-
+//                Utils.setResultToToast(mContext, Arrays.toString(focusCoordinates));
             }catch (Exception e) {
                 Utils.setResultToToast(mContext, "Error in ObjectDetectTask"); //TODO
             }
             try{
-
                     mCI.focusLen(focusCoordinates);
-
             }catch (Exception e) {
                 Utils.setResultToToast(mContext, e.getMessage()); //TODO
             }
