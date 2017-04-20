@@ -101,6 +101,7 @@ fix Watson Classifier error about Union
 
 ## APR 19 Update Notes (by David and Chen):
 - Fixed shoot photo error
+- Added Watson Classifier for change settings
 
 ## Mar XX Update Notes (by XXXX):
 - ALWAYS update this log when changes are made!!!

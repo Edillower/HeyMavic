@@ -17,7 +17,7 @@ import java.util.concurrent.Future;
  */
 
 public class WatsonCommandClassifier {
-    private final String command_classfier_id = "90e7acx197-nlc-35102";
+    private final String command_classfier_id = "90e7b7x198-nlc-43271";
     private final String direction_classfier_id = "90e7b4x199-nlc-18482";
     private final String object_detect_classfier_id = "90e7acx197-nlc-37646";
     private final List<String> object_list = Arrays.asList("aeroplane", "bicycle", "bird", "boat",
@@ -101,6 +101,9 @@ public class WatsonCommandClassifier {
                 break;
             case 5:
                 this.command_direction = "Advance Mission: " + this.google_map_search_string;
+                break;
+            case 6:
+                this.command_direction = "Change Setting: " + command;
                 break;
             case 7:
                 this.command_direction = "Take photo: "+object_detect_class_string;
@@ -204,6 +207,27 @@ public class WatsonCommandClassifier {
                 encoded_string.add(205);
                 switch_num = 5;
                 break;
+            case "home":
+                encoded_string.add(108);
+                encoded_string.add(206);
+                encoded_string.add(401);
+                encoded_string.add(207);
+                switch_num = 6;
+                break;
+            case "height":
+                encoded_string.add(108);
+                encoded_string.add(206);
+                encoded_string.add(402);
+                encoded_string.add(207);
+                switch_num = 6;
+                break;
+            case "speed":
+                encoded_string.add(108);
+                encoded_string.add(206);
+                encoded_string.add(403);
+                encoded_string.add(207);
+                switch_num = 6;
+                break;
             case "photo":
                 encoded_string.add(109);
                 int id = this.object_list.indexOf(object_detect_class_string)+1;
@@ -218,15 +242,19 @@ public class WatsonCommandClassifier {
             if (switch_num == 1) {
                 encoded_string.add(202);
                 switch_num = 3;
+                encoded_string.add(Integer.parseInt(unit));
             }
             //turn
             else if (switch_num == 2) {
                 encoded_string.add(204);
                 switch_num = 4;
+                encoded_string.add(Integer.parseInt(unit));
             }
-            encoded_string.add(Integer.parseInt(unit));
+            //settings
+            else if (switch_num == 6) {
+                encoded_string.add(Integer.parseInt(unit));
+            }
         }
-
         encoded_string.add(switch_num);
         return encoded_string;
     }
