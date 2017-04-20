@@ -258,7 +258,7 @@ public class CommandInterpreter {
                 }else{
                     Utils.setResultToToast(mContext, "Wrong Command Code [108]");
                 }
-
+                break;
             case 109:
                 object_id = mCmdCode[1];
                 shootPhoto();
