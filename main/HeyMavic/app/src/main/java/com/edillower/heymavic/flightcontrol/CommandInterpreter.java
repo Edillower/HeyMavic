@@ -168,7 +168,7 @@ public class CommandInterpreter {
             }
         }
 
-        int idx = 0, para_dis, para_dir_go, para_dir, para_deg;
+        int idx = 0, para_dis, para_dir_go, para_dir, para_deg,para_type,para_val;
         switch (mCmdCode[idx]) {
             case 100:
                 mTakeoff();
@@ -242,6 +242,23 @@ public class CommandInterpreter {
                 mSingletonVirtualStickExecutor = MyVirtualStickExecutor.getUniqueInstance();
                 mSingletonVirtualStickExecutor.mFlyto(para_lati, para_logi);
                 break;
+            case 108:
+                para_type = 0;
+                para_val = 90;
+                if(idx+2<mCmdCode.length && mCmdCode[idx+1]==206){
+                    para_type = mCmdCode[idx+2];
+                    idx += 2;
+                    if(idx+2<mCmdCode.length && mCmdCode[idx+1]==207){
+                        para_val = mCmdCode[idx+2];
+                        idx += 2;
+                        changeSetting(para_type,para_val);
+                    }else{
+                        Utils.setResultToToast(mContext, "Wrong Command Code [108]");
+                    }
+                }else{
+                    Utils.setResultToToast(mContext, "Wrong Command Code [108]");
+                }
+
             case 109:
                 object_id = mCmdCode[1];
                 shootPhoto();
@@ -252,6 +269,25 @@ public class CommandInterpreter {
         }
     }
 
+    private void changeSetting(int type, int para){
+        switch (type) {
+            case 401:
+                MyChangeSettingsExecutor.setGoHomeHeightInMeters((float)para);
+                Utils.setResultToToast(mContext,"Return to home altitude has been set to " + Integer.toString(para) + " meters");
+                break;
+            case 402:
+                MyChangeSettingsExecutor.setMaxFlightHeight((float)para);
+                Utils.setResultToToast(mContext,"Max flight height has been set to " + Integer.toString(para) + " meters");
+                break;
+            case 403:
+                MyVirtualStickExecutor.getUniqueInstance().setSpeed(para);
+                Utils.setResultToToast(mContext,"Speed has been set to " + Integer.toString(para) + " m/s");
+                break;
+            default:
+                mStop();
+                break;
+        }
+    }
 
     public void shootPhoto() {
         // take photo

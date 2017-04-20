@@ -60,6 +60,22 @@ public class MyChangeSettingsExecutor {
     }
 
     /**
+     * @param height
+     * @requires 20.0 <= height <= 500.0
+     */
+    public static void setGoHomeHeightInMeters(float height){
+        FlightController fc = DJISimulatorApplication.getFlightController();
+        if(fc!=null){
+            fc.setGoHomeHeightInMeters(height,new CommonCallbacks.CompletionCallback() {
+                @Override
+                public void onResult(DJIError djiError) {
+
+                }
+            });
+        }
+    }
+
+    /**
      * @param maxHeight
      *
      * @requires 15.0 <= maxHeight <= 500.0
@@ -76,36 +92,22 @@ public class MyChangeSettingsExecutor {
         }
     }
 
-    /**
-     * @param maxRadius
-     *
-     * @requires 15.0 <= maxHeight <= 500.0
-     */
-    public static void setMaxFlightRadius(float maxRadius){
-        FlightController fc = DJISimulatorApplication.getFlightController();
-        if(fc!=null){
-            fc.setMaxFlightRadius(maxRadius,new CommonCallbacks.CompletionCallback() {
-                @Override
-                public void onResult(DJIError djiError) {
+//    /**
+//     * @param maxRadius
+//     *
+//     * @requires 15.0 <= maxHeight <= 500.0
+//     */
+//    public static void setMaxFlightRadius(float maxRadius){
+//        FlightController fc = DJISimulatorApplication.getFlightController();
+//        if(fc!=null){
+//            fc.setMaxFlightRadius(maxRadius,new CommonCallbacks.CompletionCallback() {
+//                @Override
+//                public void onResult(DJIError djiError) {
+//
+//                }
+//            });
+//        }
+//    }
 
-                }
-            });
-        }
-    }
 
-    /**
-     * @param height
-     * @requires 20.0 <= height <= 500.0
-     */
-    public static void setGoHomeHeightInMeters(float height){
-        FlightController fc = DJISimulatorApplication.getFlightController();
-        if(fc!=null){
-            fc.setGoHomeHeightInMeters(height,new CommonCallbacks.CompletionCallback() {
-                @Override
-                public void onResult(DJIError djiError) {
-
-                }
-            });
-        }
-    }
 }

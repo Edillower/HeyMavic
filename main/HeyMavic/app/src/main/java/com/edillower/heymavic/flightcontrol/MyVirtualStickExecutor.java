@@ -20,6 +20,7 @@ import dji.sdk.flightcontroller.FlightController;
 public class MyVirtualStickExecutor {
     private MyVirtualStickExecutorMode mMode = MyVirtualStickExecutorMode.UNINITIALIZED;
 
+    private float mSpeed = 3;
     private float mPitch = 0;
     private float mRoll = 0;
     private float mYaw = 0;
@@ -75,18 +76,43 @@ public class MyVirtualStickExecutor {
         return uniqueInstance;
     }
 
-    private void initYaw(){
+    private void initYaw() {
         mYaw = mFlightController.getCompass().getHeading();
     }
 
 //    private void initAltitude (){hpAltitude=mFlightController.getState().getAircraftLocation().getAltitude();}
 
-    private double getCurrentAltitude(){
-        double alti =  (double) mFlightController.getState().getAircraftLocation().getAltitude(); //-hpAltitude;
+    private double getCurrentAltitude() {
+        double alti = (double) mFlightController.getState().getAircraftLocation().getAltitude(); //-hpAltitude;
 //        if (alti<18){
 //            alti = (double) mFlightController.getState().getUltrasonicHeightInMeters();
 //        }
         return alti;
+    }
+
+    protected void setSpeed(int s) {
+        mSpeed = (float) s;
+        if (mPitch != 0) {
+            if (mPitch > 0) {
+                mPitch = mSpeed;
+            } else {
+                mPitch = -mSpeed;
+            }
+        }
+        if (mThrottle != 0) {
+            if (mThrottle > 0) {
+                mThrottle = mSpeed;
+            } else {
+                mThrottle = -mSpeed;
+            }
+        }
+        if (mRoll != 0) {
+            if (mRoll > 0) {
+                mRoll = mSpeed;
+            } else {
+                mRoll = -mSpeed;
+            }
+        }
     }
 
     /**
@@ -338,7 +364,7 @@ public class MyVirtualStickExecutor {
         mMode = MyVirtualStickExecutorMode.UP_WITHOUT_DIS;
         checkSendVirtualStickDataTimer();
         destroyLocationTrackTimer();
-        mThrottle = 3;
+        mThrottle = mSpeed;
         if (dis != -1) {
             secFlag = true;
             mMode = MyVirtualStickExecutorMode.UP_DIS;
@@ -364,7 +390,7 @@ public class MyVirtualStickExecutor {
         mMode = MyVirtualStickExecutorMode.DOWN_WITHOUT_DIS;
         checkSendVirtualStickDataTimer();
         destroyLocationTrackTimer();
-        mThrottle = -3;
+        mThrottle = -mSpeed;
         if (dis != -1) {
             secFlag = true;
             mMode = MyVirtualStickExecutorMode.DOWN_DIS;
@@ -438,8 +464,8 @@ public class MyVirtualStickExecutor {
         } else if (movingDirection == 304) {
             idx = 1;
         }
-        mPitch = (float) (3 * dir[idx]);
-        mRoll = (float) (3 * dir[idx + 1]);
+        mPitch = (float) (mSpeed * dir[idx]);
+        mRoll = (float) (mSpeed * dir[idx + 1]);
 
         if (optionalDis != -1) {
             secFlag = true;

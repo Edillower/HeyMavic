@@ -99,9 +99,12 @@ fix Watson Classifier error about Union
 - Fix height tracking bug 
 - Removed redundant toasts and test button
 
-## APR 19 Update Notes (by David and Chen):
-- Fixed shoot photo error
-- Added Watson Classifier for change settings
+## APR 19 Update Notes:
+- Fixed shoot photo error by David and Melody
+- Added Watson Classifier for change settings by David
+
+## APR 20 Update Notes (by Eddie):
+- Added handler for voice controlled change settings
 
 ## Mar XX Update Notes (by XXXX):
 - ALWAYS update this log when changes are made!!!
