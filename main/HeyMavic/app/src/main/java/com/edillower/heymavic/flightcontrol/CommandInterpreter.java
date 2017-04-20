@@ -2,23 +2,29 @@ package com.edillower.heymavic.flightcontrol;
 
 
 import android.content.Context;
-import android.location.Location;
+import android.graphics.PointF;
+import android.os.Environment;
 
-import com.edillower.heymavic.FPVFullscreenActivity;
 import com.edillower.heymavic.common.DJISimulatorApplication;
 import com.edillower.heymavic.common.Utils;
 
+import java.io.File;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.List;
+import java.util.Date;
+import java.util.concurrent.TimeUnit;
 
-import dji.common.camera.SystemState;
-import dji.common.util.CommonCallbacks;
-import dji.common.util.LocationUtils;
-import dji.sdk.base.BaseProduct;
-import dji.sdk.flightcontroller.FlightController;
-import dji.sdk.mission.MissionControl;
-import dji.sdk.mission.timeline.Mission;
-import dji.sdk.products.Aircraft;
+import dji.common.camera.SettingsDefinitions;
 import dji.common.error.DJIError;
+import dji.common.util.CommonCallbacks;
+import dji.sdk.base.BaseProduct;
+import dji.sdk.camera.MediaFile;
+import dji.sdk.camera.MediaManager;
+import dji.sdk.flightcontroller.FlightController;
+import dji.sdk.mission.timeline.actions.GoToAction;
+import dji.sdk.products.Aircraft;
 
 
 /**
@@ -36,7 +42,17 @@ public class CommandInterpreter {
     use DJIFlightControllerFlightMode (Enum)
     isVirtualStickControlModeAvailable()
     */
+
     private MyVirtualStickExecutor mSingletonVirtualStickExecutor;
+    private GoToAction mGoToAction;
+    //private Trigger mTrigger;
+    private MediaManager mMediaManager;
+    private MediaFile media;
+    //int flag;
+
+
+    private int object_id;
+    int count = 1;
 
 
     /**

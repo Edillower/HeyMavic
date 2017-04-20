@@ -32,6 +32,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.edillower.heymavic.common.DJISimulatorApplication;
+import com.edillower.heymavic.common.Utils;
 import com.edillower.heymavic.flightcontrol.CommandInterpreter;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
@@ -454,7 +455,7 @@ public class FPVFullscreenActivity extends FragmentActivity implements OnMapRead
         mCI.initFlightController();
         if (mCI.mFlightController != null) {
             mCI.setPhotoMode();
-            showFpvToast("Set up call back");
+            showFpvToast("Set up call bacsk");
             if (mCI.mFlightController.isVirtualStickControlModeAvailable()) {
                 mBtnStop.setVisibility(View.VISIBLE);
             }
