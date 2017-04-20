@@ -122,4 +122,32 @@ public class Utils{
         destination[1] = Math.toDegrees(destination[1]);
         return destination;
     }
+
+
+    public static double calcBearing(double initLati, double initLongi, double destLati, double destLongi){
+        initLati=Math.toRadians(initLati);
+        destLati=Math.toRadians(destLati);
+        initLongi=Math.toRadians(initLongi);
+        destLongi=Math.toRadians(destLongi);
+        double deltaLongi = destLongi-initLongi;
+        double y = Math.sin(deltaLongi)*Math.cos(destLati);
+        double x = Math.cos(initLati)*Math.sin(destLati)-Math.sin(initLati)*Math.cos(destLati)*Math.cos(deltaLongi);
+        double bearing = Math.toDegrees(Math.atan2(y,x));
+        return bearing;
+    }
+
+    public static double calcDistance(double initLati, double initLongi, double destLati, double destLongi){
+        double radius = 6371000;
+        initLati=Math.toRadians(initLati);
+        destLati=Math.toRadians(destLati);
+        initLongi=Math.toRadians(initLongi);
+        destLongi=Math.toRadians(destLongi);
+        double deltaLati = destLati-initLati;
+        double deltaLongi = destLongi-initLongi;
+        double a = Math.sin(deltaLati/2)*Math.sin(deltaLati/2)+Math.cos(initLati)*Math.cos(destLati)*Math.sin(deltaLongi/2)*Math.sin(deltaLongi/2);
+        double c = 2*Math.atan2(Math.sqrt(a),Math.sqrt(1-a));
+        double distance=radius*c;
+        return distance;
+    }
+
 }

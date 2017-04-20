@@ -86,5 +86,18 @@ fix Watson Classifier error about starbucks
 ## APR 15 Update Notes (by David Yang):
 fix Watson Classifier error about Union
 
+## APR 16 Update Notes:
+- Complete flight control part by keao
+- Reimplement advanced mission fly to by Eddie
+- Fix coordinates bug by Eddie
+
+## APR 17 Update Notes (by Eddie):
+- Optimized flight precision
+- Added drone-user distance track
+- Fly to address picker list now sorted by distance
+- Minor optimization for real world testing
+- Fix height tracking bug 
+- Removed redundant toasts and test button
+
 ## Mar XX Update Notes (by XXXX):
 - ALWAYS update this log when changes are made!!!

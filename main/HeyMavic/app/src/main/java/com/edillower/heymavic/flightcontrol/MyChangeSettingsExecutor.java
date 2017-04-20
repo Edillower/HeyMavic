@@ -51,12 +51,61 @@ public class MyChangeSettingsExecutor {
 
     public static void setConventionVirtualStickMode(){
         FlightController fc = DJISimulatorApplication.getFlightController();
-        fc.setRollPitchControlMode(RollPitchControlMode.VELOCITY);
-        fc.setYawControlMode(YawControlMode.ANGLE);
-        fc.setVerticalControlMode(VerticalControlMode.VELOCITY);
-        fc.setRollPitchCoordinateSystem(FlightCoordinateSystem.BODY);
+        if(fc!=null){
+            fc.setRollPitchControlMode(RollPitchControlMode.VELOCITY);
+            fc.setYawControlMode(YawControlMode.ANGLE);
+            fc.setVerticalControlMode(VerticalControlMode.VELOCITY);
+            fc.setRollPitchCoordinateSystem(FlightCoordinateSystem.BODY);
+        }
     }
 
+    /**
+     * @param maxHeight
+     *
+     * @requires 15.0 <= maxHeight <= 500.0
+     */
+    public static void setMaxFlightHeight(float maxHeight){
+        FlightController fc = DJISimulatorApplication.getFlightController();
+        if(fc!=null){
+            fc.setMaxFlightHeight(maxHeight,new CommonCallbacks.CompletionCallback() {
+                @Override
+                public void onResult(DJIError djiError) {
 
+                }
+            });
+        }
+    }
 
+    /**
+     * @param maxRadius
+     *
+     * @requires 15.0 <= maxHeight <= 500.0
+     */
+    public static void setMaxFlightRadius(float maxRadius){
+        FlightController fc = DJISimulatorApplication.getFlightController();
+        if(fc!=null){
+            fc.setMaxFlightRadius(maxRadius,new CommonCallbacks.CompletionCallback() {
+                @Override
+                public void onResult(DJIError djiError) {
+
+                }
+            });
+        }
+    }
+
+    /**
+     * @param height
+     * @requires 20.0 <= height <= 500.0
+     */
+    public static void setGoHomeHeightInMeters(float height){
+        FlightController fc = DJISimulatorApplication.getFlightController();
+        if(fc!=null){
+            fc.setGoHomeHeightInMeters(height,new CommonCallbacks.CompletionCallback() {
+                @Override
+                public void onResult(DJIError djiError) {
+
+                }
+            });
+        }
+    }
 }

@@ -2,32 +2,30 @@ package com.edillower.heymavic.flightcontrol;
 
 
 import android.content.Context;
-import android.graphics.PointF;
-import android.os.Environment;
+import android.location.Location;
 
+import com.edillower.heymavic.FPVFullscreenActivity;
 import com.edillower.heymavic.common.DJISimulatorApplication;
 import com.edillower.heymavic.common.Utils;
 
-import java.io.File;
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.List;
-import java.util.Date;
-import java.util.concurrent.TimeUnit;
 
-import dji.common.camera.SettingsDefinitions;
-import dji.common.error.DJIError;
-import dji.common.model.LocationCoordinate2D;
+import dji.common.camera.SystemState;
 import dji.common.util.CommonCallbacks;
-import dji.sdk.camera.MediaFile;
-import dji.sdk.camera.MediaManager;
+import dji.common.util.LocationUtils;
+import dji.sdk.base.BaseProduct;
 import dji.sdk.flightcontroller.FlightController;
 import dji.sdk.mission.MissionControl;
-import dji.sdk.mission.timeline.actions.GoToAction;
+import dji.sdk.mission.timeline.Mission;
 import dji.sdk.products.Aircraft;
+import dji.common.error.DJIError;
 
+
+/**
+ * !!! this is singleton class !!!
+ */
 public class CommandInterpreter {
+
     private Context mContext;
 
     public Aircraft aircraft; //need to be local, should not be declare here
@@ -39,24 +37,25 @@ public class CommandInterpreter {
     isVirtualStickControlModeAvailable()
     */
     private MyVirtualStickExecutor mSingletonVirtualStickExecutor;
-    private GoToAction mGoToAction;
-    //private Trigger mTrigger;
-    private MediaManager mMediaManager;
-    private MediaFile media;
-    //int flag;
 
 
-    private int object_id;
-    int count = 1;
-
+    /**
+     * singleton pattern
+     */
     private static CommandInterpreter uniqueInstance = null;
 
+    /**
+     * always private, no use
+     */
     private CommandInterpreter(Context context){
         mContext = context;
-        //mTrigger = Trigger.getInstance();
-        //flag = 0;
     }
 
+    /**
+     *
+     * @param context
+     * @return
+     */
     public static CommandInterpreter getUniqueInstance(Context context){
         if(uniqueInstance == null){
             return new CommandInterpreter(context);
@@ -64,7 +63,6 @@ public class CommandInterpreter {
             return uniqueInstance;
         }
     }
-
 
     /**
      * should be private, not be used by others
@@ -74,11 +72,10 @@ public class CommandInterpreter {
         aircraft = DJISimulatorApplication.getAircraftInstance();
 
         if (aircraft == null || !aircraft.isConnected()) {
-            Utils.setResultToToast(mContext, "aircraft not found!");
+//            Utils.setResultToToast(mContext, "aircraft not found!");
             mFlightController = null;
         } else {
             mFlightController = aircraft.getFlightController();
-//            MyChangeSettingsExecutor.mEnableVS(); //this should be deleted after set to private
 //            Utils.setResultToToast(mContext, "CI init FlightController success with mode "+mFlightController.getState().getFlightMode());
         }
     }
@@ -116,17 +113,12 @@ public class CommandInterpreter {
 
     /**
      * need to be private this one
-     *
-     * should stop VirtualStick's working or Mission
      */
     public void mStop(){
         if(mFlightController.isVirtualStickControlModeAvailable()){
-            Utils.setResultToToast(mContext, "VS is on");
             mSingletonVirtualStickExecutor.mStop();
-        }else if(mGoToAction!=null&&mGoToAction.isRunning()){
-            mGoToAction.stop();
         }else{
-            MyChangeSettingsExecutor.mEnableVS();
+            MyChangeSettingsExecutor.mEnableVS(); //delete
             mSingletonVirtualStickExecutor = MyVirtualStickExecutor.getUniqueInstance();
             mSingletonVirtualStickExecutor.mStop();
         }
@@ -146,14 +138,21 @@ public class CommandInterpreter {
             Utils.setResultToToast(mContext, "Wrong Command Code [null]");
             return;
         }
-        initFlightController();
-        int idx = 0, para_dir_go = 301, para_dir = 303, para_dis = -1, para_deg = 90;
-//        Utils.setResultToToast(mContext, "before cmd mode:"+mFlightController.getState().getFlightMode());
 
-        if(mGoToAction!=null&&mGoToAction.isRunning()){
-            mGoToAction.stop();
+        BaseProduct product = DJISimulatorApplication.getProductInstance();
+        if(product == null || !product.isConnected()){
+//            Utils.setResultToToast(mContext, "CI: disconnect");
+            return;
+        }else{
+            if(product instanceof Aircraft){
+                mFlightController = ((Aircraft)product).getFlightController();
+//                Utils.setResultToToast(mContext, "CI: FC good");
+            }else{
+                return;
+            }
         }
 
+        int idx = 0, para_dis, para_dir_go, para_dir, para_deg;
         switch (mCmdCode[idx]) {
             case 100:
                 mTakeoff();
@@ -165,6 +164,8 @@ public class CommandInterpreter {
                 mStop();
                 break;
             case 103:
+                para_dis = -1;
+                para_dir_go = 90;
                 if(idx+2<mCmdCode.length && mCmdCode[idx+1]==201){
                     para_dir_go = mCmdCode[idx+2];
                     idx+=2;
@@ -175,55 +176,12 @@ public class CommandInterpreter {
                     para_dis = mCmdCode[idx+2];
                     idx+=2;
                 }
-                if(para_dis==-1){
-                    mSingletonVirtualStickExecutor = MyVirtualStickExecutor.getUniqueInstance();
-                    mSingletonVirtualStickExecutor.mGo(para_dir_go);
-                }else{
-                    //1. should reivew order here
-                    //2. stop when other cmd come in
-                    MyVirtualStickExecutor.destroyInstance();
-                    double mHomeLatitude = mFlightController.getState().getAircraftLocation().getLatitude();
-                    double mHomeLongitude = mFlightController.getState().getAircraftLocation().getLongitude();
-                    double bearing = mFlightController.getCompass().getHeading();
-                    if(para_dir_go==302){
-                        bearing += 180;
-                    }else if(para_dir_go==303){
-                        bearing -= 90;
-                    }else if(para_dir_go==304){
-                        bearing += 90;
-                    }
-                    double[] des = Utils.calcDestination(mHomeLatitude, mHomeLongitude, bearing, para_dis);
-                    final double aa = des[0];
-                    final double bb = des[1];
-
-                    Runnable goDis = new Runnable() {
-                        @Override
-                        public void run() {
-                            try{
-                                TimeUnit.SECONDS.sleep(2);
-                            }catch (Exception e){
-
-                            }
-                            MyChangeSettingsExecutor.mDisableVS();
-                            if(mFlightController.isVirtualStickControlModeAvailable()){
-                                Utils.setResultToToast(mContext, "VS still on");
-                            }
-                            mGoToAction = new GoToAction(new LocationCoordinate2D(aa,bb));
-                            mGoToAction.run();
-                            try{
-                                TimeUnit.SECONDS.sleep(2);
-                            }catch (Exception e){
-
-                            }
-                            mGoToAction.didRun();
-                        }
-                    };
-
-                    goDis.run();
-
-                }
+                mSingletonVirtualStickExecutor = MyVirtualStickExecutor.getUniqueInstance();
+                mSingletonVirtualStickExecutor.mGo(para_dir_go, para_dis);
                 break;
             case 104:
+                para_dir = 0;
+                para_deg = 90;
                 if(idx+2<mCmdCode.length && mCmdCode[idx+1]==203){
                     para_dir = mCmdCode[idx+2];
                     idx += 2;
@@ -238,84 +196,35 @@ public class CommandInterpreter {
                 mSingletonVirtualStickExecutor.mTurn(para_dir,para_deg);
                 break;
             case 105:
+                para_dis = -1;
                 if(idx+2<mCmdCode.length && mCmdCode[idx+1]==202){
                     para_dis = mCmdCode[idx+2];
                     idx+=2;
                 }
-                if(para_dis == -1){
-                    Utils.setResultToToast(mContext, "Up no dis");
-                    mSingletonVirtualStickExecutor = MyVirtualStickExecutor.getUniqueInstance();
-                    mSingletonVirtualStickExecutor.mUp();
-                }else{
-                    //1. should reivew order here
-                    //2. stop when other cmd come in
-                    Utils.setResultToToast(mContext, "Up dis: " + Integer.toString(para_dis));
-                    MyChangeSettingsExecutor.mDisableVS();
-                    MyVirtualStickExecutor.destroyInstance();
 
-                    mGoToAction = new GoToAction(para_dis);
-                    mGoToAction.run();
-                }
+                mSingletonVirtualStickExecutor = MyVirtualStickExecutor.getUniqueInstance();
+                mSingletonVirtualStickExecutor.mUp(para_dis);
                 break;
             case 106:
+                para_dis = -1;
                 if(idx+2<mCmdCode.length && mCmdCode[idx+1]==202){
                     para_dis = mCmdCode[idx+2];
                     idx+=2;
                 }
-                if(para_dis == -1){
-                    mSingletonVirtualStickExecutor = MyVirtualStickExecutor.getUniqueInstance();
-                    mSingletonVirtualStickExecutor.mDown();
-                }else{
-                    //1. should reivew order here
-                    //2. stop when other cmd come in
-                    MyChangeSettingsExecutor.mDisableVS();
-                    MyVirtualStickExecutor.destroyInstance();
-
-                    mGoToAction = new GoToAction(0-para_dis);
-                    mGoToAction.run();
-                }
+                mSingletonVirtualStickExecutor = MyVirtualStickExecutor.getUniqueInstance();
+                mSingletonVirtualStickExecutor.mDown(para_dis);
                 break;
             case 107:
-                int para_lati_int=25, para_lati_decimal=0, para_logi_int=113, para_logi_decimal=0;
-
+                double para_lati = 25, para_logi = 113;
                 if(idx+5<mCmdCode.length && mCmdCode[idx+1]==205){
-                    para_lati_int = mCmdCode[idx+2];
-                    para_lati_decimal = mCmdCode[idx+3];
-                    para_logi_int = mCmdCode[idx+4];
-                    para_logi_decimal = mCmdCode[idx+5];
+                    para_lati = mCmdCode[idx+2] + mCmdCode[idx+3]/100000.0;
+                    para_logi = mCmdCode[idx+4] + mCmdCode[idx+5]/100000.0;
                     idx+=5;
                 }else{
                     Utils.setResultToToast(mContext, "Wrong Command Code [107]");
                 }
-                //1. should reivew order here
-                //2. stop when other cmd come in
-                MyChangeSettingsExecutor.mDisableVS();
-                MyVirtualStickExecutor.destroyInstance();
-
-                double para_lati = para_lati_int + (double) para_lati_decimal/100000.0;
-                double para_logi = para_logi_int + (double) para_logi_decimal/100000.0;
-                Utils.setResultToToast(mContext, para_lati+","+para_logi);
-                //=======================
-                mGoToAction = new GoToAction(new LocationCoordinate2D(para_lati, para_logi));
-                MissionControl mc = MissionControl.getInstance();
-                mc.scheduleElement(mGoToAction);
-                mc.startTimeline();
-                //=======================
-
-                break;
-            case 108:
-                int set_type = 0, set_param = 0;
-                if(idx+2<mCmdCode.length && mCmdCode[idx+1]==206){
-                    set_type= mCmdCode[idx+2];
-                    idx += 2;
-                }else{
-                    Utils.setResultToToast(mContext, "Wrong Command Code [108]");
-                }
-                if(idx+2<mCmdCode.length && mCmdCode[idx+1]==207){
-                    set_param = mCmdCode[idx+2];
-                    idx += 2;
-                }
-//                MyChangeSettingsExecutor.execute(set_type, set_param);
+                mSingletonVirtualStickExecutor = MyVirtualStickExecutor.getUniqueInstance();
+                mSingletonVirtualStickExecutor.mFlyto(para_lati, para_logi);
                 break;
             case 109:
                 object_id = mCmdCode[1];
@@ -325,8 +234,8 @@ public class CommandInterpreter {
                 mStop();
                 break;
         }
-//        Utils.setResultToToast(mContext, "after cmd mode:"+mFlightController.getState().getFlightMode());
     }
+
 
     public void shootPhoto() {
         // take photo
@@ -521,8 +430,4 @@ public class CommandInterpreter {
         });
     }
 
-
 }
-
-
-

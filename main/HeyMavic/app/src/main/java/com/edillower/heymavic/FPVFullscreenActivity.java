@@ -116,11 +116,12 @@ public class FPVFullscreenActivity extends FragmentActivity implements OnMapRead
     private Button mBtnHide;
 
     //Aircraft State
-    private TextView mAttitute;
+    private TextView mAltitude;
     private TextView mVerSpeed;
     private TextView mHorSpeed;
+    private TextView mDistance;
     //    private TextView mDistance;
-    private double mAttitudeData;
+    private double mAltitudeData;
     private double mvs;
     private double mhs;
     private double mdistToHome;
@@ -174,7 +175,6 @@ public class FPVFullscreenActivity extends FragmentActivity implements OnMapRead
         speechService = initSpeechToTextService();
         cc1 = new WatsonCommandClassifier();
 
-        //mCI = new CommandInterpreter(mContext);
         mCI = CommandInterpreter.getUniqueInstance(mContext);
         initDrone();
 
@@ -304,7 +304,7 @@ public class FPVFullscreenActivity extends FragmentActivity implements OnMapRead
     public void onDialogMessage(boolean message) {
         if (message) {
             writeRecogRecord(true, mStrIntention, cc1.getEncodedString().toString(), cc1.getCommand());
-            showFpvToast("Start executing command");
+//            showFpvToast("Start executing command");
             preCheck(cc1.getEncodedString(), cc1.getGoogleMapSearchString()); // Start execution
         } else {
             writeRecogRecord(false, mStrIntention, cc1.getEncodedString().toString(), cc1.getCommand());
@@ -397,29 +397,29 @@ public class FPVFullscreenActivity extends FragmentActivity implements OnMapRead
     };
 
     private void updateConnection() {
-        boolean ret = false;
+//        boolean ret = false;
         BaseProduct product = DJISimulatorApplication.getProductInstance();
         if (product != null) {
             if (product.isConnected()) {
                 //The product is connected
                 showFpvToast(DJISimulatorApplication.getProductInstance().getModel() + " Connected");
-                ret = true;
+//                ret = true;
             } else {
                 if (product instanceof Aircraft) {
                     Aircraft aircraft = (Aircraft) product;
                     if (aircraft.getRemoteController() != null && aircraft.getRemoteController().isConnected()) {
                         // The product is not connected, but the remote controller is connected
                         showFpvToast("only RC Connected");
-                        ret = true;
+//                        ret = true;
                     }
                 }
             }
         }
 
-        if (!ret) {
-            // The product or the remote controller are not connected.
-            showFpvToast("Disconnected");
-        }
+//        if (!ret) {
+//            // The product or the remote controller are not connected.
+//            showFpvToast("Disconnected");
+//        }
     }
 
 
@@ -447,6 +447,8 @@ public class FPVFullscreenActivity extends FragmentActivity implements OnMapRead
         });
     }
 
+//    private double initAltitude = 0;
+//    private boolean altiFlag = true;
 
     private void initDrone() {
         mCI.initFlightController();
@@ -456,6 +458,7 @@ public class FPVFullscreenActivity extends FragmentActivity implements OnMapRead
             if (mCI.mFlightController.isVirtualStickControlModeAvailable()) {
                 mBtnStop.setVisibility(View.VISIBLE);
             }
+
             mCI.mFlightController.setStateCallback(new FlightControllerState.Callback() {
                 @Override
                 public void onUpdate(@NonNull FlightControllerState flightControllerState) {
@@ -465,11 +468,14 @@ public class FPVFullscreenActivity extends FragmentActivity implements OnMapRead
                     mDroneHeading = mCI.mFlightController.getCompass().getHeading();
                     updateDroneLocation();
                     // set flight data
-                    mAttitudeData = (double) flightControllerState.getUltrasonicHeightInMeters();
+                    mAltitudeData = (double) flightControllerState.getAircraftLocation().getAltitude(); // - initAltitude;
+//                    if (mAltitudeData < 18) {
+//                        mAltitudeData = (double) flightControllerState.getUltrasonicHeightInMeters();
+//                    }
                     mhs = Math.sqrt(flightControllerState.getVelocityX() * flightControllerState.getVelocityX()
                             + flightControllerState.getVelocityY() * flightControllerState.getVelocityY());
-                    mvs = -1*flightControllerState.getVelocityZ();
-
+                    mvs = -1 * flightControllerState.getVelocityZ();
+                    mdistToHome = Utils.calcDistance(mUserLocation.latitude, mUserLocation.longitude, mDroneLocation.latitude, mDroneLocation.longitude);
                     updateFlightData();
                 }
             });
@@ -498,7 +504,8 @@ public class FPVFullscreenActivity extends FragmentActivity implements OnMapRead
         runOnUiThread(new Runnable() {
             @Override
             public void run() {
-                mAttitute.setText("H: " + new DecimalFormat("###.#").format(mAttitudeData) + "m");
+                mDistance.setText("D: " + new DecimalFormat("####").format(mdistToHome) + "m");
+                mAltitude.setText("H: " + new DecimalFormat("###.#").format(mAltitudeData) + "m");
                 mVerSpeed.setText("V.S: " + new DecimalFormat("##.#").format(mvs) + "m/s");
                 mHorSpeed.setText("H.S: " + new DecimalFormat("##.#").format(mhs) + "m/s");
             }
@@ -515,11 +522,11 @@ public class FPVFullscreenActivity extends FragmentActivity implements OnMapRead
     }
 
     private int counter = 0;
+
     private void initUI() {
         mTxtCmmand = (EditText) findViewById(R.id.command_text);
         mBtnInput = (Button) findViewById(R.id.input_btn);
         mBtnStop = (Button) findViewById(R.id.stop_btn);
-        mBtnStop.setVisibility(View.GONE);
         mBtnDummy = (Button) findViewById(R.id.dummy_btn);
         mBtnDummyMap = (Button) findViewById(R.id.dummy_map_btn);
         mBtnShow = (Button) findViewById(R.id.show_btn);
@@ -531,8 +538,9 @@ public class FPVFullscreenActivity extends FragmentActivity implements OnMapRead
         mBtnTracking.setVisibility(View.GONE);
         mBatteryView = (BatteryView) findViewById(R.id.battery_view);
         mBatteryData = (TextView) findViewById(R.id.battery_data);
-        mAttitute = (TextView) findViewById(R.id.Attitude);
+        mAltitude = (TextView) findViewById(R.id.Altitude);
         mVerSpeed = (TextView) findViewById(R.id.VerticalSpeed);
+        mDistance = (TextView) findViewById(R.id.Distance);
         mHorSpeed = (TextView) findViewById(R.id.HorizonSpeed);
 //        mDistance = (TextView) findViewById(R.id.Distance);
         mRandR = (Button) findViewById(R.id.RR_Button);
@@ -553,7 +561,6 @@ public class FPVFullscreenActivity extends FragmentActivity implements OnMapRead
             public void onClick(View v) {
 //                mCI.mDestroy();
                 mCI.mStop();
-                mBtnStop.setVisibility(View.GONE);
             }
         });
     }
@@ -897,11 +904,11 @@ public class FPVFullscreenActivity extends FragmentActivity implements OnMapRead
 
     private ArrayList<Integer> mEncodedStr;
 
-    private void preCheck(ArrayList<Integer> encoded_string, String google_map_string){
+    private void preCheck(ArrayList<Integer> encoded_string, String google_map_string) {
         // Get first and see if it is adnvacce mission
-        if (encoded_string.get(0)==107){
+        if (encoded_string.get(0) == 107) {
             searchPlace(google_map_string);
-        }else{
+        } else {
             callExecution(encoded_string);
         }
     }
@@ -909,24 +916,18 @@ public class FPVFullscreenActivity extends FragmentActivity implements OnMapRead
     private void callExecution(ArrayList<Integer> encoded_string) {
         mEncodedStr = encoded_string;
         boolean success = false;
-        if (mCI!=null){
+        if (mCI != null) {
             mCI.initFlightController(); //added by keao xu
         }
         if (mCI.mFlightController != null) {
 //            if (mCI.mVirtualStickEnabled == false) {
 //                mCI.mEnableVS();
 //            }
-            runOnUiThread(new Runnable() {
-                @Override
-                public void run() {
-                    mBtnStop.setVisibility(View.VISIBLE);
-                }
-            });
             mCI.executeCmd(mEncodedStr);
             success = true;
         }
         if (success) {
-            showFpvToast("Signal Sent");
+            showFpvToast("Instruction Sent");
         } else {
             showFpvToast("Flight Control Error");
         }
@@ -944,15 +945,20 @@ public class FPVFullscreenActivity extends FragmentActivity implements OnMapRead
     }
 
     private List<Address> addressList = null;
+    private LatLng[] locList;
     private boolean addressList_flag = true;
 
     public void searchPlace(String locationName) {
         Geocoder mGeocoder = new Geocoder(this);
-        int maxResults = 5;
-        double lowerLeftLatitude = mUserLocation.latitude - 0.1;
-        double lowerLeftLongitude = mUserLocation.longitude - 0.1;
-        double upperRightLatitude = mUserLocation.latitude + 0.1;
-        double upperRightLongitude = mUserLocation.longitude + 0.1;
+        int maxResults = 20;
+        double lowerLeftLatitude = mDroneLocation.latitude - 0.05;
+        double lowerLeftLongitude = mDroneLocation.longitude - 0.05;
+        double upperRightLatitude = mDroneLocation.latitude + 0.05;
+        double upperRightLongitude = mDroneLocation.longitude + 0.05;
+//        double lowerLeftLatitude = mUserLocation.latitude - 0.05;
+//        double lowerLeftLongitude = mUserLocation.longitude - 0.05;
+//        double upperRightLatitude = mUserLocation.latitude + 0.05;
+//        double upperRightLongitude = mUserLocation.longitude + 0.05;
         try {
             addressList = mGeocoder.getFromLocationName(locationName, maxResults, lowerLeftLatitude, lowerLeftLongitude, upperRightLatitude, upperRightLongitude);
         } catch (IOException e) {
@@ -962,15 +968,38 @@ public class FPVFullscreenActivity extends FragmentActivity implements OnMapRead
         if (addressList_flag && addressList.size() != 0) {
             Bundle args = new Bundle();
             String[] places = new String[addressList.size()];
+            double[] dist = new double[addressList.size()];
+            LatLng[] cdArray = new LatLng[addressList.size()];
             for (int i = 0; i < addressList.size(); i++) {
                 String sb = "";
                 for (int k = 0; k < addressList.get(i).getMaxAddressLineIndex(); k++) {
                     sb += addressList.get(i).getAddressLine(k);
                     sb += "; ";
                 }
+                double lat = addressList.get(i).getLatitude();
+                double lon = addressList.get(i).getLongitude();
+                LatLng currentCd = new LatLng(lat, lon);
+                double distance = Utils.calcDistance(mDroneLocation.latitude, mDroneLocation.longitude, lat, lon);
+                sb += new DecimalFormat("####").format(distance) + "m";
                 places[i] = sb;
+                dist[i] = distance;
+                cdArray[i] = currentCd;
+                for (int j = i - 1; j >= 0; j--) {
+                    if (dist[j + 1] < dist[j]) {
+                        double t1 = dist[j];
+                        String t2 = places[j];
+                        LatLng t3 = cdArray[j];
+                        dist[j] = dist[j + 1];
+                        places[j] = places[j + 1];
+                        cdArray[j] = cdArray[j + 1];
+                        dist[j + 1] = t1;
+                        places[j + 1] = t2;
+                        cdArray[j + 1] = t3;
+                    }
+                }
             }
-            args.putStringArray("places",places);
+            locList = cdArray;
+            args.putStringArray("places", places);
             mPlaceListFragment = new PlaceListFragment();
             mPlaceListFragment.setArguments(args);
             Log.e(TAG, mPlaceListFragment.getArguments().toString());
@@ -984,16 +1013,17 @@ public class FPVFullscreenActivity extends FragmentActivity implements OnMapRead
 
     public void getPlaceCoordinates(int index) {
         getSupportFragmentManager().beginTransaction().remove(mPlaceListFragment).commit();
-        double lat = addressList.get(index).getLatitude();
-        double lon = addressList.get(index).getLongitude();
+        double lat = locList[index].latitude;
+        double lon = locList[index].longitude;
         LatLng targetLatLng = new LatLng(lat, lon);
-        showFpvToast(targetLatLng.toString());
+//        showFpvToast(targetLatLng.toString());
         addressList = null;
+        locList = null;
 
-        int latInt = (int)lat;
-        int latDeci = (int)(lat - latInt)*100000;
-        int lonInt = (int)lon;
-        int lonDeci = (int)(lon - lonInt)*100000;
+        int latInt = (int) lat;
+        int latDeci = (int) ((lat - latInt) * 100000);
+        int lonInt = (int) lon;
+        int lonDeci = (int) ((lon - lonInt) * 100000);
 
         ArrayList<Integer> temp = cc1.getEncodedString();
         temp.add(latInt);
@@ -1001,7 +1031,7 @@ public class FPVFullscreenActivity extends FragmentActivity implements OnMapRead
         temp.add(lonInt);
         temp.add(lonDeci);
 
-        showFpvToast(temp.toString());
+//        showFpvToast(temp.toString());
 
         callExecution(temp);
     }
