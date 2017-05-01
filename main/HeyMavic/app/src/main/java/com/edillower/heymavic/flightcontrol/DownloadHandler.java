@@ -79,7 +79,7 @@ public class DownloadHandler<B> implements DownloadListener<B> {
                 float [] bbox = new ObjectDetectTask().execute("129.114.109.171", "10097", query_id).get();
                 focusCoordinates[0] = (bbox[0] + bbox[2])/2;
                 focusCoordinates[1] = (bbox[1] + bbox[3])/2;
-                Utils.setResultToToast(mContext, Arrays.toString(bbox));
+//                Utils.setResultToToast(mContext, Arrays.toString(bbox));
                 Log.e(TAG, Arrays.toString(bbox));
             }catch (Exception e) {
                 Utils.setResultToToast(mContext, "Error in ObjectDetectTask"); //TODO
@@ -88,13 +88,13 @@ public class DownloadHandler<B> implements DownloadListener<B> {
             Log.e(TAG, "Success! The bitmap's byte count is: " + bitmap.getByteCount());
         } else if (obj instanceof String) {
             imgDecodableString = obj.toString();
-            Utils.setResultToToast(mContext, "The file has been store, its path is " + imgDecodableString); //TODO
+//            Utils.setResultToToast(mContext, "The file has been store, its path is " + imgDecodableString); //TODO
             // TODO add more class
             // Get query ID
             String query_id = "15";
             // Send image to server
             try {
-                Utils.setResultToToast(mContext, "Start commu server"); //TODO
+//                Utils.setResultToToast(mContext, "Start commu server"); //TODO
                 float [] bbox = new ObjectDetectTask().execute("129.114.109.171", "10097", query_id).get();
                 if (bbox == null) {
                     // Object not detected
@@ -106,7 +106,8 @@ public class DownloadHandler<B> implements DownloadListener<B> {
                 }
                 focusCoordinates[0] = (bbox[0] + bbox[2])/2;
                 focusCoordinates[1] = (bbox[1] + bbox[3])/2;
-                Utils.setResultToToast(mContext, Arrays.toString(bbox)); //TODO
+
+
                 Log.e(TAG, Arrays.toString(bbox));
 //                Utils.setResultToToast(mContext, Arrays.toString(focusCoordinates));
             }catch (Exception e) {
