@@ -2,11 +2,11 @@
 Voice Control App for DJI Mavic
 
 # Author
-**Zhuoer(Eddie) Wang** 
-**Zhichao(David) Yang** 
-**Keao(Eric) Xu** 
-**Zhiyue(Paul) Yang** 
-**Chen(Melody) Cai** 
+**Zhuoer(Eddie) Wang**  
+**Zhichao(David) Yang**  
+**Keao(Eric) Xu**  
+**Zhiyue(Paul) Yang**  
+**Chen(Melody) Cai**  
 
 ## Website
 **https://heymavic.edillower.com** (under construction)  
