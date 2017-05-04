@@ -1,7 +1,7 @@
 # Hey Mavic
-Voice Control App for DJI Mavic
+Voice Control for the Drone DJI Mavic
 
-# Author
+## Author
 **Zhuoer(Eddie) Wang**  
 **Zhichao(David) Yang**  
 **Keao(Eric) Xu**  
