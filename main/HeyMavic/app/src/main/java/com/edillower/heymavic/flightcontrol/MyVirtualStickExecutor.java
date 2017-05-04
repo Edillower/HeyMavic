@@ -1,6 +1,5 @@
 package com.edillower.heymavic.flightcontrol;
 
-import com.edillower.heymavic.FPVFullscreenActivity;
 import com.edillower.heymavic.common.DJISimulatorApplication;
 import com.edillower.heymavic.common.Utils;
 
@@ -13,11 +12,11 @@ import dji.common.util.CommonCallbacks;
 import dji.sdk.flightcontroller.FlightController;
 
 /**
- * Created by Eric on 4/3/17.
- * <p>
- * !!! This is Singleton pattern class !!!
+ * Main flight control module
+ * @author Eddie Wang, Eric Xu
  */
 public class MyVirtualStickExecutor {
+    // set up
     private MyVirtualStickExecutorMode mMode = MyVirtualStickExecutorMode.UNINITIALIZED;
 
     private float mSpeed = 3;
@@ -25,8 +24,6 @@ public class MyVirtualStickExecutor {
     private float mRoll = 0;
     private float mYaw = 0;
     private float mThrottle = 0;
-
-//    private double hpAltitude=0;
 
     private Timer mSendVirtualStickDataTimer;
     private SendVirtualStickDataTask mSendVirtualStickDataTask;
@@ -52,16 +49,9 @@ public class MyVirtualStickExecutor {
     }
 
     /**
-     * do steps in order:
-     * ----
-     * get instance
-     * initial flight controller
-     * enable virtual stick
-     * set virtual stick convention control mode
-     * set Timer
-     * set task
-     *
-     * @return this class unique instance
+     * Get an istance of the virtual stick executor
+     * @author Eric Xu, Eddie Wang
+     * @return virtual stick executor
      */
     public static MyVirtualStickExecutor getUniqueInstance() {
         if (uniqueInstance == null) {
@@ -76,12 +66,20 @@ public class MyVirtualStickExecutor {
         return uniqueInstance;
     }
 
+    /**
+     * Initialize the drone's heading
+     * @author Eddie Wang
+     */
     private void initYaw() {
         mYaw = mFlightController.getCompass().getHeading();
     }
 
 //    private void initAltitude (){hpAltitude=mFlightController.getState().getAircraftLocation().getAltitude();}
 
+    /**
+     * Get the current altitude of the drone
+     * @author Eddie Wang
+     */
     private double getCurrentAltitude() {
         double alti = (double) mFlightController.getState().getAircraftLocation().getAltitude(); //-hpAltitude;
 //        if (alti<18){
@@ -90,6 +88,10 @@ public class MyVirtualStickExecutor {
         return alti;
     }
 
+    /**
+     * Change speed
+     * @author Eddie Wang
+     */
     protected void setSpeed(int s) {
         mSpeed = (float) s;
         if (mPitch != 0) {
@@ -116,15 +118,8 @@ public class MyVirtualStickExecutor {
     }
 
     /**
-     * destroy unique instance in this class
-     * <p>
-     * if instance exits, do steps in order:
-     * ----
-     * stop current virtual stick working
-     * cancel SendVirtualStickDataTask and set to null
-     * cancel SendVirtualStickDataTimer, purge and set to null
-     * disable VirtualStickMode
-     * set uniqueInstance to null
+     * Destroy the instance
+     * @author Eddie
      */
     public static void destroyInstance() {
         if (uniqueInstance != null) {
@@ -145,7 +140,8 @@ public class MyVirtualStickExecutor {
     }
 
     /**
-     * mSendVirtualStickDataTimer always has only one task: mSendVirtualStickDataTask
+     * Check for data sending to the drone
+     * @maintainer Eric Xu
      */
     private void checkSendVirtualStickDataTimer() {
         if (mSendVirtualStickDataTimer == null) {
@@ -155,11 +151,33 @@ public class MyVirtualStickExecutor {
         }
     }
 
+    class SendVirtualStickDataTask extends TimerTask {
+        @Override
+        public void run() {
+            if (mFlightController != null) {
+                mFlightController.sendVirtualStickFlightControlData(
+                        new FlightControlData(
+                                mPitch, mRoll, mYaw, mThrottle
+                        ), new CommonCallbacks.CompletionCallback() {
+                            @Override
+                            public void onResult(DJIError djiError) {
+
+                            }
+                        }
+                );
+            }
+        }
+    }
+    /**
+     * END of Check for data sending to the drone
+     * @maintainer Eric Xu
+     */
+
     /**
      * mLocationTrackTimer always has only one task: mLocationTrackTask
      * destroy timer first
      *
-     * @param mode
+     * @param mode flight mode
      * @param homeH
      * @param tarH
      */
@@ -204,33 +222,12 @@ public class MyVirtualStickExecutor {
         }
     }
 
-    /**
-     * a new java TimerTask to send DJIVirtualStickFlightControlData with four global params
-     * (mPitch, mRoll, mYaw, mThrottle)
-     */
-    class SendVirtualStickDataTask extends TimerTask {
-        @Override
-        public void run() {
-            if (mFlightController != null) {
-                mFlightController.sendVirtualStickFlightControlData(
-                        new FlightControlData(
-                                mPitch, mRoll, mYaw, mThrottle
-                        ), new CommonCallbacks.CompletionCallback() {
-                            @Override
-                            public void onResult(DJIError djiError) {
-
-                            }
-                        }
-                );
-            }
-        }
-    }
-
     private boolean secFlag = true;
 
     /**
      * a new TimerTask to check location and set four global params (mPitch, mRoll, mYaw, mThrottle)
      * when need
+     * @author Eric Xu, Eddie Wang
      */
     class LocationTrackTask extends TimerTask {
         private MyVirtualStickExecutorMode m;
@@ -284,6 +281,7 @@ public class MyVirtualStickExecutor {
                     double cosUp = home2curX * cur2tarX + home2curY * cur2tarY;
                     double cosDown = home2curMag * cur2tarMag;
 
+                    // For precise stopping and hovering @author Eddie Wang
                     double dist = Utils.calcDistance(curLat, curLog, tarLat, tarLog);
 
                     if (dist < 0.33 || cosUp / cosDown < 0) {
@@ -301,26 +299,6 @@ public class MyVirtualStickExecutor {
                         } else if (m == MyVirtualStickExecutorMode.FLY_TO) {
                             //set direction
                             mYaw = (float) Utils.calcBearing(curLat, curLog, tarLat, tarLog);
-//                            if(cur2tarX < 0){
-//                                if(cur2tarY == 0){
-//                                    mYaw = -90;
-//                                }else{
-//                                    mYaw = -(float)(Math.atan(-cur2tarX/cur2tarY));
-//                                }
-//                            }else if(cur2tarX > 0){
-//                                if(cur2tarY == 0){
-//                                    mYaw = 90;
-//                                }else{
-//                                    mYaw = (float)(Math.atan(cur2tarX/cur2tarY));
-//                                }
-//                            }else{
-//                                //north or south or original point
-//                                if(cur2tarY > 0){
-//                                    mYaw = 0;
-//                                }else if(cur2tarY < 0){
-//                                    mYaw = 180;
-//                                }
-//                            }
                         }
                     }
                 }
@@ -329,16 +307,8 @@ public class MyVirtualStickExecutor {
     }
 
     /**
-     * ONLY STOP actions triggered by FlightController.SendVirtualStickDataTask()
-     * (i.e. up, down, turn, move, flyto)
-     *
-     * @require RollPitchControlMode: velocity
-     * VerticalControlMode: velocity
-     * YawControlMode: angle
-     * HorizontalCoordinate: body
-     * @check SendVirtualStickDataTimer be active
-     * @clear mThrottle, mPitch, mRoll
-     * @restore mYaw
+     * Stop
+     * @author Eddie Wang
      */
     protected void mStop() {
         mMode = MyVirtualStickExecutorMode.STOP;
@@ -350,15 +320,8 @@ public class MyVirtualStickExecutor {
     }
 
     /**
-     * using vectors check the arriving condition
-     *
-     * @requires RollPitchControlMode: velocity
-     * VerticalControlMode: velocity
-     * YawControlMode: angle
-     * HorizontalCoordinate: body
-     * @check SendVirtualStickDataTimer be active
-     * @restore mYaw, mPitch, mRoll
-     * @updates mThrottle
+     * Up
+     * @author Eric Xu
      */
     protected void mUp(int dis) {
         mMode = MyVirtualStickExecutorMode.UP_WITHOUT_DIS;
@@ -375,16 +338,8 @@ public class MyVirtualStickExecutor {
     }
 
     /**
-     * using vectors check the arriving condition
-     *
-     * @require RollPitchControlMode: velocity
-     * VerticalControlMode: velocity
-     * YawControlMode: angle
-     * HorizontalCoordinate: body
-     * @check SendVirtualStickDataTimer be active
-     * @restore mYaw, mPitch, mRoll
-     * @update mThrottle
-     * @ensure if currAltitude < 1.2m OR currAltitude < optionalMovingDistance, directly landing
+     * Down
+     * @author Eric Xu
      */
     protected void mDown(int dis) {
         mMode = MyVirtualStickExecutorMode.DOWN_WITHOUT_DIS;
@@ -411,14 +366,8 @@ public class MyVirtualStickExecutor {
     }
 
     /**
-     * @require RollPitchControlMode: velocity
-     * VerticalControlMode: velocity
-     * YawControlMode: angle
-     * HorizontalCoordinate: body
-     * @check SendVirtualStickDataTimer be active
-     * @restore mPitch, mRoll, mThrottle
-     * @update mYaw
-     * @ensure -180 <= mYaw <= 180
+     * Turn
+     * @author Eric Xu
      */
     protected void mTurn(int turningDirection, int optionalTurningDegree) {
         mMode = MyVirtualStickExecutorMode.TURN;
@@ -440,15 +389,8 @@ public class MyVirtualStickExecutor {
     }
 
     /**
-     * only use vectors to double check the arriving condition
-     *
-     * @require RollPitchControlMode: velocity
-     * VerticalControlMode: velocity
-     * YawControlMode: angle
-     * HorizontalCoordinate: body
-     * @check SendVirtualStickDataTimer be active
-     * @restore mThrottle
-     * @update mPitch, mRoll, mYaw
+     * Move
+     * @author Eric Xu, Eddie Wang
      */
     protected void mGo(int movingDirection, double optionalDis) {
         mMode = MyVirtualStickExecutorMode.MOVE_WITHOUT_DIS;
@@ -486,17 +428,8 @@ public class MyVirtualStickExecutor {
     }
 
     /**
-     * only use vectors to double check the arriving condition
-     *
-     * @param tarLat
-     * @param tarLog
-     * @require RollPitchControlMode: velocity
-     * VerticalControlMode: velocity
-     * YawControlMode: angle
-     * HorizontalCoordinate: body
-     * @check SendVirtualStickDataTimer be active
-     * @restore mThrottle
-     * @update mPitch, mRoll, mYaw
+     * Fly to a specific location
+     * @author Eddie Wang
      */
     protected void mFlyto(double tarLat, double tarLog) {
         final double initLati = mFlightController.getState().getAircraftLocation().getLatitude();

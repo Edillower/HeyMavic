@@ -10,7 +10,8 @@ import android.widget.Button;
 import android.widget.TextView;
 
 /**
- * Created by David on 3/5/2017.
+ * Confirmation box
+ * @author David Yang
  */
 
 public class CommandConfirmationDialogFragment extends DialogFragment implements View.OnClickListener{

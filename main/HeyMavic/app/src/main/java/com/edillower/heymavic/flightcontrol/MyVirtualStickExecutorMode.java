@@ -1,7 +1,8 @@
 package com.edillower.heymavic.flightcontrol;
 
 /**
- * Created by Eric on 4/9/17.
+ * Virtual Stick Executor Mode
+ * @author Eric Xu
  */
 
 public enum MyVirtualStickExecutorMode {

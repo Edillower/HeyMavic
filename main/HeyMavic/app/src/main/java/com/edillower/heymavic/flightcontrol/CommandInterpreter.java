@@ -28,7 +28,8 @@ import dji.sdk.products.Aircraft;
 
 
 /**
- * !!! this is singleton class !!!
+ * Interpreter that maps command to action of the drone
+ * @author Eddie Wang, Eric Xu, Melody Cai
  */
 public class CommandInterpreter {
 
@@ -37,23 +38,20 @@ public class CommandInterpreter {
     public Aircraft aircraft; //need to be local, should not be declare here
     public FlightController mFlightController; //need to be private
     public boolean mVirtualStickEnabled=false;
-    /*
-    do not use in this way
-    use DJIFlightControllerFlightMode (Enum)
-    isVirtualStickControlModeAvailable()
-    */
 
     private MyVirtualStickExecutor mSingletonVirtualStickExecutor;
     private GoToAction mGoToAction;
     //private Trigger mTrigger;
     private MediaManager mMediaManager;
     private MediaFile media;
-    //int flag;
-
 
     private int object_id;
     int count = 1;
 
+    /**
+     *  Constructor and Basics
+     *  @author Eric Xu
+     */
 
     /**
      * singleton pattern
@@ -68,9 +66,8 @@ public class CommandInterpreter {
     }
 
     /**
-     *
      * @param context
-     * @return
+     * @return instance of the command interpreter
      */
     public static CommandInterpreter getUniqueInstance(Context context){
         if(uniqueInstance == null){
@@ -81,9 +78,14 @@ public class CommandInterpreter {
     }
 
     /**
-     * should be private, not be used by others
-     * now it's used by FPVFullscreen
-     * */
+     *  END of Constructor and Basics
+     *  @author Eric Xu
+     */
+
+    /**
+     * Initialize flight controller
+     * @author Eric Xu
+     */
     public void initFlightController() {
         aircraft = DJISimulatorApplication.getAircraftInstance();
 
@@ -97,9 +99,9 @@ public class CommandInterpreter {
     }
 
     /**
-     * This is completed !
-     * directly call on FlightController
-     * */
+     * Take off
+     * @author Eric Xu
+     */
     private void mTakeoff(){
         if (mFlightController != null){
             mFlightController.startTakeoff(new CommonCallbacks.CompletionCallback() {
@@ -112,10 +114,9 @@ public class CommandInterpreter {
     }
 
     /**
-     * This is completed !
-     * directly call on FlightController
-     *
-     * */
+     * Landing
+     * @author Eric Xu
+     */
     private void mLand(){
         if (mFlightController != null){
             mFlightController.startLanding(new CommonCallbacks.CompletionCallback() {
@@ -128,7 +129,8 @@ public class CommandInterpreter {
     }
 
     /**
-     * need to be private this one
+     * Stop
+     * @author Eddie Wang
      */
     public void mStop(){
         if(mFlightController.isVirtualStickControlModeAvailable()){
@@ -141,10 +143,13 @@ public class CommandInterpreter {
     }
 
     /**
-     *
-     * @param mEncoded
+     * Encoded String Mapper
+     * See encoding protocol for details (http://heymavic.edillower.com/protocol)
+     * @author Eric Xu, Eddie Wang
+     * @param mEncoded Encoded string given by NLP module
      */
     public void executeCmd(ArrayList<Integer> mEncoded) {
+        // prepare execution
         int len = mEncoded.size();
         int[] mCmdCode = new int[len];
         for (int i = 0; i < len; i++) {
@@ -168,18 +173,19 @@ public class CommandInterpreter {
             }
         }
 
+        // mapping
         int idx = 0, para_dis, para_dir_go, para_dir, para_deg,para_type,para_val;
         switch (mCmdCode[idx]) {
-            case 100:
+            case 100: // Take off
                 mTakeoff();
                 break;
-            case 101:
+            case 101: // Landing
                 mLand();
                 break;
-            case 102:
+            case 102: // Stop
                 mStop();
                 break;
-            case 103:
+            case 103: // Go/Move
                 para_dis = -1;
                 para_dir_go = 90;
                 if(idx+2<mCmdCode.length && mCmdCode[idx+1]==201){
@@ -195,7 +201,7 @@ public class CommandInterpreter {
                 mSingletonVirtualStickExecutor = MyVirtualStickExecutor.getUniqueInstance();
                 mSingletonVirtualStickExecutor.mGo(para_dir_go, para_dis);
                 break;
-            case 104:
+            case 104: // Turn
                 para_dir = 0;
                 para_deg = 90;
                 if(idx+2<mCmdCode.length && mCmdCode[idx+1]==203){
@@ -211,7 +217,7 @@ public class CommandInterpreter {
                 mSingletonVirtualStickExecutor = MyVirtualStickExecutor.getUniqueInstance();
                 mSingletonVirtualStickExecutor.mTurn(para_dir,para_deg);
                 break;
-            case 105:
+            case 105: // Up
                 para_dis = -1;
                 if(idx+2<mCmdCode.length && mCmdCode[idx+1]==202){
                     para_dis = mCmdCode[idx+2];
@@ -221,7 +227,7 @@ public class CommandInterpreter {
                 mSingletonVirtualStickExecutor = MyVirtualStickExecutor.getUniqueInstance();
                 mSingletonVirtualStickExecutor.mUp(para_dis);
                 break;
-            case 106:
+            case 106: // Down
                 para_dis = -1;
                 if(idx+2<mCmdCode.length && mCmdCode[idx+1]==202){
                     para_dis = mCmdCode[idx+2];
@@ -230,7 +236,7 @@ public class CommandInterpreter {
                 mSingletonVirtualStickExecutor = MyVirtualStickExecutor.getUniqueInstance();
                 mSingletonVirtualStickExecutor.mDown(para_dis);
                 break;
-            case 107:
+            case 107: // FlyTo (a specific location)
                 double para_lati = 25, para_logi = 113;
                 if(idx+5<mCmdCode.length && mCmdCode[idx+1]==205){
                     para_lati = mCmdCode[idx+2] + mCmdCode[idx+3]/100000.0;
@@ -242,9 +248,7 @@ public class CommandInterpreter {
                 mSingletonVirtualStickExecutor = MyVirtualStickExecutor.getUniqueInstance();
                 mSingletonVirtualStickExecutor.mFlyto(para_lati, para_logi);
                 break;
-            case 108:
-                para_type = 0;
-                para_val = 90;
+            case 108: // Change settings
                 if(idx+2<mCmdCode.length && mCmdCode[idx+1]==206){
                     para_type = mCmdCode[idx+2];
                     idx += 2;
@@ -259,7 +263,7 @@ public class CommandInterpreter {
                     Utils.setResultToToast(mContext, "Wrong Command Code [108]");
                 }
                 break;
-            case 109:
+            case 109: // Take photo (with focusing on a specific object)
                 object_id = mCmdCode[1];
                 shootPhoto();
                 break;
@@ -269,6 +273,12 @@ public class CommandInterpreter {
         }
     }
 
+    /**
+     * Change setting
+     * @author Eddie Wang
+     * @param type code of target setting
+     * @param para parameter of target setting
+     */
     private void changeSetting(int type, int para){
         switch (type) {
             case 401:
@@ -289,11 +299,17 @@ public class CommandInterpreter {
         }
     }
 
+    /**
+     * Photo Shooting Module
+     * @author Melody Cai
+     * @assitants David Yang, Eddie Wang, Eric Xu
+     */
+
+    /**
+     * Take a photo
+     * @author Melody Cai
+     */
     public void shootPhoto() {
-        // take photo
-        //
-        // Utils.setResultToToast(mContext, mTrigger.trig());
-        //flag ++;
         DJISimulatorApplication.getProductInstance().getCamera().startShootPhoto(new CommonCallbacks.CompletionCallback() {
             @Override
             public void onResult(DJIError error) {
@@ -312,10 +328,11 @@ public class CommandInterpreter {
         });
     }
 
+    /**
+     * Get media list from the drone
+     * @author Melody Cai
+     */
     public void getPhoto() {
-
-        //setDownloadMode();
-
         mMediaManager = DJISimulatorApplication.getProductInstance().getCamera().getMediaManager();
         // fetch photo from SD card
         if (mMediaManager == null) {
@@ -361,6 +378,10 @@ public class CommandInterpreter {
         }
     }
 
+    /**
+     * Download the latest photo from the drone and save it on SD card
+     * @author Melody Cai
+     */
     public void fetchPhoto() {
 
         final File destDir = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DCIM).toString()
@@ -388,8 +409,10 @@ public class CommandInterpreter {
 
     }
 
-
-
+    /**
+     * Prepare for taking photo
+     * @maintainer Melody Cai
+     */
     public void setPhotoMode(){
         DJISimulatorApplication.getProductInstance().getCamera().setPhotoAspectRatio(SettingsDefinitions.PhotoAspectRatio.RATIO_16_9,
                 new CommonCallbacks.CompletionCallback() {
@@ -428,6 +451,10 @@ public class CommandInterpreter {
                 });
     }
 
+    /**
+     * Change to Download Mode
+     * @maintainer Melody Cai
+     */
     public void setDownloadMode(){
 
         DJISimulatorApplication.getProductInstance()
@@ -447,6 +474,10 @@ public class CommandInterpreter {
 
     }
 
+    /**
+     * Set focusing point
+     * @author Melody Cai
+     */
     public void focusLen(float[] focusCoordinates) {
 
         PointF targ = new PointF(focusCoordinates[0], focusCoordinates[1]);
@@ -469,6 +500,10 @@ public class CommandInterpreter {
         }
     }
 
+    /**
+     * Take a photo with focusing on the specific object
+     * @author Melody Cai
+     */
     public void shoot(){
         DJISimulatorApplication.getProductInstance().getCamera().startShootPhoto(new CommonCallbacks.CompletionCallback() {
             @Override
@@ -481,5 +516,11 @@ public class CommandInterpreter {
             }
         });
     }
+
+    /**
+     * END of Photo Shooting Module
+     * @author Melody Cai
+     * @assitants David Yang, Eddie Wang, Eric Xu
+     */
 
 }

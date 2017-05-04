@@ -1,3 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- @author: Eddie Wang -->
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/main_layout"
@@ -168,17 +170,6 @@
         android:layout_marginTop="3dp"
         android:layout_marginEnd="8dp"
         android:id="@+id/HorizonSpeed" />
-
-    <!--<TextView-->
-        <!--android:text="D: N/A"-->
-        <!--android:layout_width="wrap_content"-->
-        <!--android:layout_height="wrap_content"-->
-        <!--android:layout_alignParentTop="true"-->
-        <!--android:layout_alignParentEnd="true"-->
-        <!--android:layout_marginTop="3dp"-->
-        <!--android:layout_marginEnd="360dp"-->
-        <!--android:visibility="gone"-->
-        <!--android:id="@+id/Distance" />-->
 
     <Button
         android:background="@drawable/manual"

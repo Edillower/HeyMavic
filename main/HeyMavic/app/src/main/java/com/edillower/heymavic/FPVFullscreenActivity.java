@@ -34,6 +34,7 @@ import android.widget.Toast;
 import com.edillower.heymavic.common.DJISimulatorApplication;
 import com.edillower.heymavic.common.Utils;
 import com.edillower.heymavic.flightcontrol.CommandInterpreter;
+import com.edillower.heymavic.flightcontrol.MyVirtualStickExecutor;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.location.LocationServices;
@@ -66,9 +67,10 @@ import dji.sdk.base.BaseProduct;
 import dji.sdk.products.Aircraft;
 
 /**
- * FPV main control window
+ * FPV main control UI
  *
- * @author Eddie Wang
+ * @author Eddie Wang (all author-unspecified code)
+ * @author David Yang, Eric Xu, Melody Cai (specified in code)
  */
 public class FPVFullscreenActivity extends FragmentActivity implements OnMapReadyCallback, GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener, CommandConfirmationDialogFragment.Communicator {
     public static final String TAG = FPVFullscreenActivity.class.getName();
@@ -161,11 +163,13 @@ public class FPVFullscreenActivity extends FragmentActivity implements OnMapRead
                     , 1);
         }
 
+        // set up fpv
         mContext = this;
         fpvTexture = new TextureView(mContext);
         fpvTexture.setSurfaceTextureListener(new BaseFpvView(mContext));
         setContentView(fpvTexture);
 
+        // set up UI
         LayoutInflater layoutInflater = getLayoutInflater();
         View content = layoutInflater.inflate(R.layout.activity_fpvfullscreen, null, false);
         RelativeLayout.LayoutParams rlParam = new RelativeLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,
@@ -173,12 +177,20 @@ public class FPVFullscreenActivity extends FragmentActivity implements OnMapRead
         addContentView(content, rlParam);
         initUI();
 
+        // set up Watson
         speechService = initSpeechToTextService();
         cc1 = new WatsonCommandClassifier();
 
+        // set up controller
         mCI = CommandInterpreter.getUniqueInstance(mContext);
         initDrone();
 
+        // Register the broadcast receiver for receiving the device connection's changes.
+        IntentFilter filter = new IntentFilter();
+        filter.addAction(DJISimulatorApplication.FLAG_CONNECTION_CHANGE);
+        registerReceiver(mReceiver, filter);
+
+        // set up google API
         if (mGoogleApiClient == null) {
             mGoogleApiClient = new GoogleApiClient.Builder(this)
                     .addConnectionCallbacks(this)
@@ -187,14 +199,10 @@ public class FPVFullscreenActivity extends FragmentActivity implements OnMapRead
                     .build();
         }
 
-        // Register the broadcast receiver for receiving the device connection's changes.
-        IntentFilter filter = new IntentFilter();
-        filter.addAction(DJISimulatorApplication.FLAG_CONNECTION_CHANGE);
-        registerReceiver(mReceiver, filter);
-
         // Set up firebase
         mDatabase = FirebaseDatabase.getInstance();
         mDBRecog = mDatabase.getReference("recog");
+
         // Set up map
         MapFragment mapFragment = (MapFragment) getFragmentManager()
                 .findFragmentById(R.id.mapFragment);
@@ -239,13 +247,13 @@ public class FPVFullscreenActivity extends FragmentActivity implements OnMapRead
     protected void onDestroy() {
         Log.e(TAG, "onDestroy");
         unregisterReceiver(mReceiver);
-        //eric command this out, april 3
-//        mCI.mDestroy();
+        MyVirtualStickExecutor.destroyInstance();
         super.onDestroy();
     }
 
     @Override
     public void onMapReady(GoogleMap map) {
+        // initialize map
         mMap = map;
         mMap.getUiSettings().setCompassEnabled(false);
         mMap.getUiSettings().setAllGesturesEnabled(false);
@@ -275,254 +283,6 @@ public class FPVFullscreenActivity extends FragmentActivity implements OnMapRead
     public void onConnectionFailed(ConnectionResult result) {
         showFpvToast("Failed to Connect Google Play");
     }
-
-    private void updateUserLocation() {
-        try {
-            Location loc = LocationServices.FusedLocationApi.getLastLocation(
-                    mGoogleApiClient);
-            mUserLocation = new LatLng(loc.getLatitude(), loc.getLongitude());
-        } catch (SecurityException e) {
-            showFpvToast("Permission required for using map");
-        }
-    }
-
-    // display command confirmation window
-    public void showDialog(View v) {
-        // create FragmentManager and CommandConfirmationDialogFragment
-        FragmentManager manager = getFragmentManager();
-        CommandConfirmationDialogFragment myDialogFragment = new CommandConfirmationDialogFragment();
-        // send encoded_string and command into pop up window
-        Bundle bundle = new Bundle();
-        bundle.putString("encoded_string", cc1.getEncodedString().toString());
-        bundle.putString("command", cc1.getCommand());
-        myDialogFragment.setArguments(bundle);
-        // show pop up window
-        myDialogFragment.show(manager, "MyDialogFragment");
-    }
-
-    // exectue based on user feedback from command confirmation window
-    @Override
-    public void onDialogMessage(boolean message) {
-        if (message) {
-            writeRecogRecord(true, mStrIntention, cc1.getEncodedString().toString(), cc1.getCommand());
-//            showFpvToast("Start executing command");
-            preCheck(cc1.getEncodedString(), cc1.getGoogleMapSearchString()); // Start execution
-        } else {
-            writeRecogRecord(false, mStrIntention, cc1.getEncodedString().toString(), cc1.getCommand());
-            showFpvToast("Command cancelled");
-        }
-    }
-
-    //    private class custLocationListener implements LocationListener {
-//        @Override
-//        public void onLocationChanged(Location loc) {
-//            mUserLocation = new LatLng(loc.getLatitude(), loc.getLongitude());
-//        }
-//
-//        @Override
-//        public void onProviderDisabled(String provider) {
-//        }
-//
-//        @Override
-//        public void onProviderEnabled(String provider) {
-//        }
-//
-//        @Override
-//        public void onStatusChanged(String provider, int status, Bundle extras) {
-//        }
-//    }
-
-
-//    private void updateUserLocation() {
-//        mLocationManager = (LocationManager)
-//                getSystemService(Context.LOCATION_SERVICE);
-//        mLocationListener = new custLocationListener();
-//        try {
-//            mLocationManager.requestLocationUpdates(
-//                    LocationManager.GPS_PROVIDER, 5000, 0, mLocationListener);
-//        } catch (SecurityException e) {
-//            showFpvToast("Permission required for using map");
-//        }
-//    }
-
-    // Update the drone location based on states from MCU.
-    private void updateDroneLocation() {
-
-        //Create MarkerOptions object
-        final MarkerOptions markerOptions = new MarkerOptions();
-        markerOptions.position(mDroneLocation);
-        markerOptions.icon(BitmapDescriptorFactory.fromResource(R.drawable.aircraft));
-        markerOptions.rotation(mDroneHeading);
-        markerOptions.anchor(0.5f, 0.618f);
-
-        runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-                if (mDroneMarker != null) {
-                    mDroneMarker.remove();
-                }
-                if (checkGpsCoordination(mDroneLocation.latitude, mDroneLocation.longitude)) {
-                    mDroneMarker = mMap.addMarker(markerOptions);
-                    if (mMapTracking_flag) {
-                        updateMapCamera();
-                    }
-                }
-            }
-        });
-    }
-
-
-    private void updateMapCamera() {
-        if (mMapLocate_flag) {
-            mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(mDroneLocation, 15.0f));
-        } else {
-            updateUserLocation();
-            mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(mUserLocation, 15.0f));
-        }
-    }
-
-    public static boolean checkGpsCoordination(double latitude, double longitude) {
-        return (latitude > -90 && latitude < 90 && longitude > -180 && longitude < 180) && (latitude != 0f && longitude != 0f);
-    }
-
-
-    protected BroadcastReceiver mReceiver = new BroadcastReceiver() {
-
-        @Override
-        public void onReceive(Context context, Intent intent) {
-            updateConnection();
-            if (mCI.mFlightController == null) {
-                initDrone();
-            }
-        }
-    };
-
-    private void updateConnection() {
-//        boolean ret = false;
-        BaseProduct product = DJISimulatorApplication.getProductInstance();
-        if (product != null) {
-            if (product.isConnected()) {
-                //The product is connected
-                showFpvToast(DJISimulatorApplication.getProductInstance().getModel() + " Connected");
-//                ret = true;
-            } else {
-                if (product instanceof Aircraft) {
-                    Aircraft aircraft = (Aircraft) product;
-                    if (aircraft.getRemoteController() != null && aircraft.getRemoteController().isConnected()) {
-                        // The product is not connected, but the remote controller is connected
-                        showFpvToast("only RC Connected");
-//                        ret = true;
-                    }
-                }
-            }
-        }
-
-//        if (!ret) {
-//            // The product or the remote controller are not connected.
-//            showFpvToast("Disconnected");
-//        }
-    }
-
-
-    /*
-    Retrieve and Rank button
- */
-    private void RRInputListener() {
-        mRandR.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                rarFlag = !rarFlag;
-                if (rarFlag) {
-                    mBtnDummy.setVisibility(View.GONE);
-                    mBtnInput.setVisibility(View.GONE);
-                    mTxtCmmand.setVisibility(View.GONE);
-                    rarFragment = new RARFragment();
-                    getSupportFragmentManager().beginTransaction().add(R.id.main_layout, rarFragment).commit();
-                } else {
-                    mBtnDummy.setVisibility(View.VISIBLE);
-                    mBtnInput.setVisibility(View.VISIBLE);
-                    mTxtCmmand.setVisibility(View.VISIBLE);
-                    getSupportFragmentManager().beginTransaction().remove(rarFragment).commit();
-                }
-            }
-        });
-    }
-
-//    private double initAltitude = 0;
-//    private boolean altiFlag = true;
-
-    private void initDrone() {
-        mCI.initFlightController();
-        if (mCI.mFlightController != null) {
-            mCI.setPhotoMode();
-//            showFpvToast("Set up call bacsk");
-            if (mCI.mFlightController.isVirtualStickControlModeAvailable()) {
-                mBtnStop.setVisibility(View.VISIBLE);
-            }
-
-            mCI.mFlightController.setStateCallback(new FlightControllerState.Callback() {
-                @Override
-                public void onUpdate(@NonNull FlightControllerState flightControllerState) {
-                    double mDroneLocationLat = flightControllerState.getAircraftLocation().getLatitude();
-                    double mDroneLocationLng = flightControllerState.getAircraftLocation().getLongitude();
-                    mDroneLocation = new LatLng(mDroneLocationLat, mDroneLocationLng);
-                    mDroneHeading = mCI.mFlightController.getCompass().getHeading();
-                    updateDroneLocation();
-                    // set flight data
-                    mAltitudeData = (double) flightControllerState.getAircraftLocation().getAltitude(); // - initAltitude;
-//                    if (mAltitudeData < 18) {
-//                        mAltitudeData = (double) flightControllerState.getUltrasonicHeightInMeters();
-//                    }
-                    mhs = Math.sqrt(flightControllerState.getVelocityX() * flightControllerState.getVelocityX()
-                            + flightControllerState.getVelocityY() * flightControllerState.getVelocityY());
-                    mvs = -1 * flightControllerState.getVelocityZ();
-                    mdistToHome = Utils.calcDistance(mUserLocation.latitude, mUserLocation.longitude, mDroneLocation.latitude, mDroneLocation.longitude);
-                    updateFlightData();
-                }
-            });
-
-//            mTest.setOnClickListener(new View.OnClickListener() {
-//                @Override
-//                public void onClick(View v) {
-//                    mCI.shootPhoto();
-//                }
-//            });
-
-            // set up battery
-            mCI.aircraft.getBattery().setStateCallback(new BatteryState.Callback() {
-                @Override
-                public void onUpdate(BatteryState batteryState) {
-                    mBatteryPercent = batteryState.getChargeRemainingInPercent();
-                    mBatteryView.setProgress(mBatteryPercent);
-                    updateBatteryStatus();
-                }
-            });
-        }
-
-    }
-
-    private void updateFlightData() {
-        runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-                mDistance.setText("D: " + new DecimalFormat("####").format(mdistToHome) + "m");
-                mAltitude.setText("H: " + new DecimalFormat("###.#").format(mAltitudeData) + "m");
-                mVerSpeed.setText("V.S: " + new DecimalFormat("##.#").format(mvs) + "m/s");
-                mHorSpeed.setText("H.S: " + new DecimalFormat("##.#").format(mhs) + "m/s");
-            }
-        });
-    }
-
-    private void updateBatteryStatus() {
-        runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-                mBatteryData.setText(Integer.toString(mBatteryPercent) + "%");
-            }
-        });
-    }
-
-    private int counter = 0;
 
     private void initUI() {
         mTxtCmmand = (EditText) findViewById(R.id.command_text);
@@ -760,7 +520,7 @@ public class FPVFullscreenActivity extends FragmentActivity implements OnMapRead
                         tokenedCommand.add(st.nextToken());
                     }
                     // Replace mavic similar words
-                    tokenedCommand = findMavicSimilar(tokenedCommand);
+//                    tokenedCommand = findMavicSimilar(tokenedCommand);
                     // Change arraylist to string
                     mStrIntention = TextUtils.join(" ", tokenedCommand);
                     // Execute NLC
@@ -795,7 +555,186 @@ public class FPVFullscreenActivity extends FragmentActivity implements OnMapRead
         });
     }
 
-    // IBM watson service init
+    //    private double initAltitude = 0;
+//    private boolean altiFlag = true;
+
+    private void initDrone() {
+        mCI.initFlightController();
+        if (mCI.mFlightController != null) {
+            mCI.setPhotoMode();
+//            showFpvToast("Set up call bacsk");
+            if (mCI.mFlightController.isVirtualStickControlModeAvailable()) {
+                mBtnStop.setVisibility(View.VISIBLE);
+            }
+
+            mCI.mFlightController.setStateCallback(new FlightControllerState.Callback() {
+                @Override
+                public void onUpdate(@NonNull FlightControllerState flightControllerState) {
+                    double mDroneLocationLat = flightControllerState.getAircraftLocation().getLatitude();
+                    double mDroneLocationLng = flightControllerState.getAircraftLocation().getLongitude();
+                    mDroneLocation = new LatLng(mDroneLocationLat, mDroneLocationLng);
+                    mDroneHeading = mCI.mFlightController.getCompass().getHeading();
+                    updateDroneLocation();
+                    // set flight data
+                    mAltitudeData = (double) flightControllerState.getAircraftLocation().getAltitude(); // - initAltitude;
+//                    if (mAltitudeData < 18) {
+//                        mAltitudeData = (double) flightControllerState.getUltrasonicHeightInMeters();
+//                    }
+                    mhs = Math.sqrt(flightControllerState.getVelocityX() * flightControllerState.getVelocityX()
+                            + flightControllerState.getVelocityY() * flightControllerState.getVelocityY());
+                    mvs = -1 * flightControllerState.getVelocityZ();
+                    mdistToHome = Utils.calcDistance(mUserLocation.latitude, mUserLocation.longitude, mDroneLocation.latitude, mDroneLocation.longitude);
+                    updateFlightData();
+                }
+            });
+
+//            mTest.setOnClickListener(new View.OnClickListener() {
+//                @Override
+//                public void onClick(View v) {
+//                    mCI.shootPhoto();
+//                }
+//            });
+
+            // set up battery
+            mCI.aircraft.getBattery().setStateCallback(new BatteryState.Callback() {
+                @Override
+                public void onUpdate(BatteryState batteryState) {
+                    mBatteryPercent = batteryState.getChargeRemainingInPercent();
+                    mBatteryView.setProgress(mBatteryPercent);
+                    updateBatteryStatus();
+                }
+            });
+        }
+
+    }
+
+    protected BroadcastReceiver mReceiver = new BroadcastReceiver() {
+
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            updateConnection();
+            if (mCI.mFlightController == null) {
+                initDrone();
+            }
+        }
+    };
+
+    private void updateConnection() {
+//        boolean ret = false;
+        BaseProduct product = DJISimulatorApplication.getProductInstance();
+        if (product != null) {
+            if (product.isConnected()) {
+                //The product is connected
+                showFpvToast(DJISimulatorApplication.getProductInstance().getModel() + " Connected");
+//                ret = true;
+            } else {
+                if (product instanceof Aircraft) {
+                    Aircraft aircraft = (Aircraft) product;
+                    if (aircraft.getRemoteController() != null && aircraft.getRemoteController().isConnected()) {
+                        // The product is not connected, but the remote controller is connected
+                        showFpvToast("only RC Connected");
+//                        ret = true;
+                    }
+                }
+            }
+        }
+
+//        if (!ret) {
+//            // The product or the remote controller are not connected.
+//            showFpvToast("Disconnected");
+//        }
+    }
+
+    /**
+     * track user location on map
+     */
+    private void updateUserLocation() {
+        try {
+            Location loc = LocationServices.FusedLocationApi.getLastLocation(
+                    mGoogleApiClient);
+            mUserLocation = new LatLng(loc.getLatitude(), loc.getLongitude());
+        } catch (SecurityException e) {
+            showFpvToast("Permission required for using map");
+        }
+    }
+
+    /**
+     * track the drone's location on map
+     */
+    private void updateDroneLocation() {
+
+        //Create MarkerOptions object
+        final MarkerOptions markerOptions = new MarkerOptions();
+        markerOptions.position(mDroneLocation);
+        markerOptions.icon(BitmapDescriptorFactory.fromResource(R.drawable.aircraft));
+        markerOptions.rotation(mDroneHeading);
+        markerOptions.anchor(0.5f, 0.618f);
+
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                if (mDroneMarker != null) {
+                    mDroneMarker.remove();
+                }
+                if (checkGpsCoordination(mDroneLocation.latitude, mDroneLocation.longitude)) {
+                    mDroneMarker = mMap.addMarker(markerOptions);
+                    if (mMapTracking_flag) {
+                        updateMapCamera();
+                    }
+                }
+            }
+        });
+    }
+
+    /**
+     * Update Map Camera
+     */
+    private void updateMapCamera() {
+        if (mMapLocate_flag) {
+            mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(mDroneLocation, 15.0f));
+        } else {
+            updateUserLocation();
+            mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(mUserLocation, 15.0f));
+        }
+    }
+
+    public static boolean checkGpsCoordination(double latitude, double longitude) {
+        return (latitude > -90 && latitude < 90 && longitude > -180 && longitude < 180) && (latitude != 0f && longitude != 0f);
+    }
+
+    /**
+     * Update drone's distance, altitude, vertical speed, and horizontal speed
+     * @author Melody Cai, Eddie Wang
+     */
+    private void updateFlightData() {
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                mDistance.setText("D: " + new DecimalFormat("####").format(mdistToHome) + "m");
+                mAltitude.setText("H: " + new DecimalFormat("###.#").format(mAltitudeData) + "m");
+                mVerSpeed.setText("V.S: " + new DecimalFormat("##.#").format(mvs) + "m/s");
+                mHorSpeed.setText("H.S: " + new DecimalFormat("##.#").format(mhs) + "m/s");
+            }
+        });
+    }
+
+    /**
+     * Update battery level
+     * @author Melody Cai
+     */
+    private void updateBatteryStatus() {
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                mBatteryData.setText(Integer.toString(mBatteryPercent) + "%");
+            }
+        });
+    }
+
+    /**
+     * Initialize Watson Service
+     * @author David Yang
+     */
     private SpeechToText initSpeechToTextService() {
         SpeechToText service = new SpeechToText();
         String username = "23c90b4b-23ee-43cc-b0e9-97f36a0c0cfc";
@@ -805,6 +744,10 @@ public class FPVFullscreenActivity extends FragmentActivity implements OnMapRead
         return service;
     }
 
+    /**
+     * Audio service
+     * @maintainer David Yang
+     */
     private class MicrophoneRecognizeDelegate implements RecognizeCallback {
 
         @Override
@@ -834,7 +777,7 @@ public class FPVFullscreenActivity extends FragmentActivity implements OnMapRead
                 tokenedCommand.add(st.nextToken());
             }
             // Replace mavic similar words
-            tokenedCommand = findMavicSimilar(tokenedCommand);
+//            tokenedCommand = findMavicSimilar(tokenedCommand);
             // Change arraylist to string
             mStrIntention = TextUtils.join(" ", tokenedCommand);
             // Display command in string format
@@ -844,6 +787,10 @@ public class FPVFullscreenActivity extends FragmentActivity implements OnMapRead
         }
     }
 
+    /**
+     * Recognize Options
+     * @author David Yang
+     */
     private RecognizeOptions getRecognizeOptions() {
         return new RecognizeOptions.Builder()
                 .continuous(true)
@@ -856,6 +803,10 @@ public class FPVFullscreenActivity extends FragmentActivity implements OnMapRead
                 .build();
     }
 
+    /**
+     * Watson Classification Service
+     * @author David Yang
+     */
     private class ClassificationTask extends AsyncTask<ArrayList, Void, String> {
         protected String doInBackground(ArrayList... params) {
             String result = null;
@@ -874,35 +825,39 @@ public class FPVFullscreenActivity extends FragmentActivity implements OnMapRead
         }
     }
 
-    private static ArrayList<String> findMavicSimilar(ArrayList<String> original) {
-        ArrayList<String> mapSimilarList = new ArrayList<String>();
-        mapSimilarList.add("maverick");
-        mapSimilarList.add("mavericks");
-        mapSimilarList.add("magic");
-        mapSimilarList.add("eric");
+//    private static ArrayList<String> findMavicSimilar(ArrayList<String> original) {
+//        ArrayList<String> mapSimilarList = new ArrayList<String>();
+//        mapSimilarList.add("maverick");
+//        mapSimilarList.add("mavericks");
+//        mapSimilarList.add("magic");
+//        mapSimilarList.add("eric");
+//
+//        ArrayList<String> lowcase_original = (ArrayList<String>) original
+//                .clone();
+//        for (int i = 0; i < lowcase_original.size(); i++) {
+//            String tmp = lowcase_original.get(i).toLowerCase();
+//            lowcase_original.set(i, tmp);
+//        }
+//
+//        int i = 0;
+//        int lastIndexSimilarMavic = -1;
+//        while (i < mapSimilarList.size() && lastIndexSimilarMavic == -1) {
+//            lastIndexSimilarMavic = lowcase_original.lastIndexOf(mapSimilarList
+//                    .get(i));
+//            i++;
+//        }
+//        if ((lastIndexSimilarMavic > 0)
+//                && lowcase_original.get(lastIndexSimilarMavic - 1)
+//                .equals("hey")) {
+//            original.set(lastIndexSimilarMavic, "Mavic");
+//        }
+//        return original;
+//    }
 
-        ArrayList<String> lowcase_original = (ArrayList<String>) original
-                .clone();
-        for (int i = 0; i < lowcase_original.size(); i++) {
-            String tmp = lowcase_original.get(i).toLowerCase();
-            lowcase_original.set(i, tmp);
-        }
-
-        int i = 0;
-        int lastIndexSimilarMavic = -1;
-        while (i < mapSimilarList.size() && lastIndexSimilarMavic == -1) {
-            lastIndexSimilarMavic = lowcase_original.lastIndexOf(mapSimilarList
-                    .get(i));
-            i++;
-        }
-        if ((lastIndexSimilarMavic > 0)
-                && lowcase_original.get(lastIndexSimilarMavic - 1)
-                .equals("hey")) {
-            original.set(lastIndexSimilarMavic, "Mavic");
-        }
-        return original;
-    }
-
+    /**
+     * Prepare Encoded String
+     * @author David Yang, Eddie Wang
+     */
     private ArrayList<Integer> mEncodedStr;
 
     private void preCheck(ArrayList<Integer> encoded_string, String google_map_string) {
@@ -914,11 +869,65 @@ public class FPVFullscreenActivity extends FragmentActivity implements OnMapRead
         }
     }
 
+    private void writeRecogRecord(boolean pos, String s2tStr, String encodedStr, String classifiedStr) {
+        String group = "neg";
+        if (pos) {
+            group = "pos";
+        }
+        String key = mDBRecog.child(group).push().getKey();
+        mDBRecog.child(group).child(key).child("s2tStr").setValue(s2tStr);
+        mDBRecog.child(group).child(key).child("classifiedStr").setValue(classifiedStr);
+        mDBRecog.child(group).child(key).child("encodedStr").setValue(encodedStr);
+    }
+    /**
+     * END of Prepare Encoded String
+     * @author David Yang, Eddie Wang
+     */
+
+    /**
+     * Confirmation box
+     * @authod David Yang
+     */
+    // display command confirmation window
+    public void showDialog(View v) {
+        // create FragmentManager and CommandConfirmationDialogFragment
+        FragmentManager manager = getFragmentManager();
+        CommandConfirmationDialogFragment myDialogFragment = new CommandConfirmationDialogFragment();
+        // send encoded_string and command into pop up window
+        Bundle bundle = new Bundle();
+        bundle.putString("encoded_string", cc1.getEncodedString().toString());
+        bundle.putString("command", cc1.getCommand());
+        myDialogFragment.setArguments(bundle);
+        // show pop up window
+        myDialogFragment.show(manager, "MyDialogFragment");
+    }
+
+    // exectue based on user feedback from command confirmation window
+    @Override
+    public void onDialogMessage(boolean message) {
+        if (message) {
+            writeRecogRecord(true, mStrIntention, cc1.getEncodedString().toString(), cc1.getCommand());
+//            showFpvToast("Start executing command");
+            preCheck(cc1.getEncodedString(), cc1.getGoogleMapSearchString()); // Start execution
+        } else {
+            writeRecogRecord(false, mStrIntention, cc1.getEncodedString().toString(), cc1.getCommand());
+            showFpvToast("Command cancelled");
+        }
+    }
+
+    /**
+     * END of Confirmation box
+     * @authod David Yang
+     */
+
+    /**
+     * @author Eddie Wang, Eric Xu
+     */
     private void callExecution(ArrayList<Integer> encoded_string) {
         mEncodedStr = encoded_string;
         boolean success = false;
         if (mCI != null) {
-            mCI.initFlightController(); //added by keao xu
+            mCI.initFlightController();
         }
         if (mCI.mFlightController != null) {
 //            if (mCI.mVirtualStickEnabled == false) {
@@ -934,17 +943,9 @@ public class FPVFullscreenActivity extends FragmentActivity implements OnMapRead
         }
     }
 
-    private void writeRecogRecord(boolean pos, String s2tStr, String encodedStr, String classifiedStr) {
-        String group = "neg";
-        if (pos) {
-            group = "pos";
-        }
-        String key = mDBRecog.child(group).push().getKey();
-        mDBRecog.child(group).child(key).child("s2tStr").setValue(s2tStr);
-        mDBRecog.child(group).child(key).child("classifiedStr").setValue(classifiedStr);
-        mDBRecog.child(group).child(key).child("encodedStr").setValue(encodedStr);
-    }
-
+    /**
+     * Search for place and sort the result by distance to the drone
+     */
     private List<Address> addressList = null;
     private LatLng[] locList;
     private boolean addressList_flag = true;
@@ -1012,6 +1013,9 @@ public class FPVFullscreenActivity extends FragmentActivity implements OnMapRead
         }
     }
 
+    /**
+     * Get a specific place's coordinates, encode it, and call (fly to) execution
+     */
     public void getPlaceCoordinates(int index) {
         getSupportFragmentManager().beginTransaction().remove(mPlaceListFragment).commit();
         double lat = locList[index].latitude;
@@ -1037,7 +1041,33 @@ public class FPVFullscreenActivity extends FragmentActivity implements OnMapRead
         callExecution(temp);
     }
 
-    //
+    /**
+     * Specific input taker for interactive manual
+     */
+    private void RRInputListener() {
+        mRandR.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                rarFlag = !rarFlag;
+                if (rarFlag) {
+                    mBtnDummy.setVisibility(View.GONE);
+                    mBtnInput.setVisibility(View.GONE);
+                    mTxtCmmand.setVisibility(View.GONE);
+                    rarFragment = new RARFragment();
+                    getSupportFragmentManager().beginTransaction().add(R.id.main_layout, rarFragment).commit();
+                } else {
+                    mBtnDummy.setVisibility(View.VISIBLE);
+                    mBtnInput.setVisibility(View.VISIBLE);
+                    mTxtCmmand.setVisibility(View.VISIBLE);
+                    getSupportFragmentManager().beginTransaction().remove(rarFragment).commit();
+                }
+            }
+        });
+    }
+
+    /**
+     * show toast
+     */
     public void showFpvToast(final String msg) {
         runOnUiThread(new Runnable() {
             public void run() {

@@ -3,6 +3,8 @@ package com.edillower.heymavic;
 import android.widget.Button;
 
 /**
+ * VoiceToCodeHelper
+ *
  * @author David Yang, Eric Xu, Eddie Wang
  */
 

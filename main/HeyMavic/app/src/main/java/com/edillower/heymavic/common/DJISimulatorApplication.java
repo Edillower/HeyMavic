@@ -18,6 +18,12 @@ import dji.common.error.DJIError;
 import dji.common.error.DJISDKError;
 
 
+/**
+ *  Main Application Class
+ *  Defined by DJI
+ *  @Maintainer Eric Xu
+ */
+
 public class DJISimulatorApplication extends Application {
 
     private static final String TAG = DJISimulatorApplication.class.getName();
@@ -50,7 +56,6 @@ public class DJISimulatorApplication extends Application {
         return (Aircraft) getProductInstance();
     }
 
-    //added by keao xu
     public static FlightController getFlightController(){
         Aircraft aircraft = getAircraftInstance();
         if (aircraft == null || !aircraft.isConnected()) {

@@ -37,10 +37,11 @@ import java.util.StringTokenizer;
 
 import fr.arnaudguyon.xmltojsonlib.XmlToJson;
 
+/**
+ * class for the display of Retrieve and Rank service (interactive user manual)
+ * @author Paul Yang, Melody Cai, Eddie Wang
+ */
 public class RARFragment extends Fragment {
-    // TODO: Rename parameter arguments, choose names that match
-    // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-
     private static final String USERNAME = "3a92a1a2-6d59-4ae0-9a38-cc2dc0785d80";
     private static final String PASSWORD = "Je8iOi18gSGY";
     private static final String SOLR_CLUSTER_ID = "sc1afc2fba_ebc2_4630_a1df_d0ec76078c26";

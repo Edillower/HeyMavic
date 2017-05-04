@@ -1,7 +1,8 @@
 package com.edillower.heymavic;
 
 /**
- * Created by David on 2/9/2017.
+ * Supporting class of Voice recognition module
+ * @author/maintainer David Yang
  */
 import java.util.ArrayList;
 import java.util.concurrent.Callable;

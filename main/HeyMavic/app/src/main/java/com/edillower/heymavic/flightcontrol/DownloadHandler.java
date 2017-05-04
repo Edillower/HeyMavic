@@ -27,16 +27,18 @@ import dji.sdk.camera.MediaManager.DownloadListener;
 
 import static dji.sdk.camera.view.FpvLiveView.TAG;
 
-
+/**
+ * Download Handler, supporting class of Shooting Photo Module
+ * prototype by DJI
+ * @author Melody Cai, David Yang
+ */
 public class DownloadHandler<B> implements DownloadListener<B> {
 
     String imgDecodableString;
     private Context mContext;
     float[] focusCoordinates;
 
-
     CommandInterpreter mCI;
-
 
     public DownloadHandler(Context context, String fpn, CommandInterpreter ci){
         mContext = context;
@@ -257,7 +259,7 @@ public class DownloadHandler<B> implements DownloadListener<B> {
                 //System.out.println("sending "+this.filename);
                 writer.write(msg);
 
-                System.out.println("waiting for response");
+//                System.out.println("waiting for response");
                 content = "finished";
             } catch (Exception e) {
                 e.printStackTrace();

@@ -9,6 +9,10 @@ import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 
+/**
+ * Place picker for fly to a specific location
+ * @author Eddie Wang
+ */
 public class PlaceListFragment extends ListFragment {
 
     private String TAG = PlaceListFragment.class.getName();

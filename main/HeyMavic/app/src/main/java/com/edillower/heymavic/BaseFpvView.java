@@ -19,6 +19,7 @@ import dji.sdk.codec.DJICodecManager;
 
 /**
  * This class is designed for showing the fpv video feed from the camera or Lightbridge 2.
+ * @maintainer Eddie Wang
  */
 public class BaseFpvView extends RelativeLayout implements TextureView.SurfaceTextureListener {
 

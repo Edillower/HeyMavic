@@ -1,7 +1,8 @@
 package com.edillower.heymavic;
 
 /**
- * Created by chencai on 2/25/17.
+ * Handler of Battery UI
+ * @maintainer Melody Cai
  */
 
 import android.content.Context;

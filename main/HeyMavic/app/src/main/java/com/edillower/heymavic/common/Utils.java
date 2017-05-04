@@ -1,24 +1,26 @@
 package com.edillower.heymavic.common;
 
-import android.app.Activity;
-import android.app.Application;
 import android.content.Context;
 import android.os.Handler;
 import android.os.Looper;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import dji.common.error.DJIError;
-
 /**
- * Created by Eric on 3/5/17.
- *
- * This class has Utils for scree display and math problem
+ *  Math and Display Utils
+ *  @author Eddie Wang, Eric Xu
  */
+
+
 public class Utils{
     public static final double ONE_METER_OFFSET = 0.00000899322;
     private static long lastClickTime;
     private static Handler mUIHandler = new Handler(Looper.getMainLooper());
+
+    /**
+     * UI Utils
+     * @author Eric Xu
+     */
     public static boolean isFastDoubleClick() {
         long time = System.currentTimeMillis();
         long timeD = time - lastClickTime;
@@ -28,13 +30,6 @@ public class Utils{
         lastClickTime = time;
         return false;
     }
-
-//    public static void showDialogBasedOnError(Context ctx, DJIError djiError) {
-//        if (null == djiError)
-//            DJIDialog.showDialog(ctx, R.string.success);
-//        else
-//            DJIDialog.showDialog(ctx, djiError.getDescription());
-//    }
 
     public static void setResultToToast(final Context context, final String string) {
         mUIHandler.post(new Runnable() {
@@ -57,45 +52,23 @@ public class Utils{
             }
         });
     }
-
-    public static boolean checkGpsCoordinate(double latitude, double longitude) {
-        return (latitude > -90 && latitude < 90 && longitude > -180 && longitude < 180) && (latitude != 0f && longitude != 0f);
-    }
-
-    public static double Radian(double x){
-        return  x * Math.PI / 180.0;
-    }
-
-    public static double Degree(double x){
-        return  x * 180 / Math.PI ;
-    }
-
-    public static double cosForDegree(double degree) {
-        return Math.cos(degree * Math.PI / 180.0f);
-    }
-
-    public static double calcLongitudeOffset(double latitude) {
-        return ONE_METER_OFFSET / cosForDegree(latitude);
-    }
-
-    public static void addLineToSB(StringBuffer sb, String name, Object value) {
-        if (sb == null) return;
-        sb.
-                append(name == null ? "" : name + ": ").
-                append(value == null ? "" : value + "").
-                append("\n");
-    }
+    /**
+     * END of UI Utils
+     * @author Eric Xu
+     */
 
     /**
-     * added by Eric on april 4
+     * Math Utils
+     * @author Eddie Wang
+     */
+    /**
+     * Calculate destination coordinate by origin coordinate, bearing and distance
      *
-     * This is completed ! pass test!
-     *
-     * @param lati
-     * @param longi
-     * @param bearing [-180, 180]
-     * @param distance
-     * @return
+     * @param lati latitude of origin point
+     * @param longi longitude of origin point
+     * @param bearing initial bearing of the drone
+     * @param distance distance from the origin point toward the given bearing
+     * @return Destination Coordinate
      */
     public static double[] calcDestination(double lati, double longi,
                                            double bearing, double distance) {
@@ -123,7 +96,15 @@ public class Utils{
         return destination;
     }
 
-
+    /**
+     * Calculate the bearing between two geolocation
+     *
+     * @param initLati latitude of origin point
+     * @param initLongi longitude of origin point
+     * @param destLati latitude of destination point
+     * @param destLongi longitude of destination point
+     * @return bearing (turning direction)
+     */
     public static double calcBearing(double initLati, double initLongi, double destLati, double destLongi){
         initLati=Math.toRadians(initLati);
         destLati=Math.toRadians(destLati);
@@ -136,6 +117,15 @@ public class Utils{
         return bearing;
     }
 
+    /**
+     * Calculate the distance between two geolocation
+     *
+     * @param initLati latitude of origin point
+     * @param initLongi longitude of origin point
+     * @param destLati latitude of destination point
+     * @param destLongi longitude of destination point
+     * @return distance between origin point and destination point
+     */
     public static double calcDistance(double initLati, double initLongi, double destLati, double destLongi){
         double radius = 6371000;
         initLati=Math.toRadians(initLati);
@@ -149,5 +139,31 @@ public class Utils{
         double distance=radius*c;
         return distance;
     }
+    /**
+     * END of Math Utils
+     * @author Eddie Wang
+     */
 
+    /**
+     * @unused save for later usage
+     */
+//    public static boolean checkGpsCoordinate(double latitude, double longitude) {
+//        return (latitude > -90 && latitude < 90 && longitude > -180 && longitude < 180) && (latitude != 0f && longitude != 0f);
+//    }
+//
+//    public static double cosForDegree(double degree) {
+//        return Math.cos(degree * Math.PI / 180.0f);
+//    }
+//
+//    public static double calcLongitudeOffset(double latitude) {
+//        return ONE_METER_OFFSET / cosForDegree(latitude);
+//    }
+//
+//    public static void addLineToSB(StringBuffer sb, String name, Object value) {
+//        if (sb == null) return;
+//        sb.
+//                append(name == null ? "" : name + ": ").
+//                append(value == null ? "" : value + "").
+//                append("\n");
+//    }
 }

@@ -13,7 +13,8 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 
 /**
- * Created by David on 2/26/2017.
+ * Classifier and encoder
+ * @author David Yang
  */
 
 public class WatsonCommandClassifier {

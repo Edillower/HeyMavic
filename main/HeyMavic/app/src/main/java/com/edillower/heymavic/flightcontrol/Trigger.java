@@ -1,7 +1,8 @@
 package com.edillower.heymavic.flightcontrol;
 
 /**
- * Created by chencai on 4/19/17.
+ * Trigger, supporting class of Photo Shooting Module
+ * @author Melody Cai
  */
 
 public class Trigger {

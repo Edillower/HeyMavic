@@ -5,7 +5,8 @@ import java.util.concurrent.Callable;
 import com.ibm.watson.developer_cloud.natural_language_classifier.v1.NaturalLanguageClassifier;
 
 /**
- * Created by David on 2/5/2017.
+ * NLP Service, supporting class of voice recognition module
+ * @author/maintainer David Yang
  */
 
 public class NLPCallableService implements Callable<String> {

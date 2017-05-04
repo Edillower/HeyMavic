@@ -15,7 +15,8 @@ import java.util.concurrent.Callable;
 
 
 /**
- * Created by paulyang on 3/23/17.
+ * NLU Service, supporting class of voice recognition module
+ * @author/maintainer Paul Yang
  */
 
 public class NLUCallableService implements Callable<String> {
