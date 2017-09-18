@@ -1,0 +1,27 @@
+index,input,instruction,direction
+0,"Hey mavic, move forward",move,forward
+1,"Hey mavic, move backward",move,backward
+2,"Hey mavic, turn left",turn,left
+3,Hey mavic turn right,turn,right
+4,Hey mavic move left,move,left
+5,Hey mavic move right,move,right
+6,Hey mavic turn left 60 degrees,turn,left
+7,Hey mavic turn right 30 degrees,turn,right
+8,Hey mavic turn 60 degrees to the left,turn,left
+9,Hey mavic turn 30 degrees to the right,turn,right
+10,Hey mavic move left 2 meter,move,left
+11,Hey mavic move right 23 meter,move,right
+12,Hey mavic go down 5 meter,move,down
+13,Hey mavic go down 5 meter,move,down
+14,Hey mavic move up 6 meter,move,up
+15,Hey mavic reverse,move,backward
+16,Hey mavic rotate 30 degree to the left,turn,left
+17,Hey mavic up 5 meters,move,up
+18,Hey mavic down 5 meters,move,down
+19,Hey mavic to the right,turn,right
+20,Hey mavic go backward,move,backward
+21,Hey mavic take photo of a tree,photo,null
+22,Hey mavic go to Columbus,location,null
+23,Hey mavic take photo of the person,photo,null
+24,Hey mavic go to Wuhan,location,null
+25,Hey mavic fly to Ohio State University,location,null

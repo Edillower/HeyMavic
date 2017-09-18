@@ -1,0 +1,102 @@
+input,instruction,direction
+go to ground,landing,null
+land,landing,null
+landing,landing,null
+back up 12 meters,move,backward
+go back,move,backward
+move back 2 meters,move,backward
+move backward,move,backward
+fly down 1 meter,move,down
+go down 12 inch,move,down
+fly down 5 feet,move,down
+move forward,move,forward
+advance 3 feet,move,forward
+approach front,move,forward
+run toward the tree at 5 meter in the front,move,forward
+make an advancement of 2 meter,move,forward
+move 2 meter,move,forward
+proceed 5 meter,move,forward
+move left,move,left
+move 5 meter left,move,left
+grabble towards left,move,left
+approach left,move,left
+"approach left to the house, which is about 20 meter on the car's right",move,left
+move right,move,right
+walk right 2 meter,move,right
+fly to the house at your right,move,right
+creep right,move,right
+10 inch on your right,move,right
+move right 5 meter,move,right
+rise up,move,up
+climb 10 meter up,move,up
+gain altitute,move,up
+go up 5 meter,move,up
+go up 2 inch,move,up
+dodge,stop,null
+avoid obstacle,stop,null
+cancel,stop,null
+emergency stop,stop,null
+take off,takeoff,null
+rise flight,takeoff,null
+start,takeoff,null
+departure,takeoff,null
+leave ground,takeoff,null
+leave ground,takeoff,null
+turn 90 degrees left,turn,left
+move camera to your left,turn,left
+turn 78 degrees counter clockwise,turn,left
+turn counter clockwise 78 degrees,turn,left
+change direction to left,turn,left
+steer left,turn,left
+face left,turn,left
+turn your tail to right,turn,left
+veer to your left,turn,left
+alter direction to left,turn,left
+swerve sharply to left,turn,left
+turn 13 degrees clockwise,turn,right
+turn clockwise 78 degrees,turn,right
+turn right 45 degrees,turn,right
+move your head towards right,turn,right
+look towards your right,turn,right
+rotate 30 degrees to the right,turn,right
+30 degree to your right,turn,right
+wheel to your right,turn,right
+pivot to the right,turn,right
+take a picture of the blue car,photo,null
+take a picture of the red bus,photo,null
+take a photo of the red tree,photo,null
+shoot at building,photo,null
+focus onto the tree,photo,null
+focus camera onto the tree,photo,null
+center camera on the bus,photo,null
+move to Ohio Union,location,null
+set route to Thompson Library,location,null
+fly to dreese lab,location,null
+fly to ohio union,location,null
+fly to Thompson Library at OSU,location,null
+move to Thompson Library at OSU,location,null
+go to ohio union,location,null
+navigate to IBM at Dublin,location,null
+detour to mason hall,location,null
+Arrive at columbus,location,null
+Ohio Union,location,null
+turn lights,turn,right
+turned left,turn,left
+turned the right,turn,right
+take off,takeoff,null
+wake her left,turn,left
+more for,move,forward
+decreasing altitude,move,down
+increasing altitude,move,up
+set return to home altitude to 50 meter,home,null
+change return to home altitude to 50 meter,home,null
+Set back to home altitude to 100 meters,home,null
+Change back to home altitude to 100 meters,home,null
+set max altitude to 50 meter,height,null
+chnage max altitude to 50 meter,height,null
+set max height to 50 meter,height,null
+chnage max height to 50 meter,height,null
+set speed to 50 meters per second,speed,null
+chnage speed to 50 meters per second,speed,null
+Set velocity to 5 meters per second,speed,null
+Change velocity to 5 meters per second,speed,null

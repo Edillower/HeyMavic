@@ -1,0 +1,14 @@
+index,input,instruction,direction
+0,ground,landing,null
+1,"Hey, start up",takeoff,null
+2,turn off the engin,landing,null
+3,fly right,move,right
+4,Could you please go up for 5 s,move,up
+5,Stop flying you stupid drone,stop,null
+6,go to the blue and beautiful sky,takeoff,null
+7,down to the ground,landing,null
+8,scoot up,move,up
+9,shift to the right,move,right
+10,shift the body to the right,turn,right
+11,"go to the car on your right, which is near the left of the tree",move,right
+12,hey mavic,null,null

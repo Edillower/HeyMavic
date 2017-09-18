@@ -1,0 +1,22 @@
+index,input,instruction,direction
+0,"Hey alex, move forward",move,forward
+1,"Hey alex, move backward",move,backward
+2,"Hey alex, turn left",turn,left
+3,"Hey alex, turn right",turn,right
+4,"Hey alex, move left",move,left
+5,"Hey alex, move right",move,right
+6,"Hey alex, turn left 60 degrees",turn,left
+7,"Hey alex, turn right 30 degrees",turn,right
+8,"Hey alex, turn 60 degrees to the left",turn,left
+9,"Hey alex, turn 30 degrees to the right",turn,right
+10,"Hey alex, move left 2 meter",move,left
+11,"Hey alex, move right 23 meter",move,right
+12,"Hey alex, go down 5 meter",move,down
+13,"Hey alex, go down 5 meter",move,down
+14,"Hey alex, move up 6 meter",move,up
+15,"Hey alex, reverse",move,backward
+16,"Hey alex, rotate 30 degree to the left",turn,left
+17,"Hey alex, up 5 meters",move,up
+18,"Hey alex, down 5 meters",move,down
+19,"Hey alex, to the right",turn,right
+20,"Hey alex, go backward",move,backward

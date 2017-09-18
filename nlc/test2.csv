@@ -1,0 +1,22 @@
+index,input,instruction,direction
+0,"Hey maverick, move forward",move,forward
+1,"Hey maverick, move backward",move,backward
+2,"Hey maverick, turn left",turn,left
+3,"Hey maverick, turn right",turn,right
+4,"Hey maverick, move left",move,left
+5,"Hey maverick, move right",move,right
+6,"Hey maverick, turn left 60 degrees",turn,left
+7,"Hey maverick, turn right 30 degrees",turn,right
+8,"Hey maverick, turn 60 degrees to the left",turn,left
+9,"Hey maverick, turn 30 degrees to the right",turn,right
+10,"Hey maverick, move left 2 meter",move,left
+11,"Hey maverick, move right 23 meter",move,right
+12,"Hey maverick, go down 5 meter",move,down
+13,"Hey maverick, go down 5 meter",move,down
+14,"Hey maverick, move up 6 meter",move,up
+15,"Hey maverick, reverse",move,backward
+16,"Hey maverick, rotate 30 degree to the left",turn,left
+17,"Hey maverick, up 5 meters",move,up
+18,"Hey maverick, down 5 meters",move,down
+19,"Hey maverick, to the right",turn,right
+20,"Hey maverick, go backward",move,backward
